@@ -19,9 +19,10 @@
 #
 #   List of versions:
 #   - 0.34: stable release
+#   - 0.36: sin encoder/decoder and its doc 
 #
 #
 # Author: Generative Simulation\olivier.vitrac@gmail.fr
-# Revision: 2025-05-23
+# Revision: 2025-05-24
 #
-version="0.34"
+version="0.36"

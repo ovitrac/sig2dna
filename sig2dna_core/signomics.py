@@ -122,7 +122,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@gmail.com"
-__version__ = "0.34"
+__version__ = "0.36"
 
 # %% Dependencies
 # note:

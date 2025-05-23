@@ -48,16 +48,17 @@ It supports **large-scale applications** such as identifying unknown substances 
 - [🧠 2| **Applications**](#-2-applications)
 - [🧬 3| **Core Concepts** - Overview](#-3-core-concepts---overview)
 - [🧠 4| **Entropy and Distance Metrics**](#-4-entropy-and-distance-metrics)
-- [🔍 5| **Baseline Filtering and Poisson Noise Rejection**](#-5-baseline-filtering-and-poisson-noise-rejection)
-- [🧪 6| **Synthetic Signal Generation**](#-6-synthetic-signal-generation)
-- [📦 7| **Available Classes**](#-7-available-classes)
-- [📏  8| **Example Workflow**](#--8-example-workflow)
-- [📊 9| **Visualization**](#-9-visualization)
-- [🔎 10| **Motif Detection**](#-10-motif-detection)
-- [🤝 11| **Alignment**](#-11-alignment)
-- [🧪 12| **Examples** (unsorted)](#-12-examples-unsorted)
-- [📦 13| **Installation**](#-13-installation)
-- [💡14| **Recommendations**](#14-recommendations)
+- [🌀 5 | **Sinusoidal Encoding of Symbolic Segments**](#-5--sinusoidal-encoding-of-symbolic-segments)
+- [🔍 6| **Baseline Filtering and Poisson Noise Rejection**](#-6-baseline-filtering-and-poisson-noise-rejection)
+- [🧪 7| **Synthetic Signal Generation**](#-7-synthetic-signal-generation)
+- [📦 8| **Available Classes**](#-8-available-classes)
+- [📏  9| **Example Workflow**](#--9-example-workflow)
+- [📊 10| **Visualization**](#-10-visualization)
+- [🔎 11| **Motif Detection**](#-11-motif-detection)
+- [🤝 12| **Alignment**](#-12-alignment)
+- [🧪 13| **Examples** (unsorted)](#-13-examples-unsorted)
+- [📦 14| **Installation**](#-14-installation)
+- [💡15| **Recommendations**](#15-recommendations)
 - [📄 | License](#--license)
 - [📧 | Contact](#--contact)
 
@@ -987,7 +988,7 @@ MIT License — 2025 Olivier Vitrac
 
  Author: Olivier Vitrac
  Contact: [olivier.vitrac@gmail.com](mailto:olivier.vitrac@gmail.com)
- Version: 0.34 (2025-05-22)
+ Version: 0.36 (2025-05-24)
 
 ------
 
