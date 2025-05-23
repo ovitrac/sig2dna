@@ -16,7 +16,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 ![si2dna Illustrations](docs/assets/sig2dna_banner.png)
 
-<small>Credits: Olivier Vitrac</small>
+<small>🎨 Credits: Olivier Vitrac</small>
 
 
 
@@ -796,4 +796,4 @@ MIT License — 2025 Olivier Vitrac
 
 
 
-> `Sig2dna` is part of the **Generative Simulation** project: building modular, interpretable **AI-ready** tools for scientific modeling.
+> `Sig2dna` is part of the **Generative Simulation** initiative 🌱: building modular, interpretable **AI-ready** tools for scientific modeling.
