@@ -46,16 +46,16 @@ It supports **large-scale applications** such as identifying unknown substances 
 - [🧠 2| **Applications**](#-2-applications)
 - [🧬 3| **Core Concepts** - Overview](#-3-core-concepts---overview)
 - [🧠 4| **Entropy and Distance Metrics**](#-4-entropy-and-distance-metrics)
-- [🔍 5| Baseline Filtering and Poisson Noise Rejection](#-5-baseline-filtering-and-poisson-noise-rejection)
-- [🧪 6| Synthetic Signal Generation](#-6-synthetic-signal-generation)
-- [📦 7| Available Classes](#-7-available-classes)
-- [📏  8| Example Workflow](#--8-example-workflow)
-- [📊 9| Visualization](#-9-visualization)
-- [🔎 10| Motif Detection](#-10-motif-detection)
-- [🤝 11| Alignment](#-11-alignment)
-- [🧪 12| Examples (unsorted)](#-12-examples-unsorted)
-- [📦 13| Installation](#-13-installation)
-- [💡14| Recommendations](#14-recommendations)
+- [🔍 5| **Baseline Filtering and Poisson Noise Rejection**](#-5-baseline-filtering-and-poisson-noise-rejection)
+- [🧪 6| **Synthetic Signal Generation**](#-6-synthetic-signal-generation)
+- [📦 7| **Available Classes**](#-7-available-classes)
+- [📏  8| **Example Workflow**](#--8-example-workflow)
+- [📊 9| **Visualization**](#-9-visualization)
+- [🔎 10| **Motif Detection**](#-10-motif-detection)
+- [🤝 11| **Alignment**](#-11-alignment)
+- [🧪 12| **Examples** (unsorted)](#-12-examples-unsorted)
+- [📦 13| **Installation**](#-13-installation)
+- [💡14| **Recommendations**](#14-recommendations)
 - [📄 | License](#--license)
 - [📧 | Contact](#--contact)
 
@@ -338,14 +338,14 @@ $$
 and $m_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
 
 
-#### 4.3.1 Interpretation 💡
+#### 4.3.1 **Interpretation** 💡
 
 * The **Jensen–Shannon distance** quantifies **how different the symbol usage is** between two signals, **ignoring the order** in which the symbols appear.
 * It is **bounded between 0 and 1**, symmetric, and always finite (even when some symbols are missing in one sequence).
 * A value of **0** indicates identical symbol distributions, while **1** indicates completely disjoint symbol usage.
 
 
-#### 4.3.2 Use Cases 🧪
+#### 4.3.2 **Use Cases** 🧪
 
 * **Robust against misalignment or noise**: two signals with similar overall composition but different positions will still score low JSD.
 * **Useful for clustering** symbolic signals by type or composition, regardless of temporal structure.
@@ -395,7 +395,7 @@ This metric is especially useful when:
 
 
 
-## 🔍 5| Baseline Filtering and Poisson Noise Rejection
+## 🔍 5| **Baseline Filtering and Poisson Noise Rejection**
 
 > The **Ricker wavelet** $\psi_s(t)$ used in `sig2dna` is mathematically the **second derivative of a Gaussian kernel**. As such, applying the Continuous Wavelet Transform (CWT) with $\psi_s(t)$ is equivalent to performing a **second-order differentiation** of the signal $x(t)$ followed by a **Gaussian smoothing**, where the scale parameter $s$ controls the bandwidth.
 >
@@ -466,7 +466,7 @@ $$
 
 
 
-## 🧪 6| Synthetic Signal Generation
+## 🧪 6| **Synthetic Signal Generation**
 
 Synthetic signals are modeled as a sum of Gaussian/Lorentzian/Triangle peaks. For Gaussian, they read
 
@@ -493,7 +493,7 @@ This is used to:
 
 
 
-## 📦 7| Available Classes
+## 📦 7| **Available Classes**
 
 | Class Name            | Description                                                  |
 | --------------------- | ------------------------------------------------------------ |
@@ -511,7 +511,7 @@ This is used to:
 
 
 
-## 📏  8| Example Workflow
+## 📏  8| **Example Workflow**
 
 ```python
 from signomics import DNAsignal
@@ -535,7 +535,7 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 
 
 
-## 📊 9| Visualization
+## 📊 9| **Visualization**
 
 - `signal.plot()`, `signal_collection.plot()` : plot signals
 - `DNAsignal.plot_signals()`: Original + CWT overlay
@@ -551,7 +551,7 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 
 
 
-## 🔎 10| Motif Detection
+## 🔎 10| **Motif Detection**
 
 Pattern search: ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷
 
@@ -572,7 +572,7 @@ D.codesfull[4].extract_motifs("YAZB", minlen=4, plot=True)
 
 
 
-## 🤝 11| Alignment
+## 🤝 11| **Alignment**
 
 ☴ Fast symbolic alignment:⛓️⏱️
 
@@ -589,7 +589,7 @@ D1.plot_alignment()
 
 
 
-## 🧪 12| Examples (unsorted)
+## 🧪 12| **Examples** (unsorted)
 
 ```python
 from sig2dna_core.signomics import peaks, signal_collection, DNAsignal
@@ -655,7 +655,7 @@ J.scatter3d(n_clusters=5)
 
 
 
-## 📦 13| Installation
+## 📦 13| **Installation**
 
 The `sig2dna` toolkit is composed of two core modules that must be used together:
 
@@ -725,7 +725,7 @@ pip install PyWavelets seaborn scikit-learn python-Levenshtein biopython
 
 
 
-## 💡14| Recommendations
+## 💡14| **Recommendations**
 
 
 

@@ -107,7 +107,7 @@ Maintenance & forking
 
         $ tree -P '*.py' -P '*.md' -P 'LICENSE' -I '__pycache__|.*' --prune
         $ pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
-        $ doctoc  --maxlevel 2 README.md
+        $ doctoc --github  --maxlevel 2 README.md
 
 
 Author: Olivier Vitrac — olivier.vitrac@gmail.com
