@@ -552,6 +552,7 @@ with $r = N^{2/d}$, typically $N = 10000$, and $d \sim 32$.
 
 
 In decoding, we estimate $t$ by averaging multiple phase inversions:
+
 $$
 \hat{t} \approx \frac{1}{d/2} \sum_{k=0}^{d/2 - 1} r^k \cdot \theta_k,
 \quad \text{where } \theta_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)
