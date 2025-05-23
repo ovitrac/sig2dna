@@ -16,6 +16,8 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 ![si2dna Illustrations](docs/assets/sig2dna_banner.png)
 
+<small>Credits: Olivier Vitrac</small>
+
 
 
 > 📚 This approach was developed and tested as part of the PhD thesis:
