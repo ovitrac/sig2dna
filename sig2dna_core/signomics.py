@@ -132,7 +132,7 @@ __version__ = "0.34"
 import os, sys, socket, getpass, datetime, uuid, operator, json, gzip, hashlib, re
 import inspect, importlib.util, warnings
 from pathlib import Path
-from collections import OrderedDict, Counter
+from collections import defaultdict, OrderedDict, Counter
 from types import SimpleNamespace
 #from itertools import islice
 from copy import deepcopy
@@ -197,7 +197,7 @@ from scipy.spatial.distance import squareform
 import seaborn as sns
 
 
-__all__ = ['DNApairwiseAnalysis', 'DNAsignal', 'DNAstr', 'generator', 'import_local_module', 'peaks', 'signal', 'signal_collection']
+__all__ = ['DNApairwiseAnalysis', 'DNAsignal', 'DNAstr', 'generator', 'import_local_module', 'peaks', 'signal', 'signal_collection', 'sindecode_dna_grouped', 'sinencode_dna_grouped', 'sinusoidal_encoding']
 
 # %% load dynamically figprint without pythonpath modification or installation
 def import_local_module(name: str, relative_path: str):
@@ -241,6 +241,191 @@ def import_local_module(name: str, relative_path: str):
 # use figprint = import_local_module if you want to access directly print_pdf, print_png...
 import_local_module("figprint", "figprint.py")
 
+
+# %% Low-level Encoder/Decoder functions
+def sinusoidal_encoding(values, d_model, N=10000):
+    """
+    Apply sinusoidal positional encoding to a list of scalar values.
+
+    Parameters
+    ----------
+    code : dict
+        Dictionary containing the signal's symbolic segmentation (from DNAsignal.codes[scale]).
+        It must contain:
+            - 'letters': str
+            - 'xloc': list of (start, end) tuples
+            - 'widths': list of float
+            - 'heights': list of float
+            - 'dx': float
+    d_part : int
+        Number of dimensions per component (position, width, height).
+    N : int
+        Sinusoidal encoding frequency base.
+
+    Returns
+    -------
+    np.ndarray
+        Encoded matrix of shape (len(values), d_model)
+
+    Source
+    -------
+    https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)
+
+    Example
+    -------
+    >>> Demonstration with dummy position and amplitude values
+    x_pos = np.linspace(0, 1000, 10)       # example positions
+    amp = np.random.uniform(0.1, 1.0, 10)  # example normalized amplitudes
+
+    enc_pos = sinusoidal_encoding(x_pos, d_model=64)
+    enc_amp = sinusoidal_encoding(amp, d_model=64)
+
+    # Combine both
+    combined = np.concatenate([enc_pos, enc_amp], axis=1)
+    combined.shape
+
+    """
+    values = np.array(values).reshape(-1, 1)
+    d_half = d_model // 2
+    k = np.arange(d_half).reshape(1, -1)
+    r = N ** (2 * k / d_model)
+    angles = values / r
+    return np.concatenate([np.sin(angles), np.cos(angles)], axis=1)
+
+
+# encoder
+def sinencode_dna_grouped(code, d_part=32, N=10000):
+    """
+    Group-wise sinusoidal encoding of DNA segments by letter.
+
+    Parameters
+    ----------
+    code : dict
+        The original code dict from DNAsignal.
+    d_part : int
+        Dimension of each encoding component (position, width, height).
+    N : int
+        Frequency base.
+
+    Returns
+    -------
+    dict
+        Dictionary mapping each letter to an array of shape (n_segments, 3*d_part)
+    """
+    grouped = defaultdict(list)
+    letters = code['letters']
+    xlocs = np.array(code['xloc'])
+    widths = np.array(code['widths'])
+    heights = np.array(code['heights'])
+
+    x_start = xlocs[:, 0]
+    pe_x = sinusoidal_encoding(x_start, d_part, N)
+    pe_w = sinusoidal_encoding(widths, d_part, N)
+    norm_h = heights / (np.max(np.abs(heights)) or 1.0)
+    pe_h = sinusoidal_encoding(norm_h, d_part, N)
+
+    for i, l in enumerate(letters):
+        v = np.concatenate([pe_x[i], pe_w[i], pe_h[i]])
+        grouped[l].append(v)
+
+    return {k: np.stack(vlist) for k, vlist in grouped.items()}
+
+
+# decoder
+def sindecode_dna_grouped(grouped_embeddings: dict, original_code: dict, d_part=32, N=10000):
+    """
+    Decode sinusoidal embeddings grouped by symbolic letter into a symbolic code dictionary.
+
+    This function reconstructs the structural elements of a symbolic signal:
+    - Symbolic sequence (`letters`)
+    - Segment widths and heights
+    - Positional index pairs (`iloc`) and x-axis bounds (`xloc`)
+
+    It assumes the sinusoidal embedding was generated from segments grouped by letter,
+    where each encoded vector contains three sub-embeddings:
+      1. start position (x0)
+      2. segment width
+      3. segment height
+
+    The decoder approximates the original values using arctangent phase unwrapping and weighted
+    averaging of sinusoidal components.
+
+    Parameters
+    ----------
+    grouped_embeddings : dict
+        Dictionary of the form {letter: np.ndarray}, each array being (n_segments, 3*d_part).
+        This is the output of `sinencode_dna_grouped(...)`.
+    original_code : dict
+        Code dictionary used as a reference for dx value, typically taken from `DNAsignal.codes[scale]`.
+        Must contain: 'dx' (float)
+    d_part : int
+        Number of sinusoidal dimensions per component (default: 32).
+    N : int
+        Frequency base for sinusoidal encoding (default: 10000).
+
+    Returns
+    -------
+    decoded_code : dict
+        Dictionary with fields required to reconstruct symbolic segments:
+        - 'letters'  : str
+        - 'widths'   : list of float
+        - 'heights'  : list of float
+        - 'iloc'     : list of (i, j) index ranges
+        - 'xloc'     : list of (x_start, x_end) positions
+        - 'dx'       : sampling resolution used for iloc reconstruction
+
+    Notes
+    -----
+    - The decoder uses inverse trigonometry to extract approximate continuous values.
+    - The decoded output can be directly assigned to `DNAsignal.codes[scale]`.
+    - This method is tolerant to small phase shifts and quantization noise.
+    - If the number of segments is large, the performance scales linearly with segment count.
+    """
+
+    r = N ** (2 * np.arange(d_part // 2) / (2 * d_part))
+    decoded = []
+    for letter, vectors in grouped_embeddings.items():
+        vec = np.array(vectors)
+        d_model = vec.shape[1]
+        part = d_model // 3
+        chunks = np.split(vec, 3, axis=1)
+
+        def approx_decode(enc):
+            sin_part = enc[:, :d_part // 2]
+            cos_part = enc[:, d_part // 2:]
+            angles = np.arctan2(sin_part, cos_part)
+            return np.mean(angles * r, axis=1)
+
+        x0 = approx_decode(chunks[0])
+        w = approx_decode(chunks[1])
+        h = approx_decode(chunks[2])
+
+        for x, width, height in zip(x0, w, h):
+            decoded.append((x, width, height, letter))
+
+    decoded.sort(key=lambda z: z[0])
+
+    xloc = [(x, x + w) for x, w, _, _ in decoded]
+    widths = [w for _, w, _, _ in decoded]
+    heights = [h for _, _, h, _ in decoded]
+    letters = ''.join([l for _, _, _, l in decoded])
+
+    dx = original_code['dx']
+    iloc = []
+    idx = 0
+    for w in widths:
+        npts = max(1, int(round(w / dx)))
+        iloc.append((idx, idx + npts))
+        idx += npts
+
+    return {
+        'letters': letters,
+        'widths': widths,
+        'heights': heights,
+        'iloc': iloc,
+        'xloc': xloc,
+        'dx': dx
+    }
 # %% Main classes DNAsignal, DNAstr, DNApairwiseAnalysis
 
 # ------------------------
@@ -598,6 +783,99 @@ class DNAsignal:
                                  'xloc':xloc,
                                  'iloc':iloc,
                                  'dx':dx}
+
+    def sinencode_dna(self, scales=None, d_part=32, N=10000):
+        """
+        Encode multiple scales of symbolic segments into sinusoidal embeddings grouped by letter.
+
+        Parameters
+        ----------
+        scales : list[int] or None
+            List of scales to encode. If None, encode all existing in self.codes.
+        d_part : int
+            Number of dimensions per component (start, width, height).
+        N : int
+            Frequency base.
+
+        Sets
+        ----
+        self.code_embeddings_grouped : dict
+            Dictionary of {scale: {letter: np.ndarray}} embeddings.
+        self.code_embeddings_meta : dict
+            Metadata for reconstruction, including units, name, and x sampling info.
+        """
+        if not hasattr(self, 'codes') or not self.codes:
+            raise ValueError("No symbolic encodings found. Run encode_dna first.")
+
+        if not hasattr(self, 'code_embeddings_grouped'):
+            self.code_embeddings_grouped = {}
+        if not hasattr(self, 'code_embeddings_meta'):
+            self.code_embeddings_meta = {}
+
+        if scales is None:
+            scales = list(self.codes.keys())
+        if not isinstance(scales, (list, tuple)):
+            scales = [scales]
+
+        for scale in scales:
+            if scale not in self.codes:
+                continue
+            self.code_embeddings_grouped[scale] = sinencode_dna_grouped(self.codes[scale], d_part=d_part, N=N)
+
+        self.code_embeddings_meta = {
+            "x_label": self.x_label,
+            "x_unit": self.x_unit,
+            "y_label": self.y_label,
+            "y_unit": self.y_unit,
+            "name": self.name,
+            "sampling_dt": self.sampling_dt,
+            "dtype": str(self.dtype),
+            "scales": scales,
+            "d_part": d_part,
+            "N": N
+        }
+
+    @staticmethod
+    def sindecode_dna(grouped_embeddings, meta_info):
+        """
+        Decode sinusoidal grouped embeddings into a DNAsignal instance.
+
+        Parameters
+        ----------
+        grouped_embeddings : dict
+            Output of `sinencode_dna_grouped` for each scale.
+        meta_info : dict
+            Metadata used to rebuild the DNAsignal instance, including:
+            - 'x_label', 'x_unit', 'y_label', 'y_unit'
+            - 'name', 'sampling_dt', 'dtype'
+            - 'scales', 'd_part', 'N'
+
+        Returns
+        -------
+        DNAsignal
+            A reconstructed DNAsignal object with empty signal and decoded `codes` attribute.
+        """
+        empty_signal = np.array([], dtype=meta_info.get("dtype", np.float64))
+        dummy = DNAsignal(signal_obj=empty_signal,
+                          sampling_dt=meta_info["sampling_dt"],
+                          dtype=np.float64,
+                          encode=False,
+                          scales=[],
+                          x_label=meta_info["x_label"],
+                          x_unit=meta_info["x_unit"],
+                          y_label=meta_info["y_label"],
+                          y_unit=meta_info["y_unit"],
+                          plot=False)
+        dummy.name = meta_info["name"]
+        dummy.scales = meta_info["scales"]
+
+        dummy.codes = {}
+        for scale in meta_info["scales"]:
+            decoded = sindecode_dna_grouped(grouped_embeddings[scale], reference_code={"dx": meta_info["sampling_dt"]},
+                                            d_part=meta_info["d_part"], N=meta_info["N"])
+            dummy.codes[scale] = decoded
+
+        return dummy
 
     def encode_dna_full(self, scales=None, resolution='index', repeat=True, n_points=None):
         """

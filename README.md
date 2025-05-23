@@ -393,11 +393,208 @@ This metric is especially useful when:
 
 ---
 
+Here is the complete, cleanly formatted **README.md documentation section** for the new **sinusoidal encoder/decoder** functions added to `sig2dna`, including appropriate emojis and explanations:
+
+------
 
 
 
 
-## 🔍 5| **Baseline Filtering and Poisson Noise Rejection**
+
+## 🌀 5 | **Sinusoidal Encoding of Symbolic Segments**
+
+`sig2dna` integrates a **transformer-style positional encoding** for symbolic segments, enabling conversion of **morphological features** into **fixed-size vectors**. This provides a compact, AI-ready representation of:
+
+* ⏱️ Position ($x_0$)
+* 📏 Width ($\Delta x$)
+* 📶 Amplitude ($\Delta y$)
+
+> 💡 This mechanism replaces long repetitions of letters by a **numerically invertible vector encoding**, useful for clustering, attention-based models, or compressed storage.
+
+
+
+###  5.1 Mathematical Basis 📐
+
+Let $t \in \mathbb{R}$ be a scalar quantity (e.g., position, width, or height). The sinusoidal encoding $\mathbf{f}(t) \in \mathbb{R}^d$ is defined by:
+
+$$
+\begin{aligned}
+f_{2k}(t) &= \sin\left(\frac{t}{r^k}\right), \\
+f_{2k+1}(t) &= \cos\left(\frac{t}{r^k}\right),
+\end{aligned}
+\quad \text{for } k = 0, \dots, \frac{d}{2}-1
+$$
+
+where:
+
+* $r = N^{2/d}$ is a frequency base (default: $N = 10000$)
+* $d$ is the number of embedding dimensions for the feature (default: $d = 32$)
+* Each encoded feature (position, width, amplitude) gets its own $d$-vector
+
+Then the full vector for one symbolic segment becomes:
+
+$$
+\mathbf{v} = [\mathbf{f}(x_0) \, \| \, \mathbf{f}(\Delta x) \, \| \, \mathbf{f}(\Delta y)]
+\in \mathbb{R}^{3d}
+$$
+
+These vectors are computed for each letter (A, B, ..., Z) and grouped accordingly.
+
+
+
+> This encoding maps any scalar value $t$ (e.g., ⏱️, 📏, 📶) onto periodic functions. Due to the nature of sine and cosine, this representation is:
+>
+> * **translation-equivariant** for local displacements (relative order and spacing are preservd),
+> * **periodic**, so absolute positions wrap with ambiguity (exact localization may be lossy).
+>
+> The **key mathematical identity** is:
+>
+> $$
+> f(t + \Delta t) = \mathrm{diag}(f(\Delta t)) \cdot f(t)
+> $$
+>
+>
+> 👉 **shifting** a position $t$ by $\Delta t$ corresponds to a **linear transformation** of its embedding.
+>
+> ⚠️ To enable **invertibility**, we restrict $x_0$ within a known range $[0, L]$ with resolution determined by $N$ (current implementation), or add explicit absolute anchor
+
+
+
+🔷〰️〰️🔷〰️〰️〰️🔷
+
+
+
+### 5.2 `sinencode_dna()` – Letter-wise Sinusoidal Encoder 🔡 
+
+Encodes all symbolic segments at selected scale(s) into sinusoidal vectors, grouped by letter (`A`, `Z`, `B`, etc.).
+
+```python
+dna.sinencode_dna(scales=[4], d_part=32)
+```
+
+🔧 Stored outputs:
+
+- `self.code_embeddings_grouped`:
+
+  ```python
+  {
+    4: {
+      "A": np.ndarray (n_A, 96),
+      "Z": np.ndarray (n_Z, 96),
+      ...
+    }
+  }
+  ```
+
+- `self.code_embeddings_meta`:
+   Metadata required for reconstruction:
+
+  ```python
+  {
+    "sampling_dt": 0.1,
+    "x_label": "RT",
+    "x_unit": "min",
+    "y_label": "Intensity",
+    "y_unit": "a.u.",
+    "name": "GC-MS peak trace",
+    "scales": [4],
+    "d_part": 32,
+    "N": 10000
+  }
+  ```
+
+
+
+🔶〰️〰️🔶〰️〰️〰️🔶
+
+
+
+### 5.3 `sindecode_dna(...)` – Static Decoder to DNAsignal 🔁 
+
+Reconstructs a new `DNAsignal` instance from sinusoidal embeddings:
+
+```python
+reconstructed = DNAsignal.sindecode_dna(
+    grouped_embeddings = dna.code_embeddings_grouped,
+    meta_info = dna.code_embeddings_meta
+)
+```
+
+🧬 Returns a complete `DNAsignal` object with:
+
+- reconstructed `codes[scale]` dictionaries:
+  - `letters`, `widths`, `heights`, `iloc`, `xloc`, `dx`
+- empty signal (since waveform cannot be recovered from symbol encoding alone)
+
+🧠 Ideal for:
+
+- Embedding symbolic sequences for AI/ML workflows
+- Comparing motifs without repeating long letters
+- Visualizing symbolic structure in latent spaces
+
+
+
+⭐〰️〰️⭐〰️〰️〰️⭐
+
+
+
+### 5.4 Summary and error estimation  $\varepsilon = |\hat{t} - t|$  💬 
+
+Each scalar $t$ (like $x_0$ or $\Delta x$) is **encoded** as:
+
+$$
+\mathbf{f}(t) = \left[ \sin\left(\frac{t}{r^0}\right), \cos\left(\frac{t}{r^0}\right), \dots, \sin\left(\frac{t}{r^{d/2-1}}\right), \cos\left(\frac{t}{r^{d/2-1}}\right) \right]
+$$
+
+with $r = N^{2/d}$, typically $N = 10000$, and $d \sim 32$.
+
+
+
+In decoding, we estimate $t$ by averaging multiple phase inversions:
+$$
+\hat{t} \approx \frac{1}{d/2} \sum_{k=0}^{d/2 - 1} r^k \cdot \theta_k,
+\quad \text{where } \theta_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)
+$$
+
+Let $L$ be the **maximum span** of $t$ values to encode (e.g., total signal length), and $d$ the embedding size (e.g., 32). Then:
+
+* For $k=0$ (highest freq), $\text{period}_0 \sim 2\pi$
+* For $k = d/2 - 1$, $\text{period}_k \sim 2\pi N$
+
+So the **resolution** behaves like:
+
+$$
+\varepsilon \sim \frac{L}{N}
+$$
+
+where $N$ is the frequency base and $L$ is the range of $t$ values being encoded (*e.g.*, max segment length or signal length)
+
+
+
+| Feature      | Value                                                        |
+| ------------ | ------------------------------------------------------------ |
+| Error scales | $\varepsilon \sim L / N$                                     |
+| Depends on   | Signal span $L$, base $N$                                    |
+| Tunable by   | Increasing $d$ or $N$                                        |
+| Accuracy     | Typically $<0.1%$ %of signal range ($L=500$ and $N=10^4$ gives $\varepsilon \approx \frac{500}{10000} = 0.05$ ) |
+| Robustness   | Stable across most morphologies                              |
+
+The errors are acceptable for:
+
+* Motif alignment
+* Classifiers
+* Density maps
+* Latent embeddings
+
+----
+
+
+
+
+
+
+
+## 🔍 6| **Baseline Filtering and Poisson Noise Rejection**
 
 > The **Ricker wavelet** $\psi_s(t)$ used in `sig2dna` is mathematically the **second derivative of a Gaussian kernel**. As such, applying the Continuous Wavelet Transform (CWT) with $\psi_s(t)$ is equivalent to performing a **second-order differentiation** of the signal $x(t)$ followed by a **Gaussian smoothing**, where the scale parameter $s$ controls the bandwidth.
 >
@@ -468,7 +665,7 @@ $$
 
 
 
-## 🧪 6| **Synthetic Signal Generation**
+## 🧪 7| **Synthetic Signal Generation**
 
 Synthetic signals are modeled as a sum of Gaussian/Lorentzian/Triangle peaks. For Gaussian, they read
 
@@ -495,7 +692,7 @@ This is used to:
 
 
 
-## 📦 7| **Available Classes**
+## 📦 8| **Available Classes**
 
 **Module** `sig2dna_core.signomics.py`
 
@@ -535,7 +732,7 @@ str --> DNAstr
 
 
 
-## 📏  8| **Example Workflow**
+## 📏  9| **Example Workflow**
 
 ```python
 from signomics import DNAsignal
@@ -559,7 +756,7 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 
 
 
-## 📊 9| **Visualization**
+## 📊 10| **Visualization**
 
 - `signal.plot()`, `signal_collection.plot()` : plot signals
 - `DNAsignal.plot_signals()`: Original + CWT overlay
@@ -575,7 +772,7 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 
 
 
-## 🔎 10| **Motif Detection**
+## 🔎 11| **Motif Detection**
 
 Pattern search: ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷
 
@@ -596,7 +793,7 @@ D.codesfull[4].extract_motifs("YAZB", minlen=4, plot=True)
 
 
 
-## 🤝 11| **Alignment**
+## 🤝 12| **Alignment**
 
 ☴ Fast symbolic alignment:⛓️⏱️
 
@@ -613,7 +810,7 @@ D1.plot_alignment()
 
 
 
-## 🧪 12| **Examples** (unsorted)
+## 🧪 13| **Examples** (unsorted)
 
 ```python
 from sig2dna_core.signomics import peaks, signal_collection, DNAsignal
@@ -679,7 +876,7 @@ J.scatter3d(n_clusters=5)
 
 
 
-## 📦 13| **Installation**
+## 📦 14| **Installation**
 
 The `sig2dna` toolkit is composed of two core modules that must be used together:
 
@@ -749,7 +946,7 @@ pip install PyWavelets seaborn scikit-learn python-Levenshtein biopython
 
 
 
-## 💡14| **Recommendations**
+## 💡15| **Recommendations**
 
 
 
