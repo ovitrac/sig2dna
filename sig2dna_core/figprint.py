@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
+__all__ = ['PrintableFigure', 'custom_plt_figure', 'custom_plt_subplots', 'is_valid_figure', 'print_figure', 'print_pdf', 'print_png', 'print_svg']
 """
 📁 figprint.py — Utilities for saving and displaying Matplotlib figures with printing options.
 

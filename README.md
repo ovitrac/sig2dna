@@ -497,6 +497,8 @@ This is used to:
 
 ## 📦 7| **Available Classes**
 
+**Module** `sig2dna_core.signomics.py`
+
 | Class Name            | Description                                                  |
 | --------------------- | ------------------------------------------------------------ |
 | `generator`           | Peak shape generator:  Gaussian, Lorentzian, triangle        |
@@ -506,6 +508,26 @@ This is used to:
 | `DNAstr`              | Symbolic sequence with alignment, motif, entropy, distance evaluation |
 | `DNAsignal`           | Encodes and decodes symbolic sequences from signals          |
 | `DNApairwiseAnalysis` | Tools for clustering, dendrograms, dimensionality reduction, advanced plotting |
+
+**Class Inheritance Diagram**
+
+```mermaid
+graph TD;
+DNApairwiseAnalysis
+DNAsignal
+DNAstr
+generator
+peaks
+signal
+signal_collection
+list --> signal_collection
+object --> DNApairwiseAnalysis
+object --> DNAsignal
+object --> generator
+object --> peaks
+object --> signal
+str --> DNAstr
+```
 
 ---
 

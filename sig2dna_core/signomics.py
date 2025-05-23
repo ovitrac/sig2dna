@@ -197,7 +197,7 @@ from scipy.spatial.distance import squareform
 import seaborn as sns
 
 
-__all__ = ["DNAsignal", "DNAstr", "DNApairwiseAnalysis", "signal", "signal_collection", "peaks", "generator"]
+__all__ = ['DNApairwiseAnalysis', 'DNAsignal', 'DNAstr', 'generator', 'import_local_module', 'peaks', 'signal', 'signal_collection']
 
 # %% load dynamically figprint without pythonpath modification or installation
 def import_local_module(name: str, relative_path: str):

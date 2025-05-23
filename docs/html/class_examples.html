@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>sig2dna Usage/Class Examples</title>
+<style>
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #f9f9f9; 
+    color: #333;
+}
+header {
+    background: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    position: relative; /* For positioning the toggle button */
+}
+header h1 {
+    margin: 0; 
+    font-size: 1.5em;
+    color: #fff; /* Explicitly set to white */
+    padding-left: 50px; /* Space for the toggle button */
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px); /* Adjusted for header height */
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+#nav {
+    width: 300px; /* Set a fixed width */
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: width 0.3s ease, padding 0.3s ease; /* Transition for smooth animations */
+    flex-shrink: 0; /* Prevent flexbox from shrinking */
+}
+#nav.collapsed {
+    width: 0; /* Hide the sidebar completely */
+    padding: 20px 0; /* Optionally adjust padding */
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+header .toggle-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    left: 10px; /* Place the button on the left */
+    background-color: #4CAF50; /* Green background */
+    border: none;
+    color: white; /* Ensure the hamburger icon is white */
+    padding: 10px 12px; /* Adjust padding for larger button */
+    cursor: pointer;
+    font-size: 1.2em; /* Increase font size for better visibility */
+    border-radius: 4px;
+    z-index: 1001; /* Ensure the button is above other elements */
+}
+header .toggle-btn:hover {
+    background-color: #45a049;
+}
+header .toggle-btn kbd {
+    font-family: 'Arial', sans-serif; /* Match the header font */
+    color: white; /* Ensure the hamburger icon is white */
+    font-size: 1.2em; /* Same size as the button text */
+    background: none; /* Remove any background styling from <kbd> */
+    border: none; /* Remove any borders from <kbd> */
+}
+h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+h2 {
+    color: #333; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 5px;
+}
+a {
+    text-decoration: none; 
+    color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul {
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+}
+li {
+    margin: 5px 0;
+}
+.folder-title {
+    font-weight: bold; 
+    color: #333; 
+    padding: 5px 0;
+    cursor: pointer;
+}
+.folder-content {
+    margin-left: 20px;
+    display: none; /* start collapsed */
+}
+.file {
+    margin-left: 20px;
+}
+hr {
+    margin: 20px 0; 
+    border: 1px solid #ddd;
+}
+footer {
+    font-size: 0.9em; 
+    color: #666; 
+    margin-top: 20px; 
+    text-align: center;
+}
+/* Enhanced Table Styling with Banded Colors */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+tr:nth-child(odd) {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green for odd rows */
+}
+/* Collapsible Code Section */
+.collapsible {
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+}
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+/* Minimal Syntax Highlighting */
+.code {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+.keyword {
+    color: #007BFF;
+    font-weight: bold;
+}
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+.string {
+    color: #a31515;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px; /* Height of the header */
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+    #nav.collapsed {
+        width: 0; /* Hide the sidebar completely */
+        padding: 20px 0; /* Adjust padding */
+    }
+    #main {
+        flex: 1;
+    }
+    /* Add overlay when sidebar is open on mobile */
+    body.nav-open::before {
+        content: "";
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 50px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code .hll { background-color: #ffffcc }
+.code { background: #f8f8f8; }
+.code .c { color: #3D7B7B; font-style: italic } /* Comment */
+.code .err { border: 1px solid #F00 } /* Error */
+.code .k { color: #008000; font-weight: bold } /* Keyword */
+.code .o { color: #666 } /* Operator */
+.code .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.code .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.code .cp { color: #9C6500 } /* Comment.Preproc */
+.code .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.code .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.code .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.code .gd { color: #A00000 } /* Generic.Deleted */
+.code .ge { font-style: italic } /* Generic.Emph */
+.code .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code .gr { color: #E40000 } /* Generic.Error */
+.code .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code .gi { color: #008400 } /* Generic.Inserted */
+.code .go { color: #717171 } /* Generic.Output */
+.code .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.code .gs { font-weight: bold } /* Generic.Strong */
+.code .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code .gt { color: #04D } /* Generic.Traceback */
+.code .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.code .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.code .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.code .kp { color: #008000 } /* Keyword.Pseudo */
+.code .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.code .kt { color: #B00040 } /* Keyword.Type */
+.code .m { color: #666 } /* Literal.Number */
+.code .s { color: #BA2121 } /* Literal.String */
+.code .na { color: #687822 } /* Name.Attribute */
+.code .nb { color: #008000 } /* Name.Builtin */
+.code .nc { color: #00F; font-weight: bold } /* Name.Class */
+.code .no { color: #800 } /* Name.Constant */
+.code .nd { color: #A2F } /* Name.Decorator */
+.code .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.code .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.code .nf { color: #00F } /* Name.Function */
+.code .nl { color: #767600 } /* Name.Label */
+.code .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.code .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.code .nv { color: #19177C } /* Name.Variable */
+.code .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.code .w { color: #BBB } /* Text.Whitespace */
+.code .mb { color: #666 } /* Literal.Number.Bin */
+.code .mf { color: #666 } /* Literal.Number.Float */
+.code .mh { color: #666 } /* Literal.Number.Hex */
+.code .mi { color: #666 } /* Literal.Number.Integer */
+.code .mo { color: #666 } /* Literal.Number.Oct */
+.code .sa { color: #BA2121 } /* Literal.String.Affix */
+.code .sb { color: #BA2121 } /* Literal.String.Backtick */
+.code .sc { color: #BA2121 } /* Literal.String.Char */
+.code .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.code .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.code .s2 { color: #BA2121 } /* Literal.String.Double */
+.code .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.code .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.code .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.code .sx { color: #008000 } /* Literal.String.Other */
+.code .sr { color: #A45A77 } /* Literal.String.Regex */
+.code .s1 { color: #BA2121 } /* Literal.String.Single */
+.code .ss { color: #19177C } /* Literal.String.Symbol */
+.code .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.code .fm { color: #00F } /* Name.Function.Magic */
+.code .vc { color: #19177C } /* Name.Variable.Class */
+.code .vg { color: #19177C } /* Name.Variable.Global */
+.code .vi { color: #19177C } /* Name.Variable.Instance */
+.code .vm { color: #19177C } /* Name.Variable.Magic */
+.code .il { color: #666 } /* Literal.Number.Integer.Long */
+</style>
+</head>
+<body>
+<header>
+    <!-- Toggle Sidebar Button -->
+    <button class='toggle-btn' id='toggleSidebar' aria-label='Toggle Sidebar' aria-expanded='false'>
+        <kbd>&#9776;</kbd>
+    </button>
+    <h1>sig2dna Documentation - Usage Examples</h1>
+</header>
+<div id='content'>
+<div id='nav'>
+<p><strong>Version:</strong> sig2dna v.0.34</p>
+<p><strong>Maintained by:</strong> INRAE\olivier.vitrac@agroparistech.fr</p>
+<hr>
+<ul>
+<li class="folder">
+<div class="folder-title" onclick="toggleFolder(this)">sig2dna_core</div>
+<ul class="folder-content">
+<ul>
+<li class="file"><a href="#sig2dna_core_signomics" onclick="loadDoc('sig2dna_core_signomics')">signomics.py</a></li>
+</ul>
+</ul>
+</li>
+</ul>
+
+</div>
+<div id='main'>
+<div id="welcome" class="module-content" style="display:block;">
+
+<h2>Welcome to Usage Class Examples</h2>
+<p>Select a module in the left menu to view usage examples. These examples are not for production and are automatically extracted from the main section of each module.</p>
+<p>Back to the <a href='index.html'>Python'sig2dna documentation</a>.</p>
+<p>When no module is selected, you see this welcome page. They are used to test classes with typical codes. The main section often serves as a testing script, example usage block, or self-contained test block. It's a way to demonstrate how the module's functionality works or to run simple unit tests and examples inline.</p>
+<p>Generated on: 2025-05-23 11:03:10</p>
+
+</div>
+
+<div id="sig2dna_core_signomics" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+<p>output folder</p>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">outputfolder</span> <span class="o">=</span> <span class="s2">&quot;./images&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;./images&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;../images&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;../images&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Define peaks</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="n">p</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Convert to signal</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">s</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span>  <span class="c1"># defaults to x0=0, n=1000</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span> <span class="n">fig</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;simple_signal&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Generate variants</p>
+
+    <button type="button" class="collapsible">Show Code Example 4</button>
+    <div class="content">
+    <pre class="code"><span class="n">s_noisy1</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">s_noisy2</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;poisson&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="s2">&quot;ramp&quot;</span><span class="p">)</span>
+    <span class="n">s_scaled</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="mf">0.5</span>
+</pre>
+    </div>
+    <p>Create a signal collection</p>
+
+    <button type="button" class="collapsible">Show Code Example 5</button>
+    <div class="content">
+    <pre class="code"><span class="n">collection</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s_noisy1</span><span class="p">,</span> <span class="n">s_noisy2</span><span class="p">,</span> <span class="n">s_scaled</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span> <span class="n">fig</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;collection_simple_signals&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">s_mean</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">s_sum</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">s_mean</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean&quot;</span><span class="p">)</span>
+    <span class="n">s_sum</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sum&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Synthetic signals</p>
+
+    <button type="button" class="collapsible">Show Code Example 6</button>
+    <div class="content">
+    <pre class="code"><span class="n">S</span><span class="p">,</span><span class="n">pS</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_synthetic</span><span class="p">(</span>
+        <span class="n">n_signals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">n_peaks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">kinds</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;gauss&quot;</span><span class="p">,),</span>
+        <span class="n">width_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">height_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>
+        <span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
+        <span class="n">n_points</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="mi">123</span>
+    <span class="p">)</span>
+    <span class="n">pS</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">(</span><span class="n">pS</span><span class="p">)</span> <span class="c1"># flatten all peaks</span>
+    <span class="n">S</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">Sfull</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">fig</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">Sfull</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">newfig</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_signal&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Transform</p>
+
+    <button type="button" class="collapsible">Show Code Example 7</button>
+    <div class="content">
+    <pre class="code"><span class="n">dna</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="p">(</span><span class="n">Sfull</span><span class="p">)</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">compute_cwt</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>dna.transforms.plot()</p>
+
+    <button type="button" class="collapsible">Show Code Example 8</button>
+    <div class="content">
+    <pre class="code"><span class="n">dna</span><span class="o">.</span><span class="n">encode_dna</span><span class="p">()</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">encode_dna_full</span><span class="p">()</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">plot_codes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">=</span><span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</pre>
+    </div>
+    <p>Alignement</p>
+
+    <button type="button" class="collapsible">Show Code Example 9</button>
+    <div class="content">
+    <pre class="code"><span class="n">A</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">html_alignment</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">wrapped_alignment</span><span class="p">(</span><span class="mi">40</span><span class="p">))</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">plot_alignment</span><span class="p">()</span>
+    <span class="n">As</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span>
+    <span class="n">Bs</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span>
+    <span class="n">ABs</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="n">As</span><span class="p">,</span><span class="n">Bs</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span> <span class="n">As</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">ABs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>substring (peaks) extraction</p>
+
+    <button type="button" class="collapsible">Show Code Example 10</button>
+    <div class="content">
+    <pre class="code"><span class="n">pA_list</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">)</span>
+    <span class="n">pA</span> <span class="o">=</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pA_list</span><span class="p">]</span>
+    <span class="n">pAs</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pA_list</span><span class="p">])</span>
+    <span class="n">pAs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>Signal mixtures and their classification</p>
+
+    <button type="button" class="collapsible">Show Code Example 11</button>
+    <div class="content">
+    <pre class="code"><span class="n">Smix</span><span class="p">,</span> <span class="n">pSmix</span><span class="p">,</span> <span class="n">idSmix</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_mixtures</span><span class="p">(</span>
+        <span class="n">n_mixtures</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">max_peaks</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">peaks_per_mixture</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+        <span class="n">amplitude_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">n_signals</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">kinds</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;gauss&quot;</span><span class="p">,),</span>
+        <span class="n">width_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">height_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>
+        <span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
+        <span class="n">n_points</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="mi">123</span>
+        <span class="p">)</span>
+    <span class="n">dnaSmix</span> <span class="o">=</span> <span class="n">Smix</span><span class="o">.</span><span class="n">_toDNA</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">])</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseEntropyDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">engine</span><span class="o">=</span><span class="s2">&quot;bio&quot;</span><span class="p">)</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Excess Entropy&quot;</span>
+    <span class="n">Ddhalf</span><span class="p">,</span> <span class="n">figD1</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">();</span> <span class="n">figD1</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Entropy_dimensions&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">figD2</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">();</span> <span class="n">figD2</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Entropy_dendrogram&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">figD3</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">);</span> <span class="n">figD3</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Entropy_scatter&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseJaccardMotifDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">J</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;YAZB Jaccard&quot;</span>
+    <span class="n">Jdhalf</span><span class="p">,</span><span class="n">figJ1</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">();</span> <span class="n">figJ1</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Jaccard_dimensions&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">J</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">figJ2</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">();</span> <span class="n">figJ2</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Jaccard_dendrogram&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">figJ3</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">);</span> <span class="n">figJ3</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Jaccard_scatter3&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseLevenshteinDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Levenshtein&quot;</span>
+    <span class="n">Ldhalf</span><span class="p">,</span><span class="n">figL1</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">();</span> <span class="n">figL1</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Lenvenshtein_dimensions&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">figL2</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">();</span> <span class="n">figL2</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Lenvenshtein_dendrogram&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">figL3</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">);</span> <span class="n">figL3</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Lenvenshtein_scatter3&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseJensenShannonDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">S</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Jensen-Shannon&quot;</span>
+    <span class="n">Sdhalf</span><span class="p">,</span><span class="n">figJ1</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">();</span> <span class="n">figJ1</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;JensenShannon_dimensions&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">S</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+    <span class="n">figJ2</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">();</span> <span class="n">figJ2</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;JensenShannon_dendrogram&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">figJ3</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">);</span> <span class="n">figJ3</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;JensenShannon_scatter3&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Final summary table</p>
+
+    <button type="button" class="collapsible">Show Code Example 12</button>
+    <div class="content">
+    <pre class="code"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Number of dimensions to recover 50</span><span class="si">% o</span><span class="s1">f total distance:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Distance Metric&#39;</span><span class="si">:</span><span class="s2">&lt;20</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;dhalf&#39;</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;Excess Entropy&quot;</span><span class="p">,</span> <span class="n">Ddhalf</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;YAZB Jaccard&quot;</span><span class="p">,</span> <span class="n">Jdhalf</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Levenshtein&quot;</span><span class="p">,</span> <span class="n">Ldhalf</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Jensen-Shannon&quot;</span><span class="p">,</span> <span class="n">Sdhalf</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;20</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Demo Alignment on Banner</p>
+
+    <button type="button" class="collapsible">Show Code Example 13</button>
+    <div class="content">
+    <pre class="code"><span class="n">S1</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_synthetic</span><span class="p">(</span>
+        <span class="n">n_signals</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">n_peaks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kinds</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;gauss&quot;</span><span class="p">,),</span>
+        <span class="n">width_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">height_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>
+        <span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">127</span><span class="p">),</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">S1</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;S1&quot;</span>
+    <span class="n">S2</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_synthetic</span><span class="p">(</span>
+        <span class="n">n_signals</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">n_peaks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kinds</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;gauss&quot;</span><span class="p">,),</span>
+        <span class="n">width_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">height_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>
+        <span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">127</span><span class="p">),</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">456</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">S2</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;S2&quot;</span>
+    <span class="n">S12</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="n">S1</span><span class="p">,</span><span class="n">S2</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">S12</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;S1 vs. S2&quot;</span>
+    <span class="n">S12</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">S12dna</span> <span class="o">=</span> <span class="n">S12</span><span class="o">.</span><span class="n">_toDNA</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">])</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">signal</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">S12dna</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cwt_coeffs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;S1&quot;</span><span class="p">)</span>
+    <span class="n">s2</span> <span class="o">=</span>  <span class="n">signal</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">S12dna</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cwt_coeffs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;S2&quot;</span><span class="p">)</span>
+    <span class="n">s1code</span> <span class="o">=</span> <span class="n">S12dna</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">s2code</span> <span class="o">=</span> <span class="n">S12dna</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">s1code</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">s2code</span><span class="p">,</span><span class="s2">&quot;bio&quot;</span><span class="p">)</span>
+    <span class="n">S12dna_scale2</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">s2</span><span class="p">)</span>
+    <span class="n">S12dna_scale2</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S1 vs. S2 - CWT at scale 2&quot;</span>
+    <span class="n">S12dna_scale2</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">s1code</span><span class="o">.</span><span class="n">plot_alignment</span><span class="p">()</span>
+    <span class="n">s1code</span><span class="o">.</span><span class="n">plot_mask</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">s1code</span><span class="o">.</span><span class="n">wrapped_alignment</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">1024</span><span class="p">))</span>
+</pre>
+    </div>
+    </div>
+
+</div>
+</div>
+<footer>
+<p>&copy; 2025 sig2dna Project. All rights reserved.</p>
+</footer>
+<script>
+// Toggle visibility of folder contents
+function toggleFolder(element) {
+    var content = element.nextElementSibling;
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
+    }
+}
+
+// Load documentation into the main panel
+function loadDoc(moduleId) {
+    var modules = document.getElementsByClassName('module-content');
+    for (var i = 0; i < modules.length; i++) {
+        modules[i].style.display = 'none';
+    }
+    var welcome = document.getElementById('welcome');
+    welcome.style.display = 'none';
+    var selected = document.getElementById(moduleId);
+    if (selected) {
+        selected.style.display = 'block';
+    }
+}
+
+// Toggle All Code Sections
+function toggleAllCode(button) {
+    var moduleContent = button.parentElement;
+    var collapsibles = moduleContent.querySelectorAll('.collapsible');
+    var contents = moduleContent.querySelectorAll('.content');
+    var shouldExpand = true;
+    // Determine if we should expand or collapse based on the first content's display
+    if (contents.length > 0 && (contents[0].style.display === 'block')) {
+        shouldExpand = false;
+    }
+    collapsibles.forEach(function(collapsible, index) {
+        var content = collapsibles[index].nextElementSibling;
+        if (shouldExpand) {
+            content.style.display = 'block';
+            collapsible.textContent = 'Hide Code Example ' + (index + 1);
+        } else {
+            content.style.display = 'none';
+            collapsible.textContent = 'Show Code Example ' + (index + 1);
+        }
+    });
+    button.textContent = shouldExpand ? 'Collapse All Code Sections' : 'Expand All Code Sections';
+}
+
+// Initialize all collapsible buttons and handle URL hash on page load
+document.addEventListener("DOMContentLoaded", function() {
+    var coll = document.getElementsByClassName("collapsible");
+    for (var i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                this.textContent = this.textContent.replace('Hide', 'Show');
+            } else {
+                content.style.display = "block";
+                this.textContent = this.textContent.replace('Show', 'Hide');
+            }
+        });
+    }
+    
+    // Handle URL hash on page load to display the corresponding module examples
+    var hash = window.location.hash.substring(1); // Remove the #
+    if (hash) {
+        loadDoc(hash);
+    }
+});
+
+// Toggle Sidebar Functionality
+const toggleButton = document.getElementById('toggleSidebar');
+const nav = document.getElementById('nav');
+
+toggleButton.addEventListener('click', () => {
+    nav.classList.toggle('collapsed');
+    document.body.classList.toggle('nav-open'); // Toggle overlay on small screens
+    // Change icon based on sidebar state
+    if(nav.classList.contains('collapsed')) {
+        toggleButton.innerHTML = '<kbd>&#9776;</kbd>'; // Hamburger icon
+        toggleButton.setAttribute('aria-expanded', 'false');
+    } else {
+        toggleButton.innerHTML = '<kbd>&#10005;</kbd>'; // Close icon (X)
+        toggleButton.setAttribute('aria-expanded', 'true');
+    }
+});
+</script>
+</body>
+</html>
