@@ -461,11 +461,53 @@ These vectors are computed for each letter (A, B, ..., Z) and grouped accordingl
 
 
 
+🔵〰️〰️⚪️〰️〰️〰️🔴
+
+
+
+### 5.2  Decoding implementation 🗝️ 
+
+- **Encoding**: $t \mapsto [\sin(t/r_k), \cos(t/r_k)]_{k=0}^{d/2 - 1}$
+
+- **Decoding**:
+- Convert $\sin$, $\cos$ pairs into $z_k = \cos + i\sin = e^{ix/r_k}$
+  
+- Unwrap $\angle(z_k)$ → gives $\theta_k \approx t/r_k$
+  
+- Fit $t$ via least-squares:
+
+
+$$
+x_i = \frac{\sum_k \theta_{ik} \cdot \frac{1}{r_k}}{\sum_k \left(\frac{1}{r_k}\right)^2}
+$$
+
+- Robust, differentiable, and avoids scalar-local minima traps.
+
+  
+
+> Four decoders have been implemented 🔧:
+>
+> | Method            | Description                                    | Stability      |
+> | ----------------- | ---------------------------------------------- | -------------- |
+> | `'least_squares'` | Fast, phase-unwrapped projection               | ✅ Excellent    |
+> | `'svd'`           | SVD-regularized LSQ for robust inversion       | ✅ Excellent    |
+> | `'optimize'`      | Scalar optimization (slow, fragile)            | ❌ Unstable     |
+> | `'naive'`         | Mean of phase-projected values (quick + dirty) | ❌ Wrong shifts |
+>
+> Rules of Thumb 🔧:
+>
+> | Option      | Action                       | Effect                           |
+> | ----------- | ---------------------------- | -------------------------------- |
+> | Use scaling | Normalize input to `[0, 10]` | Accurate decoding for wide range |
+> | Reduce `N`  | Use e.g. `N = 1000`          | Higher range support             |
+
+
+
 🔷〰️〰️🔷〰️〰️〰️🔷
 
 
 
-### 5.2 `sinencode_dna()` – Letter-wise Sinusoidal Encoder 🔡 
+### 5.3 `sinencode_dna()` – Letter-wise Sinusoidal Encoder 🔡 
 
 Encodes all symbolic segments at selected scale(s) into sinusoidal vectors, grouped by letter (`A`, `Z`, `B`, etc.).
 
@@ -510,7 +552,7 @@ dna.sinencode_dna(scales=[4], d_part=32)
 
 
 
-### 5.3 `sindecode_dna(...)` – Static Decoder to DNAsignal 🔁 
+### 5.4 `sindecode_dna(...)` – Static Decoder to DNAsignal 🔁 
 
 Reconstructs a new `DNAsignal` instance from sinusoidal embeddings:
 
@@ -539,7 +581,7 @@ reconstructed = DNAsignal.sindecode_dna(
 
 
 
-### 5.4 Summary and error estimation  $\varepsilon = |\hat{t} - t|$  💬 
+### 5.5 Summary and error estimation  $\varepsilon = |\hat{t} - t|$  💬 
 
 Each scalar $t$ (like $x_0$ or $\Delta x$) is **encoded** as:
 
@@ -698,30 +740,39 @@ This is used to:
 
 **Module** `sig2dna_core.signomics.py`
 
-| Class Name            | Description                                                  |
-| --------------------- | ------------------------------------------------------------ |
-| `generator`           | Peak shape generator:  Gaussian, Lorentzian, triangle        |
-| `peaks`               | Peak library with synthesis + operations                     |
-| `signal`              | 1D signal class (with plotting, arithmetic, noise)           |
-| `signal_collection`   | Multi-signal wrapper for mean, sum, alignment                |
-| `DNAstr`              | Symbolic sequence with alignment, motif, entropy, distance evaluation |
-| `DNAsignal`           | Encodes and decodes symbolic sequences from signals          |
-| `DNApairwiseAnalysis` | Tools for clustering, dendrograms, dimensionality reduction, advanced plotting |
+| Class Name            | Description                                                                 |
+|-----------------------|-----------------------------------------------------------------------------|
+| `generator`           | Peak shape generator: Gaussian, Lorentzian, triangle                        |
+| `peaks`               | Peak library with synthesis, parameter control, and arithmetic operations   |
+| `signal`              | 1D signal class with plotting, peak summation, transformations, and noise   |
+| `signal_collection`   | Wrapper for multi-signal analysis: mean, sum, scaling, alignment, synthesis |
+| `DNAstr`              | Symbolic sequence class with entropy, motif search, edit distances          |
+| `DNAsignal`           | Symbolic encoding/decoding from signals (DNA-like)                          |
+| `DNApairwiseAnalysis` | Tools for clustering, dimensionality reduction, dendrograms, visual metrics|
+| `SinusoidalEncoder`   | Encoder/decoder for symbolic and numeric data using sinusoidal projections  |
+| `DNACodes`            | Dictionary-like symbolic representation of triplet codes (letter, width, height) |
+| `DNAFullCodes`        | Dictionary-based encoder for resolution-based symbolic repetition            |
 
 **Class Inheritance Diagram**
 
 ```mermaid
 graph TD;
+DNACodes
+DNAFullCodes
 DNApairwiseAnalysis
 DNAsignal
 DNAstr
+SinusoidalEncoder
 generator
 peaks
 signal
 signal_collection
+UserDict --> DNACodes
+dict --> DNAFullCodes
 list --> signal_collection
 object --> DNApairwiseAnalysis
 object --> DNAsignal
+object --> SinusoidalEncoder
 object --> generator
 object --> peaks
 object --> signal

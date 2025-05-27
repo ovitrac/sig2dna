@@ -111,7 +111,7 @@ Maintenance & forking
 
 
 Author: Olivier Vitrac — olivier.vitrac@gmail.com
-Revision: 2025-05-22
+Revision: 2025-05-27
 """
 
 # %% Indentication
@@ -122,7 +122,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@gmail.com"
-__version__ = "0.36"
+__version__ = "0.41"
 
 # %% Dependencies
 # note:
@@ -132,7 +132,8 @@ __version__ = "0.36"
 import os, sys, socket, getpass, datetime, uuid, operator, json, gzip, hashlib, re
 import inspect, importlib.util, warnings
 from pathlib import Path
-from collections import defaultdict, OrderedDict, Counter
+from collections import defaultdict, UserDict, OrderedDict, Counter
+from collections.abc import Sequence
 from types import SimpleNamespace
 #from itertools import islice
 from copy import deepcopy
@@ -151,6 +152,7 @@ from scipy.signal import  medfilt
 from scipy.ndimage import uniform_filter1d
 from scipy.stats import entropy
 from scipy.spatial.distance import jensenshannon
+from scipy.optimize import minimize_scalar
 from difflib import SequenceMatcher
 from matplotlib.patches import Polygon, Rectangle
 from mpl_toolkits.mplot3d import Axes3D
@@ -197,7 +199,7 @@ from scipy.spatial.distance import squareform
 import seaborn as sns
 
 
-__all__ = ['DNApairwiseAnalysis', 'DNAsignal', 'DNAstr', 'generator', 'import_local_module', 'peaks', 'signal', 'signal_collection', 'sindecode_dna_grouped', 'sinencode_dna_grouped', 'sinusoidal_encoding']
+__all__ = ['DNACodes', 'DNAFullCodes', 'DNApairwiseAnalysis', 'DNAsignal', 'DNAstr', 'SinusoidalEncoder', 'generator', 'import_local_module', 'peaks', 'signal', 'signal_collection']
 
 # %% load dynamically figprint without pythonpath modification or installation
 def import_local_module(name: str, relative_path: str):
@@ -242,190 +244,1011 @@ def import_local_module(name: str, relative_path: str):
 import_local_module("figprint", "figprint.py")
 
 
-# %% Low-level Encoder/Decoder functions
-def sinusoidal_encoding(values, d_model, N=10000):
+# %% Specialized Encoder
+class SinusoidalEncoder:
     """
-    Apply sinusoidal positional encoding to a list of scalar values.
+    🌀 Generic sinusoidal encoder/decoder supporting symbolic and numeric sequences.
+
+    Each scalar value is transformed into a vector of dimension `d_model`, where alternating components
+    contain sinusoidal features of increasing frequency. The mapping is based on:
+
+        For k = 0 to d_model/2 - 1:
+            f_{2k}(x)   = sin(x / r_k)
+            f_{2k+1}(x) = cos(x / r_k)
+
+        where r_k = N^(2k / d_model)
+
+    This representation preserves relative positions and scaling in a smooth, topologically faithful
+    embedding space. The class supports multiple decoding strategies, scaling logic, residual control,
+    and round-trip verification.
 
     Parameters
     ----------
-    code : dict
-        Dictionary containing the signal's symbolic segmentation (from DNAsignal.codes[scale]).
-        It must contain:
-            - 'letters': str
-            - 'xloc': list of (start, end) tuples
-            - 'widths': list of float
-            - 'heights': list of float
-            - 'dx': float
-    d_part : int
-        Number of dimensions per component (position, width, height).
+    d_model : int
+        Dimensionality of each sinusoidal encoding (must be even).
     N : int
-        Sinusoidal encoding frequency base.
+        Frequency base for the positional encoding.
+    dtype : np.dtype
+        Output data type (default: np.float32).
 
-    Returns
-    -------
-    np.ndarray
-        Encoded matrix of shape (len(values), d_model)
+    Attributes
+    ----------
+    d_model : int
+        Embedding dimensionality.
+    N : int
+        Frequency base.
+    dtype : np.dtype
+        Data type for encoded output.
+    _last_input_type : type
+        Last input type passed to `encode`.
+    _last_input_length : int
+        Last input length passed to `encode`.
+    _scale : float or None
+        Scaling factor applied to normalize input values.
+    _auto_scale_enabled : bool
+        Whether autoscaling is enabled.
+    _decode_residual_tolerance : float
+        Tolerance for residual error checking in decode verification.
 
-    Source
+    Methods
     -------
-    https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)
+    encode(values, scale=None)
+        Encodes a sequence of values (scalar or symbolic) into sinusoidal embeddings.
+    decode(embedding, method='least_squares', return_error=False)
+        Decodes the embedding to the original values using the selected inverse method.
+    fit_encoder(values, target_range=10.0)
+        Automatically estimates and stores a scaling factor to normalize input values.
+    set_decode_tolerance(tol)
+        Sets the residual error threshold above which decoding results will raise a warning.
+    verify_roundtrip(values, method='least_squares', scale='auto', verbose=True, return_details=False)
+        Checks round-trip accuracy of encoding and decoding. Warns if residuals exceed tolerance.
+
+    sinencode_dna_grouped(code, d_part, N)
+        Encodes a `codes` entry (triplet-based segments grouped by letter).
+    sindecode_dna_grouped(grouped, reference_code, d_part, N)
+        Reconstructs code dictionary from grouped sinusoidal embeddings.
+    sinencode_dnafull_grouped(dnafull, d_model, N)
+        Encodes `codesfull` entries (strings) into grouped embeddings.
+    sindecode_dnafull_grouped(grouped)
+        Decodes grouped full embeddings back to `DNAstr`.
+
+    Static Methods
+    --------------
+    to_complex(emb)
+        Convert a sinusoidal embedding (sin, cos) into complex numbers using Euler's identity.
+    complex_distance(emb1, emb2, norm='L2')
+        Compute pointwise distances between two embeddings in the complex sinusoidal space.
+    angle_difference(emb)
+        Compute angular differences Δθ between consecutive elements of a sinusoidal embedding.
+    phase_alignment(emb, ref)
+        Align the phase of an embedding `emb` to a reference embedding `ref` using complex phase factors.
+    pairwise_similarity(emb, metric='cosine')
+        Compute a pairwise similarity or distance matrix ('cosine' or 'L2') between all elements.
+    group_centroid(emb, labels=None, return_std=False)
+        Compute the centroid (and optionally standard deviation) of groups in complex embedding space.
+    phase_unwrap(emb, normalize=False)
+        Perform phase unwrapping (à la Fourier) on the sinusoidal embedding, optionally normalized to [0, 1].
+
+    Example (without scaling)
+    --------------------------
+    >>> s = SinusoidalEncoder(8, 100)  # poor encoder (8 dimensions, high N)
+    >>> a = s.encode([0, 1, 1, 2, 2, 3, 4, 5, 6, 6])
+    >>> s.decode(a)
+
+    Output:
+        [0.0,
+         1.0000000072927564,
+         1.0000000072927564,
+         1.9999999989612762,
+         1.9999999989612762,
+         2.9999999881593866,
+         3.9999997833243714,
+         5.000000005427378,
+         5.999999552487366,
+         5.999999552487366]
+
+    Notes:
+        - Use lower N (e.g., N = 1000) to compress phase variation and allow larger input range.
+        - Use scaling (via `fit_encoder()` or `scale=`) for large or high-resolution inputs.
+
+    Example (with scaling)
+    ----------------------
+    >>> s2 = SinusoidalEncoder(128, 10000)
+    >>> a2 = s2.encode([0, 1, 1, 2, 2, 3, 4, 5, 6, 6, 7, 7, 7, 8, 8, 8, 8, 16, 99, 130], scale=100)
+    >>> s2.decode(a2)
+
+    Output:
+        [0.0,
+         1.0000000127956146,
+         1.0000000127956146,
+         1.999999922004248,
+         1.999999922004248,
+         2.999999960015871,
+         3.9999999840341935,
+         5.000000076901334,
+         5.999999935247362,
+         5.999999935247362,
+         6.999999909109446,
+         6.999999909109446,
+         6.999999909109446,
+         8.000000084954152,
+         8.000000084954152,
+         8.000000084954152,
+         8.000000084954152,
+         16.000000431016925,
+         99.00000148970207,
+         129.99999823222058]
+
+    Advanced Example
+    -----------------
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    >>> # 1. Construct a test input signal with smooth and jump segments
+    >>> x_smooth = np.linspace(0, 20, 100)
+    >>> x_jumps = np.array([25, 25, 26, 27, 100, 101, 130])
+    >>> x = np.concatenate([x_smooth, x_jumps])
+
+    >>> # 2. Initialize encoder with high d_model and N
+    >>> s = SinusoidalEncoder(d_model=128, N=10000)
+
+    >>> # 3. Fit auto-scaling to compress input into sinusoidal-friendly space
+    >>> s.fit_encoder(x, target_range=10)
+
+    >>> # 4. Encode and decode using all robust methods
+    >>> a = s.encode(x)
+    >>> decoded_lsq, err_lsq = s.decode(a, method='least_squares', return_error=True)
+    >>> decoded_svd, err_svd = s.decode(a, method='svd', return_error=True)
+
+    >>> # 5. Compare errors
+    >>> true = x
+    >>> lsq_error = np.abs(decoded_lsq - true)
+    >>> svd_error = np.abs(decoded_svd - true)
+
+    >>> # 6. Plot results
+    >>> fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+    >>> axs[0, 0].plot(true, label="Original")
+    >>> axs[0, 0].plot(decoded_lsq, '--', label="Decoded (LSQ)")
+    >>> axs[0, 0].plot(decoded_svd, ':', label="Decoded (SVD)")
+    >>> axs[0, 0].set_title("Decoded vs Original")
+    >>> axs[0, 0].legend()
+
+    >>> axs[0, 1].plot(lsq_error, label="Abs Error (LSQ)")
+    >>> axs[0, 1].plot(svd_error, label="Abs Error (SVD)")
+    >>> axs[0, 1].set_yscale('log')
+    >>> axs[0, 1].set_title("Absolute Decoding Error (log scale)")
+    >>> axs[0, 1].legend()
+
+    >>> axs[1, 0].plot(err_lsq, label="Residual Norm (LSQ)")
+    >>> axs[1, 0].plot(err_svd, label="Residual Norm (SVD)")
+    >>> axs[1, 0].set_yscale('log')
+    >>> axs[1, 0].set_title("Reconstruction Residuals")
+    >>> axs[1, 0].legend()
+
+    >>> axs[1, 1].hist(lsq_error, bins=50, alpha=0.7, label="LSQ")
+    >>> axs[1, 1].hist(svd_error, bins=50, alpha=0.5, label="SVD")
+    >>> axs[1, 1].set_title("Histogram of Absolute Errors")
+    >>> axs[1, 1].legend()
+
+    >>> plt.suptitle("🌀 SinusoidalEncoder: Accuracy Evaluation", fontsize=14)
+    >>> plt.tight_layout()
+    >>> plt.show()
+
+    References (for the encoding)
+    ------------------------------
+    * Vaswani et al. (2017), "Attention is All You Need"
+    * https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)
+    """
+
+    def __init__(self, d_model=96, N=10000, dtype=np.float32):
+        """
+        SinuosidalEncoder Constructor
+
+        Parameters
+        ----------
+        d_model : int
+            Dimensionality of each sinusoidal encoding (must be even).
+        N : int
+            Frequency base for positional encoding.
+        dtype : np.dtype
+            Output data type (default: np.float32).
+        """
+        if d_model % 2 != 0:
+            raise ValueError("d_model must be even")
+        self.d_model = d_model
+        self.N = N
+        self.dtype = dtype
+        self._last_input_type = None
+        self._scale = None  # auto-scaling factor
+        self._auto_scale_enabled = False
+        self._decode_residual_tolerance = 1e-3
+
+    def set_decode_tolerance(self, tol=1e-3):
+        """
+        Set maximum acceptable residual error for decoding.
+
+        Parameters
+        ----------
+        tol : float
+            Residual threshold above which a warning is triggered.
+        """
+        self._decode_residual_tolerance = tol
+
+    def fit_encoder(self, values, target_range=10.0):
+        """
+        Fit a scaling factor to normalize values into a target sinusoidal-safe range.
+
+        Parameters
+        ----------
+        values : array-like
+            Original values to encode (will determine scale).
+        target_range : float
+            Maximum scaled range to span (e.g. [0, 10]).
+
+        Returns
+        -------
+        float
+            Recommended scale factor stored internally.
+        """
+        values = np.asarray(values, dtype=float).flatten()
+        span = np.max(values) - np.min(values)
+        if span == 0:
+            self._scale = 1.0
+        else:
+            self._scale = span / target_range
+        self._auto_scale_enabled = True
+        return self._scale
+
+    def encode(self, values, scale=None):
+        """
+        Encode input values into sinusoidal embeddings.
+
+        Parameters
+        ----------
+        values : array-like
+            Values to encode.
+        scale : float or None
+            Rescaling factor. If None, auto-scaling is applied if enabled.
+
+        Returns
+        -------
+        np.ndarray
+            Embedded values of shape (n, d_model)
+        """
+        arr = self._parse(values)
+        self._last_input_type = type(values)
+        self._last_input_length = len(values)
+
+        if scale is not None:
+            self._scale = scale
+        elif self._auto_scale_enabled and self._scale is not None:
+            pass  # use previously fitted scale
+        else:
+            self._scale = None
+
+        if self._scale:
+            arr = arr / self._scale
+
+        return self._sin_embed(arr)
+
+
+    def decode(self, embedding, method='least_squares', return_error=False):
+        """
+        Decode sinusoidal embeddings back to original values using selected method.
+
+        Parameters
+        ----------
+        embedding : np.ndarray
+            Encoded sinusoidal array of shape (n, d_model)
+        method : str
+            Decoding strategy: 'least_squares' (default), 'optimize', or 'naive'
+        return_error : bool
+            If True, returns (decoded_values, residual_error) as a tuple
+
+        Returns
+        -------
+        decoded : list or array
+            Reconstructed input values
+        residual : np.ndarray, optional
+            Residuals of decoding (per sample), returned only if return_error=True
+        """
+        if self._last_input_type is None:
+            raise RuntimeError("Cannot decode: no prior encoding available.")
+        if method == 'least_squares' or method == "LS":
+            values, error = self._decode_lsq(embedding)
+        elif method == 'svd':
+            values, error = self._decode_svd(embedding)
+        elif method == 'optimize':
+            values, error = self._decode_optimize(embedding)
+        elif method == 'naive':
+            values = self._decode_naive(embedding)
+            error = np.full_like(values, np.nan)
+        else:
+            raise ValueError("Unknown method. Use 'least_squares', 'optimize', or 'naive'.")
+        if self._scale is not None:
+            values *= self._scale
+        if return_error and hasattr(error, "__len__"):
+            bad = np.where(error > self._decode_residual_tolerance)[0]
+            if len(bad):
+                print(f"⚠️  Warning: {len(bad)} / {len(error)} decoded values exceed residual threshold "
+                      f"({self._decode_residual_tolerance}).")
+        reconstructed = self._reconstruct_type(values)
+        return (reconstructed, error) if return_error else reconstructed
+
+    def _parse(self, values):
+        """Parse values"""
+        if isinstance(values, str):
+            return np.arange(len(values))
+        elif isinstance(values, DNAstr):
+            return np.arange(len(values))
+        elif isinstance(values, (list, tuple, np.ndarray)):
+            return np.array(values, dtype=float).flatten()
+        else:
+            raise TypeError(f"Unsupported input type: {type(values)}")
+
+    def _reconstruct_type(self, arr):
+        """Reconstruct types"""
+        if self._last_input_type is str:
+            return ''.join(chr(65 + int(round(x)) % 26) for x in arr)
+        elif self._last_input_type is list:
+            return arr.tolist()
+        elif self._last_input_type is tuple:
+            return tuple(arr.tolist())
+        elif self._last_input_type is np.ndarray:
+            return arr.astype(float)
+        else:
+            raise TypeError("Cannot decode unknown or unsupported type")
+
+    def _sin_embed(self, values):
+        """
+        Project scalar values into sinusoidal embedding space.
+
+        Parameters
+        ----------
+        values : np.ndarray
+            1D array of scalar values to encode.
+
+        Returns
+        -------
+        np.ndarray
+            Array of shape (n, d_model) with sinusoidal features.
+        """
+        values = np.asarray(values, dtype=float).reshape(-1, 1)
+        d_half = self.d_model // 2
+        k = np.arange(d_half).reshape(1, -1)
+        r = self.N ** (2 * k / self.d_model)
+        angles = values / r
+        return np.concatenate([np.sin(angles), np.cos(angles)], axis=1).astype(self.dtype)
+
+    def _inverse_sin_embed(self, emb):
+        """
+        Inverse sinusoidal encoding (approximate).
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded vectors (n, d_part*2)
+        d_part : int
+            Dimension of each embedding part
+        N : int
+            Frequency base
+
+        Returns
+        -------
+        np.ndarray
+            Approximate decoded scalar values
+        """
+        d_part = emb.shape[1] // 2
+        angles = np.arctan2(emb[:, :d_part], emb[:, d_part:])
+        k = np.arange(d_part).reshape(1, -1)
+        r = self.N ** (2 * k / self.d_model)
+        return np.mean(angles * r, axis=1)
+
+
+    def _decode_svd(self, emb):
+        """
+        SVD-based phase unwrapping decoder with regularized least-squares.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array of shape (n, d_model)
+
+        Returns
+        -------
+        values : np.ndarray
+            Decoded values
+        residuals : np.ndarray
+            Reconstruction errors (L2 norm)
+        """
+        d_half = self.d_model // 2
+        k = np.arange(d_half)
+        r = self.N ** (2 * k / self.d_model)
+        freqs = 1 / r  # shape (d_half,)
+
+        z = self.to_complex(emb)  # shape (n, d_half)
+        theta = np.unwrap(np.angle(z), axis=0)  # shape (n, d_half)
+
+        # Use pseudoinverse for robust fit
+        F = freqs.reshape(1, -1)
+        U, S, Vt = np.linalg.svd(F, full_matrices=False)
+        pinv = (Vt.T @ np.diag(1 / S) @ U.T).reshape(-1)  # shape (d_half,)
+
+        values = theta @ pinv
+        fitted = np.outer(values, freqs)
+        residual = np.linalg.norm(theta - fitted, axis=1)
+        return values, residual
+
+
+    def _decode_lsq(self, emb):
+        """
+        Least-squares phase unwrapping decoder (robust fast decoder).
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array of shape (n, d_model)
+
+        Returns
+        -------
+        values : np.ndarray
+            Decoded values
+        residuals : np.ndarray
+            Reconstruction errors (L2 norm)
+        """
+        d_half = self.d_model // 2
+        k = np.arange(d_half)
+        r = self.N ** (2 * k / self.d_model)
+        freqs = 1 / r
+
+        z = self.to_complex(emb)
+        theta = np.unwrap(np.angle(z), axis=0)
+
+        values = np.sum(theta * freqs, axis=1) / np.sum(freqs ** 2)
+        # reconstruction error (projected back then subtract)
+        fitted = np.outer(values, freqs)
+        residual = np.linalg.norm(theta - fitted, axis=1)
+        return values, residual
+
+    def _decode_optimize(self, emb):
+        """
+        Decode each embedding vector via scalar minimization.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array of shape (n, d_model)
+
+        Returns
+        -------
+        values : np.ndarray
+            Decoded values
+        residuals : np.ndarray
+            L2 residuals of the solution
+        """
+
+        d_half = self.d_model // 2
+        k = np.arange(d_half)
+        r = self.N ** (2 * k / self.d_model)
+
+        def f_embed(x):
+            x = np.asarray(x).reshape(-1, 1)
+            angles = x / r.reshape(1, -1)
+            return np.hstack([np.sin(angles), np.cos(angles)])
+
+        def decode_single(e):
+            def loss(x):
+                return np.linalg.norm(f_embed(x) - e.reshape(1, -1))
+            res = minimize_scalar(loss, bounds=(-100, 100), method='bounded')
+            return res.x if res.success else np.nan, res.fun if res.success else np.inf
+
+        results = [decode_single(e) for e in emb]
+        values, errors = zip(*results)
+        return np.array(values), np.array(errors)
+
+    def _decode_naive(self, emb):
+        """
+        Simple decoder based on mean projection (coarse and periodic).
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded sinusoidal array (n, d_model)
+
+        Returns
+        -------
+        np.ndarray
+            Coarse estimate of decoded values
+        """
+        d_half = self.d_model // 2
+        angles = np.arctan2(emb[:, :d_half], emb[:, d_half:])
+        k = np.arange(d_half).reshape(1, -1)
+        r = self.N ** (2 * k / self.d_model)
+        return np.mean(angles * r, axis=1)
+
+    @staticmethod
+    def sinencode_dna_grouped(code, d_part=32, N=10000):
+        """
+        Encode symbolic code segments grouped by letter into sinusoidal embeddings.
+
+        Parameters
+        ----------
+        code : dict
+            Must contain:
+                - 'letters': str
+                - 'xloc': list of (start, end) tuples
+                - 'widths': list of float
+                - 'heights': list of float
+        d_part : int
+            Number of dimensions per field (position, width, height)
+        N : int
+            Sinusoidal frequency base
+
+        Returns
+        -------
+        dict
+            Dictionary of embeddings by letter: {letter: np.ndarray(n, 3*d_part)}
+        """
+        enc = SinusoidalEncoder(d_model=d_part, N=N)
+        grouped = {}
+        dx = code.get("dx", 1.0)
+        for letter in set(code["letters"]):
+            indices = [i for i, l in enumerate(code["letters"]) if l == letter]
+            starts = np.array([code["xloc"][i][0] for i in indices])
+            widths = np.array([code["widths"][i] for i in indices])
+            heights = np.array([code["heights"][i] for i in indices])
+            emb_start = enc._sin_embed(starts)
+            emb_width = enc._sin_embed(widths)
+            emb_height = enc._sin_embed(heights)
+            grouped[letter] = np.hstack([emb_start, emb_width, emb_height])
+        return grouped
+
+    @staticmethod
+    def sindecode_dna_grouped(grouped, reference_code, d_part=32, N=10000):
+        """
+        Decode sinusoidal embeddings grouped by letter into symbolic segments.
+
+        Parameters
+        ----------
+        grouped : dict
+            Dictionary of letter: embeddings
+        reference_code : dict
+            Must include 'dx' (sampling resolution).
+        d_part : int
+            Number of dimensions per part (start, width, height)
+        N : int
+            Frequency base
+
+        Returns
+        -------
+        dict
+            Dictionary with keys: letters, widths, heights, xloc, iloc, dx
+        """
+        dx = reference_code["dx"]
+        all_letters, all_xloc, all_widths, all_heights, all_iloc = [], [], [], [], []
+        for letter, emb in grouped.items():
+            n = emb.shape[0]
+            x = SinusoidalEncoder._inverse_sin_embed(emb[:, :d_part], d_part, N)
+            w = SinusoidalEncoder._inverse_sin_embed(emb[:, d_part:2*d_part], d_part, N)
+            h = SinusoidalEncoder._inverse_sin_embed(emb[:, 2*d_part:], d_part, N)
+            all_letters.extend([letter] * n)
+            all_widths.extend(w)
+            all_heights.extend(h)
+            all_xloc.extend([(xi, xi + wi) for xi, wi in zip(x, w)])
+            all_iloc.extend([(int(round(xi / dx)), int(round((xi + wi) / dx))) for xi, wi in zip(x, w)])
+        return {
+            "letters": ''.join(all_letters),
+            "widths": all_widths,
+            "heights": all_heights,
+            "xloc": all_xloc,
+            "iloc": all_iloc,
+            "dx": dx
+        }
+
+    @staticmethod
+    def to_complex(emb):
+        """
+        Convert sinusoidal embedding into a complex array using Euler's identity.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Array of shape (..., 2d) where sin/cos pairs are stored.
+
+        Returns
+        -------
+        np.ndarray
+            Complex array of shape (..., d) with values exp(i * theta)
+        """
+        d = emb.shape[-1] // 2
+        sin, cos = emb[..., :d], emb[..., d:]
+        return cos + 1j * sin
+
+    @staticmethod
+    def complex_distance(emb1, emb2, norm='L2'):
+        """
+        Compute distance between two encoded arrays using complex projection.
+
+        Parameters
+        ----------
+        emb1, emb2 : np.ndarray
+            Encoded arrays of shape (..., 2d) to compare.
+        norm : str
+            'L2' for Euclidean norm, 'cos' for cosine angle distance.
+
+        Returns
+        -------
+        np.ndarray
+            Distance values per sample (1D array)
+        """
+        z1 = SinusoidalEncoder.to_complex(emb1)
+        z2 = SinusoidalEncoder.to_complex(emb2)
+        if norm == 'L2':
+            return np.linalg.norm(z1 - z2, axis=-1)
+        elif norm == 'cos':
+            dot = np.real(np.sum(z1 * np.conj(z2), axis=-1))
+            norm1 = np.linalg.norm(z1, axis=-1)
+            norm2 = np.linalg.norm(z2, axis=-1)
+            return 1 - (dot / (norm1 * norm2 + 1e-9))
+        else:
+            raise ValueError("Unknown norm type. Use 'L2' or 'cos'.")
+
+    @staticmethod
+    def angle_difference(emb):
+        """
+        Compute angular differences (∆θ) between consecutive embeddings.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array of shape (n, 2d)
+
+        Returns
+        -------
+        np.ndarray
+            Array of shape (n-1, d) of angular differences in radians
+        """
+        z = SinusoidalEncoder.to_complex(emb)
+        return np.angle(z[1:] * np.conj(z[:-1]))
+
+    @staticmethod
+    def phase_alignment(emb, ref):
+        """
+        Align embedding `emb` to reference `ref` using complex phase.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array to align (n, 2d)
+        ref : np.ndarray
+            Reference encoded array (n, 2d)
+
+        Returns
+        -------
+        np.ndarray
+            Aligned encoding of `emb`, same shape as input.
+        """
+        z1 = SinusoidalEncoder.to_complex(emb)
+        z2 = SinusoidalEncoder.to_complex(ref)
+        phase_shift = np.sum(z2 * np.conj(z1), axis=-1, keepdims=True)
+        align_factor = phase_shift / np.abs(phase_shift + 1e-9)
+        z_aligned = z1 * align_factor
+        return np.concatenate([np.imag(z_aligned), np.real(z_aligned)], axis=-1)
+
+    @staticmethod
+    def pairwise_similarity(emb, metric='cosine'):
+        """
+        Compute a pairwise similarity (or distance) matrix in sinusoidal embedding space.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array of shape (n, 2d).
+        metric : str
+            Distance metric: 'cosine' for 1 - cosine similarity, 'L2' for Euclidean norm.
+
+        Returns
+        -------
+        np.ndarray
+            Pairwise similarity matrix of shape (n, n)
+        """
+        z = SinusoidalEncoder.to_complex(emb)
+        if metric == 'cosine':
+            norm = np.linalg.norm(z, axis=1, keepdims=True)
+            Z = z / (norm + 1e-9)
+            return 1 - np.real(Z @ Z.conj().T)
+        elif metric == 'L2':
+            diff = np.expand_dims(z, 1) - np.expand_dims(z, 0)
+            return np.linalg.norm(diff, axis=-1)
+        else:
+            raise ValueError("Unknown metric: use 'cosine' or 'L2'")
+
+    @staticmethod
+    def group_centroid(emb, labels=None, return_std=False):
+        """
+        Compute the centroid (average embedding) of each group in complex sinusoidal space.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array of shape (n, 2d), with sin and cos interleaved.
+        labels : list or np.ndarray, optional
+            Group labels (n,). If None, the entire set is treated as one group.
+        return_std : bool
+            Whether to also return the standard deviation per group.
+
+        Returns
+        -------
+        dict
+            Dictionary mapping each group label to its centroid (2d real array).
+            If return_std=True, also includes key '<label>_std' with standard deviation.
+        """
+        z = SinusoidalEncoder.to_complex(emb)
+        out = {}
+
+        if labels is None:
+            mean = np.mean(z, axis=0)
+            result = np.concatenate([np.imag(mean), np.real(mean)])
+            out['all'] = result
+            if return_std:
+                std = np.std(z, axis=0)
+                out['all_std'] = np.concatenate([np.imag(std), np.real(std)])
+            return out
+
+        labels = np.asarray(labels)
+        for g in np.unique(labels):
+            mask = labels == g
+            group_z = z[mask]
+            mean = np.mean(group_z, axis=0)
+            result = np.concatenate([np.imag(mean), np.real(mean)])
+            out[g] = result
+            if return_std:
+                std = np.std(group_z, axis=0)
+                out[f"{g}_std"] = np.concatenate([np.imag(std), np.real(std)])
+        return out
+
+    def verify_roundtrip(self, values, method='least_squares', scale='auto', verbose=True, return_details=False):
+        """
+        Perform an encode → decode → compare roundtrip and report accuracy.
+
+        Parameters
+        ----------
+        values : array-like
+            Original values to test.
+        method : str
+            Decoding method: 'least_squares', 'svd', 'optimize', or 'naive'.
+        scale : float or 'auto' or None
+            Scaling strategy: 'auto' uses fit_encoder(), float uses fixed scaling, None disables scaling.
+        verbose : bool
+            If True, prints accuracy report.
+        return_details : bool
+            If True, also returns the encoded array, decoded values, and residuals.
+
+        Returns
+        -------
+        success : bool
+            Whether all values were accurately recovered within residual tolerance.
+        details : tuple, optional
+            Tuple (encoded, decoded, residuals) if return_details=True
+        """
+        values = np.asarray(values, dtype=float).flatten()
+
+        if scale == 'auto':
+            self.fit_encoder(values)
+        elif isinstance(scale, (float, int)):
+            self._scale = float(scale)
+            self._auto_scale_enabled = True
+        elif scale is None:
+            self._scale = None
+            self._auto_scale_enabled = False
+        else:
+            raise ValueError("Invalid value for scale. Use float, 'auto', or None.")
+
+        encoded = self.encode(values)
+        decoded, residual = self.decode(encoded, method=method, return_error=True)
+        decoded_array = np.asarray(decoded, dtype=float)
+        error = np.abs(decoded_array - values)
+        max_error = np.max(error)
+        mean_error = np.mean(error)
+        bad = np.where(residual > self._decode_residual_tolerance)[0]
+        success = len(bad) == 0
+
+        if verbose:
+            print(f"🔁 Roundtrip verification ({method}, scale={self._scale}):")
+            print(f"    Max abs error     : {max_error:.3e}")
+            print(f"    Mean abs error    : {mean_error:.3e}")
+            print(f"    Residual failures : {len(bad)} / {len(values)} "
+                  f"(threshold = {self._decode_residual_tolerance})")
+            if not success:
+                print(f"    ⚠️  Failed indices: {bad.tolist()}")
+
+        return (success, (encoded, decoded_array, residual)) if return_details else success
+
+    @staticmethod
+    def phase_unwrap(emb, normalize=False):
+        """
+        Perform Fourier-like phase unwrapping on sinusoidal embedding.
+
+        Parameters
+        ----------
+        emb : np.ndarray
+            Encoded array of shape (n, 2d).
+        normalize : bool
+            Whether to scale unwrapped phases to [0, 1].
+
+        Returns
+        -------
+        np.ndarray
+            Phase unwrapped matrix of shape (n, d), optionally normalized.
+        """
+        z = SinusoidalEncoder.to_complex(emb)
+        phases = np.unwrap(np.angle(z), axis=0)
+        if normalize:
+            minv = np.min(phases, axis=0, keepdims=True)
+            maxv = np.max(phases, axis=0, keepdims=True)
+            return (phases - minv) / (maxv - minv + 1e-9)
+        return phases
+
+
+# %% Low-Level classes to store code and codefull DNA
+class DNACodes(UserDict):
+    """
+    🧬 DNACodes
+    Dictionary-like container for symbolic signal encodings at multiple scales.
+
+    Attributes
+    ----------
+    meta : dict
+        Metadata describing the signal and encoding parameters.
+    encoded : bool
+        Whether the content has been sinusoidally encoded.
+
+    Methods
+    -------
+    sinencode(d_part=32, N=10000)
+        Encodes symbolic segments using transformer-style sinusoidal embeddings.
+    sindecode(reference_dx=None)
+        Decodes sinusoidal embeddings back to symbolic segment structure.
+    summary()
+        Displays segment or vector counts by scale.
+    """
+
+    def __init__(self, *args, meta=None, encoded=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.meta = meta or {}
+        self.encoded = encoded
+
+    def sinencode(self, d_part=32, N=10000):
+        """
+        Encode symbolic segments at each scale using sinusoidal encoding grouped by letter.
+
+        Parameters
+        ----------
+        d_part : int
+            Number of dimensions for each component (start, width, height).
+        N : int
+            Frequency base for sinusoidal embedding.
+
+        Returns
+        -------
+        DNACodes
+            Encoded version of the current codes, grouped by letter per scale.
+        """
+        encoded = DNACodes(meta=self.meta.copy(), encoded=True)
+        for scale, code in self.items():
+            encoder = SinusoidalEncoder(d_model=3 * d_part, N=N)
+            encoded[scale] = encoder.sinencode_dna_grouped(code, d_part=d_part, N=N)
+        encoded.meta.update({"d_part": d_part, "N": N})
+        return encoded
+
+    def sindecode(self, reference_dx=None):
+        """
+        Decode sinusoidally embedded codes grouped by letter into symbolic segment structure.
+
+        Parameters
+        ----------
+        reference_dx : float, optional
+            Sampling interval used to reconstruct `xloc`. Defaults to meta["sampling_dt"].
+
+        Returns
+        -------
+        DNACodes
+            Decoded symbolic codes for each scale.
+        """
+        if not self.encoded:
+            raise ValueError("sindecode() can only be called on encoded instances.")
+        decoded = DNACodes(meta=self.meta.copy(), encoded=False)
+        ref_dx = reference_dx or self.meta.get("sampling_dt", 1.0)
+        ref = {"dx": ref_dx}
+        d_part = self.meta.get("d_part", 32)
+        N = self.meta.get("N", 10000)
+        for scale, grouped in self.items():
+            decoded[scale] = SinusoidalEncoder.sindecode_dna_grouped(grouped, reference_code=ref, d_part=d_part, N=N)
+        return decoded
+
+    def summary(self):
+        """
+        Print the number of encoded vectors or symbolic segments per scale.
+        """
+        for scale, content in self.items():
+            if self.encoded:
+                counts = {k: len(v) for k, v in content.items()}
+                total = sum(counts.values())
+                detail = ", ".join(f"{k}:{v}" for k, v in counts.items())
+                print(f"🔢 Scale {scale} → {total} vectors ({detail})")
+            else:
+                print(f"🔡 Scale {scale} → {len(content['letters'])} segments")
+
+
+
+class DNAFullCodes(dict):
+    """
+    🧬 DNAFullCodes(dict)
+    ----------------------
+    Container for symbolic full-resolution DNA-like strings per scale.
+
+    Each entry in the dictionary maps a scale (int) to a DNAstr object or str sequence.
+    This class supports future extensions such as sinusoidal encoding or pattern-based decoding.
+
+    Attributes
+    ----------
+    meta : dict
+        Optional metadata about sampling, units, labels, etc.
+    encoded : bool
+        True if this structure has been encoded via a sinusoidal encoder.
 
     Example
     -------
-    >>> Demonstration with dummy position and amplitude values
-    x_pos = np.linspace(0, 1000, 10)       # example positions
-    amp = np.random.uniform(0.1, 1.0, 10)  # example normalized amplitudes
-
-    enc_pos = sinusoidal_encoding(x_pos, d_model=64)
-    enc_amp = sinusoidal_encoding(amp, d_model=64)
-
-    # Combine both
-    combined = np.concatenate([enc_pos, enc_amp], axis=1)
-    combined.shape
-
-    """
-    values = np.array(values).reshape(-1, 1)
-    d_half = d_model // 2
-    k = np.arange(d_half).reshape(1, -1)
-    r = N ** (2 * k / d_model)
-    angles = values / r
-    return np.concatenate([np.sin(angles), np.cos(angles)], axis=1)
-
-
-# encoder
-def sinencode_dna_grouped(code, d_part=32, N=10000):
-    """
-    Group-wise sinusoidal encoding of DNA segments by letter.
-
-    Parameters
-    ----------
-    code : dict
-        The original code dict from DNAsignal.
-    d_part : int
-        Dimension of each encoding component (position, width, height).
-    N : int
-        Frequency base.
-
-    Returns
-    -------
-    dict
-        Dictionary mapping each letter to an array of shape (n_segments, 3*d_part)
-    """
-    grouped = defaultdict(list)
-    letters = code['letters']
-    xlocs = np.array(code['xloc'])
-    widths = np.array(code['widths'])
-    heights = np.array(code['heights'])
-
-    x_start = xlocs[:, 0]
-    pe_x = sinusoidal_encoding(x_start, d_part, N)
-    pe_w = sinusoidal_encoding(widths, d_part, N)
-    norm_h = heights / (np.max(np.abs(heights)) or 1.0)
-    pe_h = sinusoidal_encoding(norm_h, d_part, N)
-
-    for i, l in enumerate(letters):
-        v = np.concatenate([pe_x[i], pe_w[i], pe_h[i]])
-        grouped[l].append(v)
-
-    return {k: np.stack(vlist) for k, vlist in grouped.items()}
-
-
-# decoder
-def sindecode_dna_grouped(grouped_embeddings: dict, original_code: dict, d_part=32, N=10000):
-    """
-    Decode sinusoidal embeddings grouped by symbolic letter into a symbolic code dictionary.
-
-    This function reconstructs the structural elements of a symbolic signal:
-    - Symbolic sequence (`letters`)
-    - Segment widths and heights
-    - Positional index pairs (`iloc`) and x-axis bounds (`xloc`)
-
-    It assumes the sinusoidal embedding was generated from segments grouped by letter,
-    where each encoded vector contains three sub-embeddings:
-      1. start position (x0)
-      2. segment width
-      3. segment height
-
-    The decoder approximates the original values using arctangent phase unwrapping and weighted
-    averaging of sinusoidal components.
-
-    Parameters
-    ----------
-    grouped_embeddings : dict
-        Dictionary of the form {letter: np.ndarray}, each array being (n_segments, 3*d_part).
-        This is the output of `sinencode_dna_grouped(...)`.
-    original_code : dict
-        Code dictionary used as a reference for dx value, typically taken from `DNAsignal.codes[scale]`.
-        Must contain: 'dx' (float)
-    d_part : int
-        Number of sinusoidal dimensions per component (default: 32).
-    N : int
-        Frequency base for sinusoidal encoding (default: 10000).
-
-    Returns
-    -------
-    decoded_code : dict
-        Dictionary with fields required to reconstruct symbolic segments:
-        - 'letters'  : str
-        - 'widths'   : list of float
-        - 'heights'  : list of float
-        - 'iloc'     : list of (i, j) index ranges
-        - 'xloc'     : list of (x_start, x_end) positions
-        - 'dx'       : sampling resolution used for iloc reconstruction
-
-    Notes
-    -----
-    - The decoder uses inverse trigonometry to extract approximate continuous values.
-    - The decoded output can be directly assigned to `DNAsignal.codes[scale]`.
-    - This method is tolerant to small phase shifts and quantization noise.
-    - If the number of segments is large, the performance scales linearly with segment count.
+    >>> codes = DNAFullCodes({4: 'YAABZZ'}, meta={"sampling_dt": 0.5})
+    >>> print(codes.summary())
     """
 
-    r = N ** (2 * np.arange(d_part // 2) / (2 * d_part))
-    decoded = []
-    for letter, vectors in grouped_embeddings.items():
-        vec = np.array(vectors)
-        d_model = vec.shape[1]
-        part = d_model // 3
-        chunks = np.split(vec, 3, axis=1)
+    def __init__(self, *args, meta=None, encoded=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.meta = meta or {}
+        self.encoded = encoded
 
-        def approx_decode(enc):
-            sin_part = enc[:, :d_part // 2]
-            cos_part = enc[:, d_part // 2:]
-            angles = np.arctan2(sin_part, cos_part)
-            return np.mean(angles * r, axis=1)
+    def summary(self):
+        """
+        Return a brief summary of the full codes per scale.
 
-        x0 = approx_decode(chunks[0])
-        w = approx_decode(chunks[1])
-        h = approx_decode(chunks[2])
+        Returns
+        -------
+        dict
+            Mapping from scale to summary string or code length.
+        """
+        return {scale: f"{len(seq)} letters" for scale, seq in self.items()}
 
-        for x, width, height in zip(x0, w, h):
-            decoded.append((x, width, height, letter))
+    def sinencode(self, d_model=96, N=10000):
+        """Sinencode method"""
+        encoded = DNAFullCodes(meta=self.meta.copy(), encoded=True)
+        for scale, seq in self.items():
+            encoder = SinusoidalEncoder(d_model=d_model, N=N)
+            grouped = {ch: encoder.encode([i for i, c in enumerate(seq) if c == ch])
+                       for ch in set(seq)}
+            encoded[scale] = grouped
+        encoded.meta.update({"d_model": d_model, "N": N})
+        return encoded
 
-    decoded.sort(key=lambda z: z[0])
+    def sindecode(self):
+        """Sindecode method"""
+        if not self.encoded:
+            raise ValueError("sindecode() can only be called on encoded instances.")
+        decoded = DNAFullCodes(meta=self.meta.copy(), encoded=False)
+        for scale, grouped in self.items():
+            letters = []
+            for letter, array in grouped.items():
+                letters.extend([letter] * len(array))
+            decoded[scale] = DNAstr("".join(letters))
+        return decoded
 
-    xloc = [(x, x + w) for x, w, _, _ in decoded]
-    widths = [w for _, w, _, _ in decoded]
-    heights = [h for _, _, h, _ in decoded]
-    letters = ''.join([l for _, _, _, l in decoded])
+    def __repr__(self):
+        return f"<DNAFullCodes(scales={list(self.keys())}, encoded={self.encoded})>"
 
-    dx = original_code['dx']
-    iloc = []
-    idx = 0
-    for w in widths:
-        npts = max(1, int(round(w / dx)))
-        iloc.append((idx, idx + npts))
-        idx += npts
+    def __str__(self):
+        return "\n".join([f"scale {s} → {len(v)} letters" for s, v in self.items()])
 
-    return {
-        'letters': letters,
-        'widths': widths,
-        'heights': heights,
-        'iloc': iloc,
-        'xloc': xloc,
-        'dx': dx
-    }
+
 # %% Main classes DNAsignal, DNAstr, DNApairwiseAnalysis
 
 # ------------------------
@@ -462,12 +1285,32 @@ class DNAsignal:
 
     Attributes
     ----------
-    signal : signal
-        The raw signal object being encoded.
-    dx : float
+    signal : np.ndarray
+        Original numerical signal (values only; x stored via `sampling_dt`).
+    dtype : data-type
+        Data type of the stored signal.
+    sampling_dt : float
+        Sampling interval along the x-axis.
+    dx : float (depreciated)
         The nominal x-resolution of the signal (automatically derived).
     n : int
         Number of points in the signal (length of x/y arrays).
+    name : str
+        Name of the signal.
+    x_label : str
+        Label of the x-axis.
+    x_unit : str
+        Unit of the x-axis.
+    y_label : str
+        Label of the y-axis.
+    y_unit : str
+        Unit of the y-axis.
+    scales : list[int]
+        List of scales used for encoding.
+    codes : DNACodes
+        Dictionary-like container of symbolic triplet encodings by scale.
+    codesfull : DNAFullCodes
+        Dictionary-like container of full-resolution symbolic strings per scale.
     scales : array-like
         Set of scales used in the Continuous Wavelet Transform (powers of 2 by default).
     transforms : signal_collection
@@ -517,6 +1360,32 @@ class DNAsignal:
         Return a DNApairwisedistance based on the Jensen-Shannon distance of a pattern
     _pairwiseLevenshteinDistance(list of DNAstr objects, scale)
         Return a DNApairwisedistance based on the Levenshtein Distance
+
+    Methods: Symbolic Encoding
+    --------------------------
+    encode_dna(scales=None)
+        Convert signal into triplet-based symbolic encoding (per scale).
+    encode_dna_full(scales=None, resolution='index', repeat=True, n_points=None)
+        Generate full-resolution DNA strings by repeating letters (to `codesfull`).
+
+    Methods: Sinusoidal Encoding
+    ----------------------------
+    sinencode_dna(scales=None, d_part=32, N=10000)
+        Encode symbolic segments (from `codes`) into sinusoidal vectors.
+    sinencode_dna_full(scales=None, d_part=32, N=10000)
+        Encode symbolic full strings (from `codesfull`) into sinusoidal vectors.
+
+    Methods: Sinusoidal Decoding (Static)
+    -------------------------------------
+    sindecode_dna(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000)
+        [static] Decode grouped sinusoidal embeddings → `DNACodes` structure.
+    sindecode_dna_full(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000)
+        [static] Decode full sinusoidal embeddings → `DNAFullCodes` structure.
+
+    Methods: Signal Reconstruction
+    ------------------------------
+    tosignal(scale=None, codes_attr='codes')
+        Reconstruct approximate signal (as `signal` instance) from symbolic encoding.
 
     Examples
     --------
@@ -573,7 +1442,7 @@ class DNAsignal:
         self.filtered_signal = None
         self.scales = []
         self.cwt_coeffs = {}  # scale -> array
-        self.codes = {}       # scale -> {letters, widths, heights}
+        self.codes = DNACodes()  # dict-like[scale]-> {letters, widths, heights}
 
         # encode and plots on request
         if plot and "plot_signals" in plotter:
@@ -717,6 +1586,8 @@ class DNAsignal:
                 source="CWT")
             self.transforms.append(sig)
 
+    # --------------------------[ DNA coding segment-wise (no repetitions) ]----------------------------
+
     def encode_dna(self, scales=None):
         """
         Encode each transformed signal into a symbolic DNA-like sequence of monotonic segments.
@@ -786,96 +1657,50 @@ class DNAsignal:
 
     def sinencode_dna(self, scales=None, d_part=32, N=10000):
         """
-        Encode multiple scales of symbolic segments into sinusoidal embeddings grouped by letter.
+        Encode `self.codes` into sinusoidal embeddings (grouped by letter).
 
-        Parameters
-        ----------
-        scales : list[int] or None
-            List of scales to encode. If None, encode all existing in self.codes.
-        d_part : int
-            Number of dimensions per component (start, width, height).
-        N : int
-            Frequency base.
-
-        Sets
-        ----
-        self.code_embeddings_grouped : dict
-            Dictionary of {scale: {letter: np.ndarray}} embeddings.
-        self.code_embeddings_meta : dict
-            Metadata for reconstruction, including units, name, and x sampling info.
+        Sets:
+            - self.codes (DNACodes): Encoded version of original codes.
         """
-        if not hasattr(self, 'codes') or not self.codes:
-            raise ValueError("No symbolic encodings found. Run encode_dna first.")
-
-        if not hasattr(self, 'code_embeddings_grouped'):
-            self.code_embeddings_grouped = {}
-        if not hasattr(self, 'code_embeddings_meta'):
-            self.code_embeddings_meta = {}
-
-        if scales is None:
-            scales = list(self.codes.keys())
-        if not isinstance(scales, (list, tuple)):
-            scales = [scales]
-
-        for scale in scales:
-            if scale not in self.codes:
-                continue
-            self.code_embeddings_grouped[scale] = sinencode_dna_grouped(self.codes[scale], d_part=d_part, N=N)
-
-        self.code_embeddings_meta = {
-            "x_label": self.x_label,
-            "x_unit": self.x_unit,
-            "y_label": self.y_label,
-            "y_unit": self.y_unit,
-            "name": self.name,
-            "sampling_dt": self.sampling_dt,
-            "dtype": str(self.dtype),
-            "scales": scales,
-            "d_part": d_part,
-            "N": N
-        }
+        if not isinstance(self.codes, DNACodes):
+            raise ValueError("self.codes must be a DNACodes instance")
+        if scales is not None:
+            self.codes = DNACodes({s: self.codes[s] for s in scales if s in self.codes},
+                                  meta=self.codes.meta, encoded=False)
+        self.codes = self.codes.sinencode(d_part=d_part, N=N)
 
     @staticmethod
-    def sindecode_dna(grouped_embeddings, meta_info):
+    def sindecode_dna(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000):
         """
-        Decode sinusoidal grouped embeddings into a DNAsignal instance.
+        Decode sinusoidal grouped embeddings into a DNACodes structure.
 
         Parameters
         ----------
         grouped_embeddings : dict
-            Output of `sinencode_dna_grouped` for each scale.
-        meta_info : dict
-            Metadata used to rebuild the DNAsignal instance, including:
-            - 'x_label', 'x_unit', 'y_label', 'y_unit'
-            - 'name', 'sampling_dt', 'dtype'
-            - 'scales', 'd_part', 'N'
+            {scale: {letter: np.ndarray}} sinusoidal representations
+        reference_dx : float
+            Sampling resolution used to reconstruct xloc and iloc
+        d_part : int
+            Dimensionality per component (start, width, height)
+        N : int
+            Frequency base
 
         Returns
         -------
-        DNAsignal
-            A reconstructed DNAsignal object with empty signal and decoded `codes` attribute.
+        DNACodes
+            Decoded symbolic structure
         """
-        empty_signal = np.array([], dtype=meta_info.get("dtype", np.float64))
-        dummy = DNAsignal(signal_obj=empty_signal,
-                          sampling_dt=meta_info["sampling_dt"],
-                          dtype=np.float64,
-                          encode=False,
-                          scales=[],
-                          x_label=meta_info["x_label"],
-                          x_unit=meta_info["x_unit"],
-                          y_label=meta_info["y_label"],
-                          y_unit=meta_info["y_unit"],
-                          plot=False)
-        dummy.name = meta_info["name"]
-        dummy.scales = meta_info["scales"]
+        from sig2dna3.signomics import SinusoidalEncoder
 
-        dummy.codes = {}
-        for scale in meta_info["scales"]:
-            decoded = sindecode_dna_grouped(grouped_embeddings[scale], reference_code={"dx": meta_info["sampling_dt"]},
-                                            d_part=meta_info["d_part"], N=meta_info["N"])
-            dummy.codes[scale] = decoded
+        decoded = DNACodes(meta={"sampling_dt": reference_dx}, encoded=False)
+        for scale, grouped in grouped_embeddings.items():
+            decoded[scale] = SinusoidalEncoder.sindecode_dna_grouped(
+                grouped, reference_code={"dx": reference_dx}, d_part=d_part, N=N
+            )
+        return decoded
 
-        return dummy
+
+    # --------------------------[ coding in full letters (with repetitions) ]----------------------------
 
     def encode_dna_full(self, scales=None, resolution='index', repeat=True, n_points=None):
         """
@@ -916,7 +1741,7 @@ class DNAsignal:
         if not hasattr(self, 'codes') or not self.codes:
             self.encode_dna(scales)
 
-        result = {}
+        result = DNAFullCodes()
         for scale in scales:
             if scale not in self.codes:
                 self.encode_dna([scale])
@@ -955,6 +1780,119 @@ class DNAsignal:
                                    x_label=self.x_label, x_unit=self.x_unit)
         self.codesfull = result
 
+    def sinencode_dna_full(self, d_model=96, N=10000):
+        """
+        🌀 Encode full-resolution DNA-like strings into sinusoidal embeddings grouped by letter.
+
+        Parameters
+        ----------
+        d_model : int
+            Dimensionality of the sinusoidal embedding (must be even).
+        N : int
+            Frequency base used for sinusoidal encoding.
+
+        Sets
+        ----
+        self.codesfull : DNAFullCodes (if not already set)
+            Full-resolution symbolic strings at each scale.
+        self.codesfull_encoded : DNAFullCodes
+            Sinusoidally encoded version of the full DNA strings.
+        """
+        if not hasattr(self, 'codesfull') or not self.codesfull:
+            self.encode_dna_full()  # generate codesfull from codes
+        if not isinstance(self.codesfull, DNAFullCodes):
+            raise TypeError("self.codesfull must be an instance of DNAFullCodes.")
+        # Attach metadata if missing
+        self.codesfull.meta.update({
+            "sampling_dt": self.sampling_dt,
+            "d_model": d_model,
+            "N": N
+        })
+        self.codesfull_encoded = self.codesfull.sinencode(d_model=d_model, N=N)
+
+
+    @staticmethod
+    def sindecode_dna(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000):
+        """
+        Decode sinusoidal grouped embeddings into a DNACodes structure.
+
+        Parameters
+        ----------
+        grouped_embeddings : dict
+            {scale: {letter: np.ndarray}} sinusoidal representations
+        reference_dx : float
+            Sampling resolution used to reconstruct xloc and iloc
+        d_part : int
+            Dimensionality per component (start, width, height)
+        N : int
+            Frequency base
+
+        Returns
+        -------
+        DNACodes
+            Decoded symbolic structure
+        """
+        from sig2dna3.signomics import SinusoidalEncoder
+
+        decoded = DNACodes(meta={"sampling_dt": reference_dx}, encoded=False)
+        for scale, grouped in grouped_embeddings.items():
+            decoded[scale] = SinusoidalEncoder.sindecode_dna_grouped(
+                grouped, reference_code={"dx": reference_dx}, d_part=d_part, N=N
+            )
+        return decoded
+
+
+
+    # --------------------------[ back to signal ]----------------------------
+    def tosignal(self, scale=None, codes_attr="codes"):
+        """
+        Reconstruct an approximate signal from symbolic encodings.
+
+        Parameters
+        ----------
+        scale : int or None
+            Scale level to use (defaults to first available if None).
+        codes_attr : str
+            Attribute from which to decode ('codes' or 'codesfull').
+
+        Returns
+        -------
+        signal
+            An approximate `signal` object reconstructed from symbolic information.
+        """
+        from sig2dna3.signal import signal  # Adjust path to your actual signal module
+
+        if not hasattr(self, codes_attr):
+            raise AttributeError(f"DNAsignal has no attribute '{codes_attr}'")
+
+        codes = getattr(self, codes_attr)
+        if not codes:
+            raise ValueError(f"No symbolic data found in '{codes_attr}'")
+
+        if scale is None:
+            scale = next(iter(codes))
+
+        code = codes[scale]
+        if isinstance(code, str):  # from codesfull
+            raise TypeError("Cannot reconstruct signal from 'codesfull' directly. Use decode + pattern extraction.")
+
+        x_centers = [(x1 + x2) / 2 for x1, x2 in code["xloc"]]
+        heights = code["heights"]
+
+        return signal(
+            x=np.array(x_centers),
+            y=np.array(heights),
+            name=f"decoded@{scale}",
+            type="synthetic",
+            x_label=self.x_label,
+            x_unit=self.x_unit,
+            y_label=self.y_label,
+            y_unit=self.y_unit,
+            source="decoded"
+        )
+
+
+    # --------------------------[ low-level methods ]----------------------------
     @staticmethod
     def _get_letter(start, end, tol=1e-12):
         """
@@ -4532,6 +5470,58 @@ if __name__ == "__main__":
     s1code.plot_alignment()
     s1code.plot_mask()
     print(s1code.wrapped_alignment(width=1024))
+
+    # --------------------- [SinEnCoder/DeCoder] --------------------------
+    # 1. Construct a test input signal with smooth and jump segments
+    x_smooth = np.linspace(0, 20, 100)
+    x_jumps = np.array([25, 25, 26, 27, 100, 101, 130])
+    x = np.concatenate([x_smooth, x_jumps])
+
+    # 2. Initialize encoder with high d_model and N
+    s = SinusoidalEncoder(d_model=128, N=10000)
+
+    # 3. Fit auto-scaling to compress input into sinusoidal-friendly space
+    s.fit_encoder(x, target_range=10)
+
+    # 4. Encode and decode using all robust methods
+    a = s.encode(x)
+    decoded_lsq, err_lsq = s.decode(a, method='least_squares', return_error=True)
+    decoded_svd, err_svd = s.decode(a, method='svd', return_error=True)
+
+    # 5. Compare errors
+    true = x
+    lsq_error = np.abs(decoded_lsq - true)
+    svd_error = np.abs(decoded_svd - true)
+
+    # 6. Plot results
+    fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+    axs[0, 0].plot(true, label="Original")
+    axs[0, 0].plot(decoded_lsq, '--', label="Decoded (LSQ)")
+    axs[0, 0].plot(decoded_svd, ':', label="Decoded (SVD)")
+    axs[0, 0].set_title("Decoded vs Original")
+    axs[0, 0].legend()
+
+    axs[0, 1].plot(lsq_error, label="Abs Error (LSQ)")
+    axs[0, 1].plot(svd_error, label="Abs Error (SVD)")
+    axs[0, 1].set_yscale('log')
+    axs[0, 1].set_title("Absolute Decoding Error (log scale)")
+    axs[0, 1].legend()
+
+    axs[1, 0].plot(err_lsq, label="Residual Norm (LSQ)")
+    axs[1, 0].plot(err_svd, label="Residual Norm (SVD)")
+    axs[1, 0].set_yscale('log')
+    axs[1, 0].set_title("Reconstruction Residuals")
+    axs[1, 0].legend()
+
+    axs[1, 1].hist(lsq_error, bins=50, alpha=0.7, label="LSQ")
+    axs[1, 1].hist(svd_error, bins=50, alpha=0.5, label="SVD")
+    axs[1, 1].set_title("Histogram of Absolute Errors")
+    axs[1, 1].legend()
+
+    plt.suptitle("🌀 SinusoidalEncoder: Accuracy Evaluation", fontsize=14)
+    plt.tight_layout()
+    plt.show()
+    fig.print("Sinusoidal-Encoder-Decoder",outputfolder)
 
 # %% obsolete
 """
