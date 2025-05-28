@@ -20,9 +20,7 @@
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Reference" href="api.html" />
-    <link rel="prev" title="Welcome to sig2dna_core’s documentation" href="index.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,71 +43,8 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">📡🧬 sig2dna</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">📚 Table of Contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main-components">🧩 1| <strong>Main Components</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#applications">🧠 2| <strong>Applications</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#core-concepts-overview">🧬 3| <strong>Core Concepts</strong> - Overview</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#input-signal">3.1 <strong>Input Signa</strong>l ➡️</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#wavelet-transform">3.2 <strong>Wavelet Transform</strong> 〰</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#relationship-of-w-s-t-with-the-second-derivative-x-t-frac-partial-2-x-t-partial-t-2">3.3 <strong>Relationship of <span class="math notranslate nohighlight">\(W\_s(t)\)</span> with the second derivative</strong> <span class="math notranslate nohighlight">\(x''(t)=\frac{\partial^2 x(t)}{\partial t^2}\)</span></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#symbolic-encoding">3.4 <strong>Symbolic Encoding</strong> 🔡</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#symbolic-compression">3.5 <strong>Symbolic Compression</strong> 🗜️</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#structural-meaning-e-g-yazb-motif">3.6 <strong>Structural Meaning</strong> (e.g., <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> Motif)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#interpretation-when-gaussians-overlap">3.7 <strong>Interpretation When Gaussians Overlap</strong> 🌈⃤</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#entropy-and-distance-metrics">🧠 4| <strong>Entropy and Distance Metrics</strong></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#shannon-entropy">4.1 <strong>Shannon Entropy</strong> ⚀⚁⚂⚃⚄⚅</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#aligned-sequences-and-excess-entropy-distance">4.2 <strong>Aligned sequences and Excess Entropy Distance</strong>  ↔️</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#jensen-shannon-distance">4.3 <strong>Jensen-Shannon Distance</strong> ↔️</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#interpretation">4.3.1 <strong>Interpretation</strong> 💡</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#use-cases">4.3.2 <strong>Use Cases</strong> 🧪</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#jaccard-motif-distance">4.4 <strong>Jaccard Motif Distance</strong> 🔍</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#key-features">4.4.1 Key Features:</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#implementation-notes">4.4.2 Implementation Notes:</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#sinusoidal-encoding-of-symbolic-segments">🌀 5 | <strong>Sinusoidal Encoding of Symbolic Segments</strong></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#mathematical-basis">5.1 Mathematical Basis 📐</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#sinencode-dna-letter-wise-sinusoidal-encoder">5.3 <code class="docutils literal notranslate"><span class="pre">sinencode_dna()</span></code> – Letter-wise Sinusoidal Encoder 🔡</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#sindecode-dna-static-decoder-to-dnasignal">5.4 <code class="docutils literal notranslate"><span class="pre">sindecode_dna(...)</span></code> – Static Decoder to DNAsignal 🔁</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#summary-and-error-estimation-varepsilon-hat-t-t">5.5 Summary and error estimation  <span class="math notranslate nohighlight">\(\varepsilon = |\hat{t} - t|\)</span>  💬</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#baseline-filtering-and-poisson-noise-rejection">🔍 6| <strong>Baseline Filtering and Poisson Noise Rejection</strong></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#step-1-median-baseline-subtraction">Step 1 — Median Baseline Subtraction ﹏𓊝﹏</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#step-2-poisson-noise-estimation">Step 2 — Poisson Noise Estimation ▶︎ ၊၊||၊|။|||| |</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#step-3-bienaymetchebychev-thresholding">Step 3 — Bienaymé–Tchebychev Thresholding 🗑️</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#synthetic-signal-generation">🧪 7| <strong>Synthetic Signal Generation</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#available-classes">📦 8| <strong>Available Classes</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-workflow">📏  9| <strong>Example Workflow</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#visualization">📊 10| <strong>Visualization</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#motif-detection">🔎 11| <strong>Motif Detection</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#alignment">🤝 12| <strong>Alignment</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#examples-unsorted">🧪 13| <strong>Examples</strong> (unsorted)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation">📦 14| <strong>Installation</strong></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#recommended-file-structure">Recommended File Structure 🛠</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#import-example">Import Example 📥</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies 📦</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#recommendations">💡15| <strong>Recommendations</strong></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#strategy-for-2d-or-multi-modal-chromatography">Strategy for 2D or Multi-modal Chromatography 🧭</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#substance-identification-and-library-matching">Substance Identification and Library Matching 🔍</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#license">📄 | License</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#contact">📧 | Contact</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">📡🧬 sig2dna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
 
@@ -129,7 +64,7 @@
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">📡🧬 sig2dna</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/README_backup.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -247,28 +182,34 @@ https://theses.hal.science/tel-04194172</p>
 <h3>3.2 <strong>Wavelet Transform</strong> 〰<a class="headerlink" href="#wavelet-transform" title="Link to this heading"></a></h3>
 <p>A <strong>Mexican hat (Ricker)</strong> wavelet is used:</p>
 <div class="math notranslate nohighlight">
-\[\psi_s(t) = \left(1 - \frac{t^2}{s^2}\right)e^{-\frac{t^2}{2s^2}}\]</div>
+\[
+\psi_s(t) = \left(1 - \frac{t^2}{s^2}\right)e^{-\frac{t^2}{2s^2}}
+\]</div>
 <p>The Continuous Wavelet Transform (CWT) of a signal <span class="math notranslate nohighlight">\(x(t)\)</span> is:</p>
 <div class="math notranslate nohighlight">
-\[W_s(t) = x(t)*\psi_s(t) = \int x(\tau) \cdot \psi_s(t - \tau) \, d\tau\]</div>
+\[
+W_s(t) = x(t)*\psi_s(t) = \int x(\tau) \cdot \psi_s(t - \tau) \, d\tau
+\]</div>
 <p>where <span class="math notranslate nohighlight">\(s\)</span> is the scale parameter (typically powers of two, e.g., <span class="math notranslate nohighlight">\(s = 2^n\)</span>) and <span class="math notranslate nohighlight">\(*\)</span> the convolution operator.</p>
 <p>🟪</p>
 </section>
 <section id="relationship-of-w-s-t-with-the-second-derivative-x-t-frac-partial-2-x-t-partial-t-2">
-<h3>3.3 <strong>Relationship of <span class="math notranslate nohighlight">\(W\_s(t)\)</span> with the second derivative</strong> <span class="math notranslate nohighlight">\(x''(t)=\frac{\partial^2 x(t)}{\partial t^2}\)</span><a class="headerlink" href="#relationship-of-w-s-t-with-the-second-derivative-x-t-frac-partial-2-x-t-partial-t-2" title="Link to this heading"></a></h3>
-<p>Applying the <strong>Ricker wavelet (second derivative of a Gaussian</strong>) to the signal <span class="math notranslate nohighlight">\(x(t)\)</span> via convolution (i.e., CWT) is equivalent to computing the <strong>second derivative of <span class="math notranslate nohighlight">\(x(t)\)</span></strong> smoothed by the Gaussian kernel <span class="math notranslate nohighlight">\(g\_s(t)\)</span>:</p>
+<h3>3.3 <strong>Relationship of <span class="math notranslate nohighlight">\(W_s(t)\)</span> with the second derivative</strong> <span class="math notranslate nohighlight">\(x''(t)=\frac{\partial^2 x(t)}{\partial t^2}\)</span><a class="headerlink" href="#relationship-of-w-s-t-with-the-second-derivative-x-t-frac-partial-2-x-t-partial-t-2" title="Link to this heading"></a></h3>
+<p>Applying the <strong>Ricker wavelet (second derivative of a Gaussian</strong>) to the signal <span class="math notranslate nohighlight">\(x(t)\)</span> via convolution (i.e., CWT) is equivalent to computing the <strong>second derivative of <span class="math notranslate nohighlight">\(x(t)\)</span></strong> smoothed by the Gaussian kernel <span class="math notranslate nohighlight">\(g_s(t)\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[W_s(t) = x(t)*\psi_s(t) = x(t) * g''(t) = x''(t) * g(t)\]</div>
+\[
+W_s(t) = x(t)*\psi_s(t) = x(t) * g''(t) = x''(t) * g(t)
+\]</div>
 <details>
     <summary>Click here for the demonstration</summary>
 <p>The <strong>convolution</strong> of <span class="math notranslate nohighlight">\(x(t)\)</span> with the second derivative of <span class="math notranslate nohighlight">\(g(t)\)</span> is:</p>
-<p><span class="math notranslate nohighlight">\((x * g'')(t) = \int\_{-\infty}^{\infty} x(\tau) g''(t - \tau) \, d\tau\)</span></p>
+<p><span class="math notranslate nohighlight">\((x * g'')(t) = \int_{-\infty}^{\infty} x(\tau) g''(t - \tau) \, d\tau\)</span></p>
 <p>We perform a <strong>change of variable</strong>: let <span class="math notranslate nohighlight">\(u = t - \tau\)</span>, so <span class="math notranslate nohighlight">\(\tau = t - u\)</span> and <span class="math notranslate nohighlight">\(d\tau = -du\)</span>. This gives:</p>
-<p><span class="math notranslate nohighlight">\((x * g'')(t) = \int\_{-\infty}^{\infty} x(t - u) g''(u) \, du\)</span></p>
+<p><span class="math notranslate nohighlight">\((x * g'')(t) = \int_{-\infty}^{\infty} x(t - u) g''(u) \, du\)</span></p>
 <p>Now consider the convolution of the <strong>second derivative of <span class="math notranslate nohighlight">\(x(t)\)</span></strong> with <span class="math notranslate nohighlight">\(g(t)\)</span>:</p>
-<p><span class="math notranslate nohighlight">\((x'' * g)(t) = \int\_{-\infty}^{\infty} x''(\tau) g(t - \tau) \, d\tau\)</span></p>
+<p><span class="math notranslate nohighlight">\((x'' * g)(t) = \int_{-\infty}^{\infty} x''(\tau) g(t - \tau) \, d\tau\)</span></p>
 <p>Again, perform the <strong>change of variable</strong> <span class="math notranslate nohighlight">\(u = t - \tau\)</span>, yielding:</p>
-<p><span class="math notranslate nohighlight">\((x'' * g)(t) = \int\_{-\infty}^{\infty} x''(t - u) g(u) \, du\)</span></p>
+<p><span class="math notranslate nohighlight">\((x'' * g)(t) = \int_{-\infty}^{\infty} x''(t - u) g(u) \, du\)</span></p>
 <p><em>Now integrate by parts twice</em>:</p>
 <ul class="simple">
 <li><p><strong>First integration by parts</strong> (assuming <span class="math notranslate nohighlight">\(g(u) \to 0\)</span> and <span class="math notranslate nohighlight">\(x'(t - u) \to 0\)</span> as <span class="math notranslate nohighlight">\(u \to \pm \infty\)</span>):</p></li>
@@ -285,10 +226,10 @@ https://theses.hal.science/tel-04194172</p>
 </section>
 <section id="symbolic-encoding">
 <h3>3.4 <strong>Symbolic Encoding</strong> 🔡<a class="headerlink" href="#symbolic-encoding" title="Link to this heading"></a></h3>
-<p>Each segment of the wavelet-transformed signal is encoded into one of the symbolic codes corresponding to the table of variation <span class="math notranslate nohighlight">\(\text{sign}\left(\frac{\partial}{\partial t}W\_s(t)\right)\)</span> and <span class="math notranslate nohighlight">\(\text{sign}\left(W\_s(t)\right)\)</span>.</p>
+<p>Each segment of the wavelet-transformed signal is encoded into one of the symbolic codes corresponding to the table of variation <span class="math notranslate nohighlight">\(\text{sign}\left(\frac{\partial}{\partial t}W_s(t)\right)\)</span> and <span class="math notranslate nohighlight">\(\text{sign}\left(W_s(t)\right)\)</span>.</p>
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Symbol: <span class="math notranslate nohighlight">\(\ell\_i\)</span></p></th>
+<tr class="row-odd"><th class="head"><p>Symbol: <span class="math notranslate nohighlight">\(\ell_i\)</span></p></th>
 <th class="head text-center"><p>Variation</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
@@ -417,10 +358,11 @@ https://theses.hal.science/tel-04194172</p>
 </table>
 <section id="shannon-entropy">
 <h3>4.1 <strong>Shannon Entropy</strong> ⚀⚁⚂⚃⚄⚅<a class="headerlink" href="#shannon-entropy" title="Link to this heading"></a></h3>
-<p>Entropy provides a <strong>robust, physics-informed metric</strong> for morphological comparisons.  For a symbolic sequence <span class="math notranslate nohighlight">\(X\)</span>, it reads:</p>
-<div class="math notranslate nohighlight">
-\[H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i)\]</div>
-<p>where <span class="math notranslate nohighlight">\(p(\ell\_i)\)</span> is the frequency of letter <span class="math notranslate nohighlight">\(l\_i\)</span> in the sequence <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Entropy provides a <strong>robust, physics-informed metric</strong> for morphological comparisons.  For a symbolic sequence <span class="math notranslate nohighlight">\(X\)</span>, it reads:
+$<span class="math notranslate nohighlight">\(
+H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i)
+\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(p(\ell_i)\)</span> is the frequency of letter <span class="math notranslate nohighlight">\(l_i\)</span> in the sequence <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>Entropy <span class="math notranslate nohighlight">\(H\)</span> is an extensive quantity verify additivity properties for independent sequences. Its value is accumulated between structured and low structured regions. Entropy is <strong>invariant under translation and stable under small perturbations</strong>, especially when using symbolic codes rather than raw intensities. This makes it ideal for comparing:</p>
 <ul class="simple">
 <li><p>Signals with <strong>shifts in baseline</strong></p></li>
@@ -439,7 +381,9 @@ https://theses.hal.science/tel-04194172</p>
 </ul>
 <p>Given sequences <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>, the mutually exclusive information or excess entropy is defined as:</p>
 <div class="math notranslate nohighlight">
-\[D_{\text{excess}}(A, B) = H(A) + H(B) - 2 H(\tilde{A} * \tilde{B})\]</div>
+\[
+D_{\text{excess}}(A, B) = H(A) + H(B) - 2 H(\tilde{A} * \tilde{B})
+\]</div>
 <p>where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(H(A)\)</span> and <span class="math notranslate nohighlight">\(H(B)\)</span> are the Shannon entropies of the original sequences</p></li>
@@ -451,19 +395,25 @@ https://theses.hal.science/tel-04194172</p>
 <h3>4.3 <strong>Jensen-Shannon Distance</strong> ↔️<a class="headerlink" href="#jensen-shannon-distance" title="Link to this heading"></a></h3>
 <p>Let <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(Q\)</span> be the <strong>empirical frequency distributions</strong> of symbolic letters in two DNA-like coded signals <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>, respectively. That is:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(P = {p\_\ell}\)</span> where <span class="math notranslate nohighlight">\(p\_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(Q = {q\_\ell}\)</span> where <span class="math notranslate nohighlight">\(q\_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(P = {p_\ell}\)</span> where <span class="math notranslate nohighlight">\(p_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(Q = {q_\ell}\)</span> where <span class="math notranslate nohighlight">\(q_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}\)</span></p></li>
 </ul>
 <p>Let <span class="math notranslate nohighlight">\(M\)</span> be the average distribution:</p>
 <div class="math notranslate nohighlight">
-\[M = \frac{1}{2}(P + Q)\]</div>
+\[
+M = \frac{1}{2}(P + Q)
+\]</div>
 <p>Then, the <strong>Jensen–Shannon distance</strong> between <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(Q\)</span> is defined as:</p>
 <div class="math notranslate nohighlight">
-\[D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }\]</div>
-<p>where <span class="math notranslate nohighlight">\(D\_{\text{KL}}\)</span> is the Kullback-Leibler divergence:</p>
+\[
+D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(D_{\text{KL}}\)</span> is the Kullback-Leibler divergence:</p>
 <div class="math notranslate nohighlight">
-\[D_{\text{KL}}(P \| M) = \sum_\ell p_\ell \log_2 \left( \frac{p_\ell}{m_\ell} \right)\]</div>
-<p>and <span class="math notranslate nohighlight">\(m\_\ell\)</span> is the frequency of symbol <span class="math notranslate nohighlight">\(\ell\)</span> in the average distribution <span class="math notranslate nohighlight">\(M\)</span>.</p>
+\[
+D_{\text{KL}}(P \| M) = \sum_\ell p_\ell \log_2 \left( \frac{p_\ell}{m_\ell} \right)
+\]</div>
+<p>and <span class="math notranslate nohighlight">\(m_\ell\)</span> is the frequency of symbol <span class="math notranslate nohighlight">\(\ell\)</span> in the average distribution <span class="math notranslate nohighlight">\(M\)</span>.</p>
 <section id="interpretation">
 <h4>4.3.1 <strong>Interpretation</strong> 💡<a class="headerlink" href="#interpretation" title="Link to this heading"></a></h4>
 <ul class="simple">
@@ -492,7 +442,9 @@ https://theses.hal.science/tel-04194172</p>
 </ul>
 <p>Then the <strong>Jaccard distance</strong> is defined as:</p>
 <div class="math notranslate nohighlight">
-\[D_{\text{Jaccard}}(A, B) = 1 - \frac{|\mathcal{M}(A) \cap \mathcal{M}(B)|}{|\mathcal{M}(A) \cup \mathcal{M}(B)|}\]</div>
+\[
+D_{\text{Jaccard}}(A, B) = 1 - \frac{|\mathcal{M}(A) \cap \mathcal{M}(B)|}{|\mathcal{M}(A) \cup \mathcal{M}(B)|}
+\]</div>
 <section id="key-features">
 <h4>4.4.1 Key Features:<a class="headerlink" href="#key-features" title="Link to this heading"></a></h4>
 <ul class="simple">
@@ -525,7 +477,7 @@ https://theses.hal.science/tel-04194172</p>
 <h2>🌀 5 | <strong>Sinusoidal Encoding of Symbolic Segments</strong><a class="headerlink" href="#sinusoidal-encoding-of-symbolic-segments" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> integrates a <strong>transformer-style positional encoding</strong> for symbolic segments, enabling conversion of <strong>morphological features</strong> into <strong>fixed-size vectors</strong>. This provides a compact, AI-ready representation of:</p>
 <ul class="simple">
-<li><p>⏱️ Position (<span class="math notranslate nohighlight">\(x\_0\)</span>)</p></li>
+<li><p>⏱️ Position (<span class="math notranslate nohighlight">\(x_0\)</span>)</p></li>
 <li><p>📏 Width (<span class="math notranslate nohighlight">\(\Delta x\)</span>)</p></li>
 <li><p>📶 Amplitude (<span class="math notranslate nohighlight">\(\Delta y\)</span>)</p></li>
 </ul>
@@ -536,11 +488,13 @@ https://theses.hal.science/tel-04194172</p>
 <h3>5.1 Mathematical Basis 📐<a class="headerlink" href="#mathematical-basis" title="Link to this heading"></a></h3>
 <p>Let <span class="math notranslate nohighlight">\(t \in \mathbb{R}\)</span> be a scalar quantity (e.g., position, width, or height). The sinusoidal encoding <span class="math notranslate nohighlight">\(\mathbf{f}(t) \in \mathbb{R}^d\)</span> is defined by:</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}\begin{aligned}
+\[\begin{split}
+\begin{aligned}
 f_{2k}(t) &amp;= \sin\left(\frac{t}{r^k}\right), \\
 f_{2k+1}(t) &amp;= \cos\left(\frac{t}{r^k}\right),
 \end{aligned}
-\quad \text{for } k = 0, \dots, \frac{d}{2}-1\end{split}\]</div>
+\quad \text{for } k = 0, \dots, \frac{d}{2}-1
+\end{split}\]</div>
 <p>where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(r = N^{2/d}\)</span> is a frequency base (default: <span class="math notranslate nohighlight">\(N = 10000\)</span>)</p></li>
@@ -549,8 +503,10 @@ f_{2k+1}(t) &amp;= \cos\left(\frac{t}{r^k}\right),
 </ul>
 <p>Then the full vector for one symbolic segment becomes:</p>
 <div class="math notranslate nohighlight">
-\[\mathbf{v} = [\mathbf{f}(x_0) \, \| \, \mathbf{f}(\Delta x) \, \| \, \mathbf{f}(\Delta y)]
-\in \mathbb{R}^{3d}\]</div>
+\[
+\mathbf{v} = [\mathbf{f}(x_0) \, \| \, \mathbf{f}(\Delta x) \, \| \, \mathbf{f}(\Delta y)]
+\in \mathbb{R}^{3d}
+\]</div>
 <p>These vectors are computed for each letter (A, B, …, Z) and grouped accordingly.</p>
 <blockquote>
 <div><p>This encoding maps any scalar value <span class="math notranslate nohighlight">\(t\)</span> (e.g., ⏱️, 📏, 📶) onto periodic functions. Due to the nature of sine and cosine, this representation is:</p>
@@ -560,37 +516,27 @@ f_{2k+1}(t) &amp;= \cos\left(\frac{t}{r^k}\right),
 </ul>
 <p>The <strong>key mathematical identity</strong> is:</p>
 <div class="math notranslate nohighlight">
-\[f(t + \Delta t) = \mathrm{diag}(f(\Delta t)) \cdot f(t)
-\]</div>
+\[
+&gt; f(t + \Delta t) = \mathrm{diag}(f(\Delta t)) \cdot f(t)
+&gt; \]</div>
+<p>👉 <strong>shifting</strong> a position <span class="math notranslate nohighlight">\(t\)</span> by <span class="math notranslate nohighlight">\(\Delta t\)</span> corresponds to a <strong>linear transformation</strong> of its embedding.</p>
+<p>⚠️ To enable <strong>invertibility</strong>, we restrict <span class="math notranslate nohighlight">\(x_0\)</span> within a known range <span class="math notranslate nohighlight">\([0, L]\)</span> with resolution determined by <span class="math notranslate nohighlight">\(N\)</span> (current implementation), or add explicit absolute anchor</p>
 </div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&gt;
-&gt;
-&gt; 👉 **shifting** a position $t$ by $\Delta t$ corresponds to a **linear transformation** of its embedding.
-&gt;
-&gt; ⚠️ To enable **invertibility**, we restrict $x_0$ within a known range $[0, L]$ with resolution determined by $N$ (current implementation), or add explicit absolute anchor
-
-
-
-🔵〰️〰️⚪️〰️〰️〰️🔴
-
-
-
-### 5.2  Decoding implementation 🗝️ 
-
-- **Encoding**: $t \mapsto [\sin(t/r_k), \cos(t/r_k)]_{k=0}^{d/2 - 1}$
-
-- **Decoding**:
-- Convert $\sin$, $\cos$ pairs into $z_k = \cos + i\sin = e^{ix/r_k}$
-  
-- Unwrap $\angle(z_k)$ → gives $\theta_k \approx t/r_k$
-  
-- Fit $t$ via least-squares:
-
-
-```{math}
-x\_i = \frac{\sum\_k \theta\_{ik} \cdot \frac{1}{r\_k}}{\sum\_k \left(\frac{1}{r\_k}\right)^2}
-</pre></div>
-</div>
+<p>🔵〰️〰️⚪️〰️〰️〰️🔴</p>
+</section>
+<section id="decoding-implementation">
+<h3>5.2  Decoding implementation 🗝️<a class="headerlink" href="#decoding-implementation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Encoding</strong>: <span class="math notranslate nohighlight">\(t \mapsto [\sin(t/r_k), \cos(t/r_k)]_{k=0}^{d/2 - 1}\)</span></p></li>
+<li><p><strong>Decoding</strong>:</p></li>
+<li><p>Convert <span class="math notranslate nohighlight">\(\sin\)</span>, <span class="math notranslate nohighlight">\(\cos\)</span> pairs into <span class="math notranslate nohighlight">\(z_k = \cos + i\sin = e^{ix/r_k}\)</span></p></li>
+<li><p>Unwrap <span class="math notranslate nohighlight">\(\angle(z_k)\)</span> → gives <span class="math notranslate nohighlight">\(\theta_k \approx t/r_k\)</span></p></li>
+<li><p>Fit <span class="math notranslate nohighlight">\(t\)</span> via least-squares:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+x_i = \frac{\sum_k \theta_{ik} \cdot \frac{1}{r_k}}{\sum_k \left(\frac{1}{r_k}\right)^2}
+\]</div>
 <ul class="simple">
 <li><p>Robust, differentiable, and avoids scalar-local minima traps.</p></li>
 </ul>
@@ -647,7 +593,7 @@ x\_i = \frac{\sum\_k \theta\_{ik} \cdot \frac{1}{r\_k}}{\sum\_k \left(\frac{1}{r
 <section id="sinencode-dna-letter-wise-sinusoidal-encoder">
 <h3>5.3 <code class="docutils literal notranslate"><span class="pre">sinencode_dna()</span></code> – Letter-wise Sinusoidal Encoder 🔡<a class="headerlink" href="#sinencode-dna-letter-wise-sinusoidal-encoder" title="Link to this heading"></a></h3>
 <p>Encodes all symbolic segments at selected scale(s) into sinusoidal vectors, grouped by letter (<code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, etc.).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dna</span><span class="o">.</span><span class="n">sinencode</span>\<span class="n">_dna</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">d</span>\<span class="n">_part</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dna</span><span class="o">.</span><span class="n">sinencode_dna</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">d_part</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>🔧 Stored outputs:</p>
@@ -655,8 +601,8 @@ x\_i = \frac{\sum\_k \theta\_{ik} \cdot \frac{1}{r\_k}}{\sum\_k \left(\frac{1}{r
 <li><p><code class="docutils literal notranslate"><span class="pre">self.code_embeddings_grouped</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="mi">4</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">(</span><span class="n">n</span>\<span class="n">_A</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span>
-    <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">(</span><span class="n">n</span>\<span class="n">_Z</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span>
+    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">(</span><span class="n">n_A</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span>
+    <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">(</span><span class="n">n_Z</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span>
     <span class="o">...</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -666,14 +612,14 @@ x\_i = \frac{\sum\_k \theta\_{ik} \cdot \frac{1}{r\_k}}{\sum\_k \left(\frac{1}{r
 <li><p><code class="docutils literal notranslate"><span class="pre">self.code_embeddings_meta</span></code>:
 Metadata required for reconstruction:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;sampling\_dt&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-  <span class="s2">&quot;x\_label&quot;</span><span class="p">:</span> <span class="s2">&quot;RT&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;x\_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;y\_label&quot;</span><span class="p">:</span> <span class="s2">&quot;Intensity&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;y\_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;a.u.&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;sampling_dt&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+  <span class="s2">&quot;x_label&quot;</span><span class="p">:</span> <span class="s2">&quot;RT&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;x_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;y_label&quot;</span><span class="p">:</span> <span class="s2">&quot;Intensity&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;y_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;a.u.&quot;</span><span class="p">,</span>
   <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;GC-MS peak trace&quot;</span><span class="p">,</span>
   <span class="s2">&quot;scales&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
-  <span class="s2">&quot;d\_part&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+  <span class="s2">&quot;d_part&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
   <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="mi">10000</span>
 <span class="p">}</span>
 </pre></div>
@@ -685,9 +631,9 @@ Metadata required for reconstruction:</p>
 <section id="sindecode-dna-static-decoder-to-dnasignal">
 <h3>5.4 <code class="docutils literal notranslate"><span class="pre">sindecode_dna(...)</span></code> – Static Decoder to DNAsignal 🔁<a class="headerlink" href="#sindecode-dna-static-decoder-to-dnasignal" title="Link to this heading"></a></h3>
 <p>Reconstructs a new <code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code> instance from sinusoidal embeddings:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reconstructed</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">sindecode</span>\<span class="n">_dna</span><span class="p">(</span>
-    <span class="n">grouped</span>\<span class="n">_embeddings</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">code</span>\<span class="n">_embeddings</span>\<span class="n">_grouped</span><span class="p">,</span>
-    <span class="n">meta</span>\<span class="n">_info</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">code</span>\<span class="n">_embeddings</span>\<span class="n">_meta</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reconstructed</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">sindecode_dna</span><span class="p">(</span>
+    <span class="n">grouped_embeddings</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">code_embeddings_grouped</span><span class="p">,</span>
+    <span class="n">meta_info</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">code_embeddings_meta</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -712,12 +658,16 @@ Metadata required for reconstruction:</p>
 <h3>5.5 Summary and error estimation  <span class="math notranslate nohighlight">\(\varepsilon = |\hat{t} - t|\)</span>  💬<a class="headerlink" href="#summary-and-error-estimation-varepsilon-hat-t-t" title="Link to this heading"></a></h3>
 <p>Each scalar <span class="math notranslate nohighlight">\(t\)</span> (like <span class="math notranslate nohighlight">\(x_0\)</span> or <span class="math notranslate nohighlight">\(\Delta x\)</span>) is <strong>encoded</strong> as:</p>
 <div class="math notranslate nohighlight">
-\[\mathbf{f}(t) = \left[ \sin\left(\frac{t}{r^0}\right), \cos\left(\frac{t}{r^0}\right), \dots, \sin\left(\frac{t}{r^{d/2-1}}\right), \cos\left(\frac{t}{r^{d/2-1}}\right) \right]\]</div>
+\[
+\mathbf{f}(t) = \left[ \sin\left(\frac{t}{r^0}\right), \cos\left(\frac{t}{r^0}\right), \dots, \sin\left(\frac{t}{r^{d/2-1}}\right), \cos\left(\frac{t}{r^{d/2-1}}\right) \right]
+\]</div>
 <p>with <span class="math notranslate nohighlight">\(r = N^{2/d}\)</span>, typically <span class="math notranslate nohighlight">\(N = 10000\)</span>, and <span class="math notranslate nohighlight">\(d \sim 32\)</span>.</p>
 <p>In decoding, we estimate <span class="math notranslate nohighlight">\(t\)</span> by averaging multiple phase inversions:</p>
 <div class="math notranslate nohighlight">
-\[\hat{t} \approx \frac{1}{d/2} \sum\_{k=0}^{d/2 - 1} r^k \cdot \theta\_k,
-\quad \text{where } \theta\_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)\]</div>
+\[
+\hat{t} \approx \frac{1}{d/2} \sum_{k=0}^{d/2 - 1} r^k \cdot \theta_k,
+\quad \text{where } \theta_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)
+\]</div>
 <p>Let <span class="math notranslate nohighlight">\(L\)</span> be the <strong>maximum span</strong> of <span class="math notranslate nohighlight">\(t\)</span> values to encode (e.g., total signal length), and <span class="math notranslate nohighlight">\(d\)</span> the embedding size (e.g., 32). Then:</p>
 <ul class="simple">
 <li><p>For <span class="math notranslate nohighlight">\(k=0\)</span> (highest freq), <span class="math notranslate nohighlight">\(\text{period}_0 \sim 2\pi\)</span></p></li>
@@ -725,7 +675,9 @@ Metadata required for reconstruction:</p>
 </ul>
 <p>So the <strong>resolution</strong> behaves like:</p>
 <div class="math notranslate nohighlight">
-\[\varepsilon \sim \frac{L}{N}\]</div>
+\[
+\varepsilon \sim \frac{L}{N}
+\]</div>
 <p>where <span class="math notranslate nohighlight">\(N\)</span> is the frequency base and <span class="math notranslate nohighlight">\(L\)</span> is the range of <span class="math notranslate nohighlight">\(t\)</span> values being encoded (<em>e.g.</em>, max segment length or signal length)</p>
 <table class="docutils align-default">
 <thead>
@@ -773,10 +725,14 @@ Metadata required for reconstruction:</p>
 <h3>Step 1 — Median Baseline Subtraction ﹏𓊝﹏<a class="headerlink" href="#step-1-median-baseline-subtraction" title="Link to this heading"></a></h3>
 <p>Let <span class="math notranslate nohighlight">\(x(t)\)</span> be the input signal. We compute a moving median over a window of width <span class="math notranslate nohighlight">\(w\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[\text{baseline}(t) = \text{median}\left[x(t - w/2), \dots, x(t + w/2)\right]\]</div>
+\[
+\text{baseline}(t) = \text{median}\left[x(t - w/2), \dots, x(t + w/2)\right]
+\]</div>
 <p>Then, apply a non-negative correction:</p>
 <div class="math notranslate nohighlight">
-\[x\_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right)\]</div>
+\[
+x_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right)
+\]</div>
 <p>🏻‎🏼‎🏽‎🏾🏿</p>
 </section>
 <section id="step-2-poisson-noise-estimation">
@@ -787,24 +743,32 @@ Metadata required for reconstruction:</p>
 <li><p>Estimate the coefficient of variation:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
-\[\text{cv}(t) = \frac{\sigma(t)}{\mu(t)}\]</div>
+\[
+\text{cv}(t) = \frac{\sigma(t)}{\mu(t)}
+\]</div>
 <p>Assuming Poisson noise, infer the local Poisson parameter:</p>
 <div class="math notranslate nohighlight">
-\[\lambda(t) = \frac{1}{\text{cv}(t)^2}\]</div>
+\[
+\lambda(t) = \frac{1}{\text{cv}(t)^2}
+\]</div>
 <p>🏻‎🏼‎🏽‎🏾🏿</p>
 </section>
 <section id="step-3-bienaymetchebychev-thresholding">
 <h3>Step 3 — Bienaymé–Tchebychev Thresholding 🗑️<a class="headerlink" href="#step-3-bienaymetchebychev-thresholding" title="Link to this heading"></a></h3>
 <p>To reject noise, use a threshold <span class="math notranslate nohighlight">\(T(t)\)</span> derived from <span class="math notranslate nohighlight">\(\lambda(t)\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[T(t) = k \cdot \sqrt{10 \lambda(t) \Delta t}\]</div>
+\[
+T(t) = k \cdot \sqrt{10 \lambda(t) \Delta t}
+\]</div>
 <p>Filtered signal is then:</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}x\_{bf}(t) = 
+\[\begin{split}
+x_{bf}(t) = 
 \begin{cases}
-x\_b(t) &amp; \text{if } x\_b(t) &gt; T(t) \\
+x_b(t) &amp; \text{if } x_b(t) &gt; T(t) \\
 0 &amp; \text{otherwise}
-\end{cases}\end{split}\]</div>
+\end{cases}
+\end{split}\]</div>
 </section>
 </section>
 <hr class="docutils" />
@@ -812,7 +776,9 @@ x\_b(t) &amp; \text{if } x\_b(t) &gt; T(t) \\
 <h2>🧪 7| <strong>Synthetic Signal Generation</strong><a class="headerlink" href="#synthetic-signal-generation" title="Link to this heading"></a></h2>
 <p>Synthetic signals are modeled as a sum of Gaussian/Lorentzian/Triangle peaks. For Gaussian, they read</p>
 <div class="math notranslate nohighlight">
-\[s(t) = \sum\_{i} h\_i \cdot \exp\left(-\left(\frac{t - \mu\_i}{0.6006 \cdot w\_i}\right)^2\right)\]</div>
+\[
+s(t) = \sum_{i} h_i \cdot \exp\left(-\left(\frac{t - \mu_i}{0.6006 \cdot w_i}\right)^2\right)
+\]</div>
 <p>where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(h_i\)</span>: peak height</p></li>
@@ -881,10 +847,10 @@ SinusoidalEncoder
 generator
 peaks
 signal
-signal\_collection
+signal_collection
 UserDict --&gt; DNACodes
 dict --&gt; DNAFullCodes
-list --&gt; signal\_collection
+list --&gt; signal_collection
 object --&gt; DNApairwiseAnalysis
 object --&gt; DNAsignal
 object --&gt; SinusoidalEncoder
@@ -902,15 +868,15 @@ str --&gt; DNAstr
 
 <span class="c1"># Load and encode</span>
 <span class="n">D</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">D</span><span class="o">.</span><span class="n">encode</span>\<span class="n">_dna</span><span class="p">()</span>
-<span class="n">D</span><span class="o">.</span><span class="n">encode</span>\<span class="n">_dna</span>\<span class="n">_full</span><span class="p">()</span>
+<span class="n">D</span><span class="o">.</span><span class="n">encode_dna</span><span class="p">()</span>
+<span class="n">D</span><span class="o">.</span><span class="n">encode_dna_full</span><span class="p">()</span>
 
 <span class="c1"># Visualize</span>
-<span class="n">D</span><span class="o">.</span><span class="n">plot</span>\<span class="n">_codes</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">D</span><span class="o">.</span><span class="n">plot_codes</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
 <span class="c1"># Entropy and distances</span>
-<span class="n">entropy</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">get</span>\<span class="n">_entropy</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">analysis</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span>\<span class="n">_pairwiseEntropyDistance</span><span class="p">([</span><span class="n">D1</span><span class="p">,</span> <span class="n">D2</span><span class="p">,</span> <span class="n">D3</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">entropy</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseEntropyDistance</span><span class="p">([</span><span class="n">D1</span><span class="p">,</span> <span class="n">D2</span><span class="p">,</span> <span class="n">D3</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -932,11 +898,11 @@ str --&gt; DNAstr
 <h2>🔎 11| <strong>Motif Detection</strong><a class="headerlink" href="#motif-detection" title="Link to this heading"></a></h2>
 <p>Pattern search: ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">listPat</span><span class="o">=</span><span class="n">D</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">)</span>
-<span class="n">listPat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span>\<span class="n">_signal</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># show the first match as a signal</span>
+<span class="n">listPat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># show the first match as a signal</span>
 </pre></div>
 </div>
 <p>Extract and plot motifs: ▌│█║▌║▌║</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">extract</span>\<span class="n">_motifs</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">,</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">extract_motifs</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">,</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -945,70 +911,70 @@ str --&gt; DNAstr
 <h2>🤝 12| <strong>Alignment</strong><a class="headerlink" href="#alignment" title="Link to this heading"></a></h2>
 <p>☴ Fast symbolic alignment:⛓️⏱️</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">D1</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">D2</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;bio&quot;</span><span class="p">)</span>
-<span class="n">D1</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">wrapped</span>\<span class="n">_alignment</span><span class="p">()</span>
-<span class="n">D1</span><span class="o">.</span><span class="n">html</span>\<span class="n">_alignment</span><span class="p">()</span>
-<span class="n">D1</span><span class="o">.</span><span class="n">plot</span>\<span class="n">_alignment</span><span class="p">()</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">wrapped_alignment</span><span class="p">()</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">html_alignment</span><span class="p">()</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">plot_alignment</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
 <hr class="docutils" />
 <section id="examples-unsorted">
 <h2>🧪 13| <strong>Examples</strong> (unsorted)<a class="headerlink" href="#examples-unsorted" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sig2dna</span>\<span class="n">_core</span><span class="o">.</span><span class="n">signomics</span> <span class="kn">import</span><span class="w"> </span><span class="nn">peaks</span><span class="o">,</span><span class="w"> </span><span class="nn">signal</span>\<span class="n">_collection</span><span class="p">,</span> <span class="n">DNAsignal</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sig2dna_core.signomics</span><span class="w"> </span><span class="kn">import</span> <span class="n">peaks</span><span class="p">,</span> <span class="n">signal_collection</span><span class="p">,</span> <span class="n">DNAsignal</span>
 
 <span class="c1"># 1. Peak creation and basic signals 🏔️</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">()</span>
 <span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">s</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">to</span>\<span class="n">_signal</span><span class="p">()</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span>
 <span class="n">s</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
 <span class="c1"># 2. Signal collection 🗃️</span>
-<span class="n">s</span>\<span class="n">_noisy</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">add</span>\<span class="n">_noise</span><span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">s</span>\<span class="n">_scaled</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="mf">0.5</span>
-<span class="n">coll</span> <span class="o">=</span> <span class="n">signal</span>\<span class="n">_collection</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span>\<span class="n">_noisy</span><span class="p">,</span> <span class="n">s</span>\<span class="n">_scaled</span><span class="p">)</span>
-<span class="n">s</span>\<span class="n">_mean</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="n">s</span>\<span class="n">_mean</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean&quot;</span><span class="p">)</span>
+<span class="n">s_noisy</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">s_scaled</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="n">coll</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s_noisy</span><span class="p">,</span> <span class="n">s_scaled</span><span class="p">)</span>
+<span class="n">s_mean</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">s_mean</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean&quot;</span><span class="p">)</span>
 
 <span class="c1"># 3. Synthetic mixtures 🥣</span>
-<span class="n">S</span><span class="p">,</span> <span class="n">pS</span> <span class="o">=</span> <span class="n">signal</span>\<span class="n">_collection</span><span class="o">.</span><span class="n">generate</span>\<span class="n">_synthetic</span><span class="p">(</span><span class="n">n</span>\<span class="n">_signals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">n</span>\<span class="n">_peaks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">S</span><span class="p">,</span> <span class="n">pS</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_synthetic</span><span class="p">(</span><span class="n">n_signals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 <span class="n">Sfull</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="n">dna</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="p">(</span><span class="n">Sfull</span><span class="p">)</span>
-<span class="n">dna</span><span class="o">.</span><span class="n">compute</span>\<span class="n">_cwt</span><span class="p">()</span>
-<span class="n">dna</span><span class="o">.</span><span class="n">encode</span>\<span class="n">_dna</span>\<span class="n">_full</span><span class="p">()</span>
-<span class="n">dna</span><span class="o">.</span><span class="n">plot</span>\<span class="n">_codes</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">dna</span><span class="o">.</span><span class="n">compute_cwt</span><span class="p">()</span>
+<span class="n">dna</span><span class="o">.</span><span class="n">encode_dna_full</span><span class="p">()</span>
+<span class="n">dna</span><span class="o">.</span><span class="n">plot_codes</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
 <span class="c1"># 4. Alignment of encoded sequences 🧬🧬</span>
 <span class="n">A</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 <span class="n">A</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
-<span class="n">A</span><span class="o">.</span><span class="n">html</span>\<span class="n">_alignment</span><span class="p">()</span>
-<span class="n">A</span><span class="o">.</span><span class="n">plot</span>\<span class="n">_alignment</span><span class="p">()</span>
+<span class="n">A</span><span class="o">.</span><span class="n">html_alignment</span><span class="p">()</span>
+<span class="n">A</span><span class="o">.</span><span class="n">plot_alignment</span><span class="p">()</span>
 
 <span class="c1"># 5. Extract motifs (e.g., YAZB segments ⚗️</span>
 <span class="n">pA</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">)</span>
-<span class="n">pAs</span> <span class="o">=</span> <span class="n">signal</span>\<span class="n">_collection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">to</span>\<span class="n">_signal</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pA</span><span class="p">])</span>
+<span class="n">pAs</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pA</span><span class="p">])</span>
 <span class="n">pAs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
 <span class="c1"># 6. Classification from mixtures 🏁</span>
-<span class="n">Smix</span><span class="p">,</span> <span class="n">pSmix</span><span class="p">,</span> <span class="n">idSmix</span> <span class="o">=</span> <span class="n">signal</span>\<span class="n">_collection</span><span class="o">.</span><span class="n">generate</span>\<span class="n">_mixtures</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">dnaSmix</span> <span class="o">=</span> <span class="n">Smix</span><span class="o">.</span>\<span class="n">_toDNA</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">])</span>
+<span class="n">Smix</span><span class="p">,</span> <span class="n">pSmix</span><span class="p">,</span> <span class="n">idSmix</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_mixtures</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">dnaSmix</span> <span class="o">=</span> <span class="n">Smix</span><span class="o">.</span><span class="n">_toDNA</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">])</span>
 
 <span class="c1"># 7. Excess entropy distance &amp; clustering 🎲</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span>\<span class="n">_pairwiseEntropyDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;bio&quot;</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseEntropyDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;bio&quot;</span><span class="p">)</span>
 <span class="n">D</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Excess Entropy&quot;</span>
-<span class="n">D</span><span class="o">.</span><span class="n">dimension</span>\<span class="n">_variance</span>\<span class="n">_curve</span><span class="p">()</span>
-<span class="n">D</span><span class="o">.</span><span class="n">select</span>\<span class="n">_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">D</span><span class="o">.</span><span class="n">plot</span>\<span class="n">_dendrogram</span><span class="p">()</span>
-<span class="n">D</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n</span>\<span class="n">_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">D</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">()</span>
+<span class="n">D</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">D</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">()</span>
+<span class="n">D</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
 <span class="c1"># 8. Jaccard motif distance ↔️</span>
-<span class="n">J</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span>\<span class="n">_pairwiseJaccardMotifDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">J</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseJaccardMotifDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">J</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;YAZB Jaccard&quot;</span>
-<span class="n">J</span><span class="o">.</span><span class="n">dimension</span>\<span class="n">_variance</span>\<span class="n">_curve</span><span class="p">()</span>
-<span class="n">J</span><span class="o">.</span><span class="n">select</span>\<span class="n">_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">J</span><span class="o">.</span><span class="n">plot</span>\<span class="n">_dendrogram</span><span class="p">()</span>
-<span class="n">J</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n</span>\<span class="n">_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">J</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">()</span>
+<span class="n">J</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">J</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">()</span>
+<span class="n">J</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1036,18 +1002,18 @@ str --&gt; DNAstr
 <p>For simplicity and consistency, it is recommended to use both modules from a local subfolder (e.g., <code class="docutils literal notranslate"><span class="pre">sig2dna_core</span></code>) within your working directory. You can clone or place the source files accordingly:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>📂 sig2dna/                &lt;- your working directory
 │
-├── 📂 sig2dna\_core/       &lt;- folder for core modules
+├── 📂 sig2dna_core/       &lt;- folder for core modules
 │   ├── 🖨️ figprint.py     &lt;- figure saving utilities
 │   └── 🧬 signomics.py    &lt;- main symbolic signal processing module (&gt;4 Klines)
 │
-├── 📂 sig2dna\_tools/       &lt;- folder for tools (not included in this release)
+├── 📂 sig2dna_tools/       &lt;- folder for tools (not included in this release)
 │
 ├── 📁 images/             &lt;- output folder for saved figures (PDF, PNG, SVG)
 │
-├── 📝 yourscript.py       &lt;- your script using sig2dna\_core modules
+├── 📝 yourscript.py       &lt;- your script using sig2dna_core modules
 │
-├── 📄 test\_signomics.py      &lt;- minimal test and plotting script
-├── 📄 casestudy\_signomics.py &lt;- in-depth classification and clustering example
+├── 📄 test_signomics.py      &lt;- minimal test and plotting script
+├── 📄 casestudy_signomics.py &lt;- in-depth classification and clustering example
 ├── 📜 LICENSE
 └── 📑 README.md
 </pre></div>
@@ -1056,7 +1022,7 @@ str --&gt; DNAstr
 <section id="import-example">
 <h3>Import Example 📥<a class="headerlink" href="#import-example" title="Link to this heading"></a></h3>
 <p>In your scripts, import the components directly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sig2dna</span>\<span class="n">_core</span><span class="o">.</span><span class="n">signomics</span> <span class="kn">import</span><span class="w"> </span><span class="nn">peaks</span><span class="o">,</span><span class="w"> </span><span class="nn">signal</span>\<span class="n">_collection</span><span class="p">,</span> <span class="n">DNAsignal</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sig2dna_core.signomics</span><span class="w"> </span><span class="kn">import</span> <span class="n">peaks</span><span class="p">,</span> <span class="n">signal_collection</span><span class="p">,</span> <span class="n">DNAsignal</span>
 </pre></div>
 </div>
 </section>
@@ -1118,10 +1084,7 @@ Version: 0.43 (2025-05-28)</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to sig2dna_core’s documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

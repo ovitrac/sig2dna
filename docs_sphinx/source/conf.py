@@ -36,6 +36,15 @@ release = '0.43'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+mathjax3_config = {
+    "tex": {
+        "inlineMath": [["$", "$"], ["\\(", "\\)"]],
+        "displayMath": [["$$", "$$"], ["\\[", "\\]"]],
+        "processEscapes": True,
+        "tags": "ams",
+    }
+}
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',  # For Google/Numpy style docstrings
@@ -44,6 +53,7 @@ extensions = [
 extensions += ['sphinx.ext.mathjax']
 
 myst_enable_extensions = [
+    "dollarmath",
     "colon_fence",
     "deflist",
     "html_admonition",

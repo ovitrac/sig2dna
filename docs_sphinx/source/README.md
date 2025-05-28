@@ -123,15 +123,15 @@ S = signal.from_peaks(...)
 
 A **Mexican hat (Ricker)** wavelet is used:
 
-$$
+```{math}
 \psi_s(t) = \left(1 - \frac{t^2}{s^2}\right)e^{-\frac{t^2}{2s^2}}
-$$
+```
 
 The Continuous Wavelet Transform (CWT) of a signal $x(t)$ is:
 
-$$
+```{math}
 W_s(t) = x(t)*\psi_s(t) = \int x(\tau) \cdot \psi_s(t - \tau) \, d\tau
-$$
+```
 
 where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and $*$ the convolution operator.
 
@@ -139,13 +139,13 @@ where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and 
 
 🟪
 
-### 3.3 **Relationship of $W_s(t)$ with the second derivative** $x''(t)=\frac{\partial^2 x(t)}{\partial t^2}$
+### 3.3 **Relationship of $W\_s(t)$ with the second derivative** $x''(t)=\frac{\partial^2 x(t)}{\partial t^2}$
 
-Applying the **Ricker wavelet (second derivative of a Gaussian**) to the signal $x(t)$ via convolution (i.e., CWT) is equivalent to computing the **second derivative of $x(t)$** smoothed by the Gaussian kernel $g_s(t)$:
+Applying the **Ricker wavelet (second derivative of a Gaussian**) to the signal $x(t)$ via convolution (i.e., CWT) is equivalent to computing the **second derivative of $x(t)$** smoothed by the Gaussian kernel $g\_s(t)$:
 
-$$
+```{math}
 W_s(t) = x(t)*\psi_s(t) = x(t) * g''(t) = x''(t) * g(t)
-$$
+```
 
 <details>
     <summary>Click here for the demonstration</summary>
@@ -153,19 +153,19 @@ $$
 
 The **convolution** of $x(t)$ with the second derivative of $g(t)$ is:
 
-$(x * g'')(t) = \int_{-\infty}^{\infty} x(\tau) g''(t - \tau) \, d\tau$
+$(x * g'')(t) = \int\_{-\infty}^{\infty} x(\tau) g''(t - \tau) \, d\tau$
 
 We perform a **change of variable**: let $u = t - \tau$, so $\tau = t - u$ and $d\tau = -du$. This gives:
 
-$(x * g'')(t) = \int_{-\infty}^{\infty} x(t - u) g''(u) \, du$
+$(x * g'')(t) = \int\_{-\infty}^{\infty} x(t - u) g''(u) \, du$
 
 Now consider the convolution of the **second derivative of $x(t)$** with $g(t)$:
 
-$(x'' * g)(t) = \int_{-\infty}^{\infty} x''(\tau) g(t - \tau) \, d\tau$
+$(x'' * g)(t) = \int\_{-\infty}^{\infty} x''(\tau) g(t - \tau) \, d\tau$
 
 Again, perform the **change of variable** $u = t - \tau$, yielding:
 
-$(x'' * g)(t) = \int_{-\infty}^{\infty} x''(t - u) g(u) \, du$
+$(x'' * g)(t) = \int\_{-\infty}^{\infty} x''(t - u) g(u) \, du$
 
 
 
@@ -189,9 +189,9 @@ $(x'' * g)(t) = \int x(t - u) g''(u) \, du = (x * g'')(t)$
 
 ### 3.4 **Symbolic Encoding** 🔡
 
-Each segment of the wavelet-transformed signal is encoded into one of the symbolic codes corresponding to the table of variation $\text{sign}\left(\frac{\partial}{\partial t}W_s(t)\right)$ and $\text{sign}\left(W_s(t)\right)$.
+Each segment of the wavelet-transformed signal is encoded into one of the symbolic codes corresponding to the table of variation $\text{sign}\left(\frac{\partial}{\partial t}W\_s(t)\right)$ and $\text{sign}\left(W\_s(t)\right)$.
 
-| Symbol: $\ell_i$ | Variation | Description                                     |
+| Symbol: $\ell\_i$ | Variation | Description                                     |
 | ---------------- | :-------: | ----------------------------------------------- |
 | <kbd>A</kbd>     |    -↗+    | Increasing crossing from − to + (zero-crossing) |
 | <kbd>B</kbd>     |    -↗-    | Increasing negative                             |
@@ -199,7 +199,7 @@ Each segment of the wavelet-transformed signal is encoded into one of the symbol
 | <kbd>X</kbd>     |    +↘+    | Decreasing positive                             |
 | <kbd>Y</kbd>     |   -↘\-    | Decreasing negative                             |
 | <kbd>Z</kbd>     |    +↘-    | Decreasing crossing from + to − (zero-crossing) |
-| <kbd>_</kbd>     |    ──     | Flat or noise segment                           |
+| <kbd>\_</kbd>     |    ──     | Flat or noise segment                           |
 
 Each segment stores its `width`, `height`, and `position`. 
 
@@ -273,11 +273,11 @@ So **changes in the symbolic code structure** directly reflect **signal interfer
 ### 4.1 **Shannon Entropy** ⚀⚁⚂⚃⚄⚅
 
 Entropy provides a **robust, physics-informed metric** for morphological comparisons.  For a symbolic sequence $X$, it reads:
-$$
+```{math}
 H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i)
-$$
+```
 
-where $p(\ell_i)$ is the frequency of letter $l_i$ in the sequence $X$.
+where $p(\ell\_i)$ is the frequency of letter $l\_i$ in the sequence $X$.
 
 Entropy $H$ is an extensive quantity verify additivity properties for independent sequences. Its value is accumulated between structured and low structured regions. Entropy is **invariant under translation and stable under small perturbations**, especially when using symbolic codes rather than raw intensities. This makes it ideal for comparing:
 
@@ -301,9 +301,9 @@ Let $A$ and $B$ be two symbolic sequences (`DNAstr`) representing two signals. A
 
 Given sequences $A$ and $B$, the mutually exclusive information or excess entropy is defined as:
 
-$$
+```{math}
 D_{\text{excess}}(A, B) = H(A) + H(B) - 2 H(\tilde{A} * \tilde{B})
-$$
+```
 
 where:
 
@@ -317,28 +317,28 @@ where:
 
 Let $P$ and $Q$ be the **empirical frequency distributions** of symbolic letters in two DNA-like coded signals $A$ and $B$, respectively. That is:
 
-* $P = {p_\ell}$ where $p_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}$
-* $Q = {q_\ell}$ where $q_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}$
+* $P = {p\_\ell}$ where $p\_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}$
+* $Q = {q\_\ell}$ where $q\_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}$
 
 Let $M$ be the average distribution:
 
-$$
+```{math}
 M = \frac{1}{2}(P + Q)
-$$
+```
 
 Then, the **Jensen–Shannon distance** between $P$ and $Q$ is defined as:
 
-$$
+```{math}
 D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }
-$$
+```
 
-where $D_{\text{KL}}$ is the Kullback-Leibler divergence:
+where $D\_{\text{KL}}$ is the Kullback-Leibler divergence:
 
-$$
+```{math}
 D_{\text{KL}}(P \| M) = \sum_\ell p_\ell \log_2 \left( \frac{p_\ell}{m_\ell} \right)
-$$
+```
 
-and $m_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
+and $m\_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
 
 
 #### 4.3.1 **Interpretation** 💡
@@ -368,9 +368,9 @@ Given two sequences $A$ and $B$, and a set of motifs $\mathcal{M}$ of length $k$
 
 Then the **Jaccard distance** is defined as:
 
-$$
+```{math}
 D_{\text{Jaccard}}(A, B) = 1 - \frac{|\mathcal{M}(A) \cap \mathcal{M}(B)|}{|\mathcal{M}(A) \cup \mathcal{M}(B)|}
-$$
+```
 
 #### 4.4.1 Key Features:
 
@@ -406,7 +406,7 @@ Here is the complete, cleanly formatted **README.md documentation section** for 
 
 `sig2dna` integrates a **transformer-style positional encoding** for symbolic segments, enabling conversion of **morphological features** into **fixed-size vectors**. This provides a compact, AI-ready representation of:
 
-* ⏱️ Position ($x_0$)
+* ⏱️ Position ($x\_0$)
 * 📏 Width ($\Delta x$)
 * 📶 Amplitude ($\Delta y$)
 
@@ -418,13 +418,13 @@ Here is the complete, cleanly formatted **README.md documentation section** for 
 
 Let $t \in \mathbb{R}$ be a scalar quantity (e.g., position, width, or height). The sinusoidal encoding $\mathbf{f}(t) \in \mathbb{R}^d$ is defined by:
 
-$$
+```{math}
 \begin{aligned}
 f_{2k}(t) &= \sin\left(\frac{t}{r^k}\right), \\
 f_{2k+1}(t) &= \cos\left(\frac{t}{r^k}\right),
 \end{aligned}
 \quad \text{for } k = 0, \dots, \frac{d}{2}-1
-$$
+```
 
 where:
 
@@ -434,10 +434,10 @@ where:
 
 Then the full vector for one symbolic segment becomes:
 
-$$
+```{math}
 \mathbf{v} = [\mathbf{f}(x_0) \, \| \, \mathbf{f}(\Delta x) \, \| \, \mathbf{f}(\Delta y)]
 \in \mathbb{R}^{3d}
-$$
+```
 
 These vectors are computed for each letter (A, B, ..., Z) and grouped accordingly.
 
@@ -450,9 +450,10 @@ These vectors are computed for each letter (A, B, ..., Z) and grouped accordingl
 >
 > The **key mathematical identity** is:
 >
-> $$
+> ```{math}
 > f(t + \Delta t) = \mathrm{diag}(f(\Delta t)) \cdot f(t)
-> $$
+>
+```
 >
 >
 > 👉 **shifting** a position $t$ by $\Delta t$ corresponds to a **linear transformation** of its embedding.
@@ -477,9 +478,9 @@ These vectors are computed for each letter (A, B, ..., Z) and grouped accordingl
 - Fit $t$ via least-squares:
 
 
-$$
-x_i = \frac{\sum_k \theta_{ik} \cdot \frac{1}{r_k}}{\sum_k \left(\frac{1}{r_k}\right)^2}
-$$
+```{math}
+x\_i = \frac{\sum\_k \theta\_{ik} \cdot \frac{1}{r\_k}}{\sum\_k \left(\frac{1}{r\_k}\right)^2}
+```
 
 - Robust, differentiable, and avoids scalar-local minima traps.
 
@@ -512,7 +513,7 @@ $$
 Encodes all symbolic segments at selected scale(s) into sinusoidal vectors, grouped by letter (`A`, `Z`, `B`, etc.).
 
 ```python
-dna.sinencode_dna(scales=[4], d_part=32)
+dna.sinencode\_dna(scales=[4], d\_part=32)
 ```
 
 🔧 Stored outputs:
@@ -522,8 +523,8 @@ dna.sinencode_dna(scales=[4], d_part=32)
   ```python
   {
     4: {
-      "A": np.ndarray (n_A, 96),
-      "Z": np.ndarray (n_Z, 96),
+      "A": np.ndarray (n\_A, 96),
+      "Z": np.ndarray (n\_Z, 96),
       ...
     }
   }
@@ -534,14 +535,14 @@ dna.sinencode_dna(scales=[4], d_part=32)
 
   ```python
   {
-    "sampling_dt": 0.1,
-    "x_label": "RT",
-    "x_unit": "min",
-    "y_label": "Intensity",
-    "y_unit": "a.u.",
+    "sampling\_dt": 0.1,
+    "x\_label": "RT",
+    "x\_unit": "min",
+    "y\_label": "Intensity",
+    "y\_unit": "a.u.",
     "name": "GC-MS peak trace",
     "scales": [4],
-    "d_part": 32,
+    "d\_part": 32,
     "N": 10000
   }
   ```
@@ -557,9 +558,9 @@ dna.sinencode_dna(scales=[4], d_part=32)
 Reconstructs a new `DNAsignal` instance from sinusoidal embeddings:
 
 ```python
-reconstructed = DNAsignal.sindecode_dna(
-    grouped_embeddings = dna.code_embeddings_grouped,
-    meta_info = dna.code_embeddings_meta
+reconstructed = DNAsignal.sindecode\_dna(
+    grouped\_embeddings = dna.code\_embeddings\_grouped,
+    meta\_info = dna.code\_embeddings\_meta
 )
 ```
 
@@ -585,9 +586,9 @@ reconstructed = DNAsignal.sindecode_dna(
 
 Each scalar $t$ (like $x_0$ or $\Delta x$) is **encoded** as:
 
-$$
+```{math}
 \mathbf{f}(t) = \left[ \sin\left(\frac{t}{r^0}\right), \cos\left(\frac{t}{r^0}\right), \dots, \sin\left(\frac{t}{r^{d/2-1}}\right), \cos\left(\frac{t}{r^{d/2-1}}\right) \right]
-$$
+```
 
 with $r = N^{2/d}$, typically $N = 10000$, and $d \sim 32$.
 
@@ -595,10 +596,10 @@ with $r = N^{2/d}$, typically $N = 10000$, and $d \sim 32$.
 
 In decoding, we estimate $t$ by averaging multiple phase inversions:
 
-$$
-\hat{t} \approx \frac{1}{d/2} \sum_{k=0}^{d/2 - 1} r^k \cdot \theta_k,
-\quad \text{where } \theta_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)
-$$
+```{math}
+\hat{t} \approx \frac{1}{d/2} \sum\_{k=0}^{d/2 - 1} r^k \cdot \theta\_k,
+\quad \text{where } \theta\_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)
+```
 
 Let $L$ be the **maximum span** of $t$ values to encode (e.g., total signal length), and $d$ the embedding size (e.g., 32). Then:
 
@@ -607,9 +608,9 @@ Let $L$ be the **maximum span** of $t$ values to encode (e.g., total signal leng
 
 So the **resolution** behaves like:
 
-$$
+```{math}
 \varepsilon \sim \frac{L}{N}
-$$
+```
 
 where $N$ is the frequency base and $L$ is the range of $t$ values being encoded (*e.g.*, max segment length or signal length)
 
@@ -654,15 +655,15 @@ The errors are acceptable for:
 
 Let $x(t)$ be the input signal. We compute a moving median over a window of width $w$:
 
-$$
+```{math}
 \text{baseline}(t) = \text{median}\left[x(t - w/2), \dots, x(t + w/2)\right]
-$$
+```
 
 Then, apply a non-negative correction:
 
-$$
-x_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right)
-$$
+```{math}
+x\_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right)
+```
 
 🏻‎🏼‎🏽‎🏾🏿
 
@@ -673,15 +674,15 @@ From the baseline-corrected signal $x_b(t)$:
 * Compute the local mean $\mu(t)$ and standard deviation $\sigma(t)$ using a uniform filter.
 * Estimate the coefficient of variation:
 
-$$
+```{math}
 \text{cv}(t) = \frac{\sigma(t)}{\mu(t)}
-$$
+```
 
 Assuming Poisson noise, infer the local Poisson parameter:
 
-$$
+```{math}
 \lambda(t) = \frac{1}{\text{cv}(t)^2}
-$$
+```
 
 🏻‎🏼‎🏽‎🏾🏿
 
@@ -689,19 +690,19 @@ $$
 
 To reject noise, use a threshold $T(t)$ derived from $\lambda(t)$:
 
-$$
+```{math}
 T(t) = k \cdot \sqrt{10 \lambda(t) \Delta t}
-$$
+```
 
 Filtered signal is then:
 
-$$
-x_{bf}(t) = 
+```{math}
+x\_{bf}(t) = 
 \begin{cases}
-x_b(t) & \text{if } x_b(t) > T(t) \\
+x\_b(t) & \text{if } x\_b(t) > T(t) \\
 0 & \text{otherwise}
 \end{cases}
-$$
+```
 
 ---
 
@@ -713,9 +714,9 @@ $$
 
 Synthetic signals are modeled as a sum of Gaussian/Lorentzian/Triangle peaks. For Gaussian, they read
 
-$$
-s(t) = \sum_{i} h_i \cdot \exp\left(-\left(\frac{t - \mu_i}{0.6006 \cdot w_i}\right)^2\right)
-$$
+```{math}
+s(t) = \sum\_{i} h\_i \cdot \exp\left(-\left(\frac{t - \mu\_i}{0.6006 \cdot w\_i}\right)^2\right)
+```
 
 where: 
 
@@ -766,10 +767,10 @@ SinusoidalEncoder
 generator
 peaks
 signal
-signal_collection
+signal\_collection
 UserDict --> DNACodes
 dict --> DNAFullCodes
-list --> signal_collection
+list --> signal\_collection
 object --> DNApairwiseAnalysis
 object --> DNAsignal
 object --> SinusoidalEncoder
@@ -792,15 +793,15 @@ from signomics import DNAsignal
 
 # Load and encode
 D = DNAsignal(S, encode=True)
-D.encode_dna()
-D.encode_dna_full()
+D.encode\_dna()
+D.encode\_dna\_full()
 
 # Visualize
-D.plot_codes(scale=4)
+D.plot\_codes(scale=4)
 
 # Entropy and distances
-entropy = D.get_entropy(scale=4)
-analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
+entropy = D.get\_entropy(scale=4)
+analysis = DNAsignal.\_pairwiseEntropyDistance([D1, D2, D3], scale=4)
 ```
 
 ---
@@ -831,13 +832,13 @@ Pattern search: ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷
 
 ```python
 listPat=D.codes[4].find("YAZB")
-listPat[0].to_signal().plot() # show the first match as a signal
+listPat[0].to\_signal().plot() # show the first match as a signal
 ```
 
 Extract and plot motifs: ▌│█║▌║▌║
 
 ```python
-D.codesfull[4].extract_motifs("YAZB", minlen=4, plot=True)
+D.codesfull[4].extract\_motifs("YAZB", minlen=4, plot=True)
 ```
 
 ------
@@ -852,9 +853,9 @@ D.codesfull[4].extract_motifs("YAZB", minlen=4, plot=True)
 
 ```python
 D1.codes[4].align(D2.codes[4], engine="bio")
-D1.codes[4].wrapped_alignment()
-D1.html_alignment()
-D1.plot_alignment()
+D1.codes[4].wrapped\_alignment()
+D1.html\_alignment()
+D1.plot\_alignment()
 ```
 
 ------
@@ -866,61 +867,61 @@ D1.plot_alignment()
 ## 🧪 13| **Examples** (unsorted)
 
 ```python
-from sig2dna_core.signomics import peaks, signal_collection, DNAsignal
+from sig2dna\_core.signomics import peaks, signal\_collection, DNAsignal
 
 # 1. Peak creation and basic signals 🏔️
 p = peaks()
 p.add(x=10, w=2, h=1)
 p.add(x=20, w=2, h=1)
-s = p.to_signal()
+s = p.to\_signal()
 s.plot()
 
 # 2. Signal collection 🗃️
-s_noisy = s.add_noise("gaussian", scale=0.01, bias=5)
-s_scaled = s * 0.5
-coll = signal_collection(s, s_noisy, s_scaled)
-s_mean = coll.mean()
-s_mean.plot(label="Mean")
+s\_noisy = s.add\_noise("gaussian", scale=0.01, bias=5)
+s\_scaled = s * 0.5
+coll = signal\_collection(s, s\_noisy, s\_scaled)
+s\_mean = coll.mean()
+s\_mean.plot(label="Mean")
 
 # 3. Synthetic mixtures 🥣
-S, pS = signal_collection.generate_synthetic(n_signals=12, n_peaks=1, ...)
+S, pS = signal\_collection.generate\_synthetic(n\_signals=12, n\_peaks=1, ...)
 Sfull = S.mean()
 dna = DNAsignal(Sfull)
-dna.compute_cwt()
-dna.encode_dna_full()
-dna.plot_codes(scale=4)
+dna.compute\_cwt()
+dna.encode\_dna\_full()
+dna.plot\_codes(scale=4)
 
 # 4. Alignment of encoded sequences 🧬🧬
 A = dna.codesfull[4]
 B = dna.codesfull[2]
 A.align(B)
-A.html_alignment()
-A.plot_alignment()
+A.html\_alignment()
+A.plot\_alignment()
 
 # 5. Extract motifs (e.g., YAZB segments ⚗️
 pA = A.find("YAZB")
-pAs = signal_collection(*[s.to_signal() for s in pA])
+pAs = signal\_collection(*[s.to\_signal() for s in pA])
 pAs.plot()
 
 # 6. Classification from mixtures 🏁
-Smix, pSmix, idSmix = signal_collection.generate_mixtures(...)
-dnaSmix = Smix._toDNA(scales=[1,2,4,8,16,32])
+Smix, pSmix, idSmix = signal\_collection.generate\_mixtures(...)
+dnaSmix = Smix.\_toDNA(scales=[1,2,4,8,16,32])
 
 # 7. Excess entropy distance & clustering 🎲
-D = DNAsignal._pairwiseEntropyDistance(dnaSmix, scale=4, engine="bio")
+D = DNAsignal.\_pairwiseEntropyDistance(dnaSmix, scale=4, engine="bio")
 D.name = "Excess Entropy"
-D.dimension_variance_curve()
-D.select_dimensions(10)
-D.plot_dendrogram()
-D.scatter3d(n_clusters=5)
+D.dimension\_variance\_curve()
+D.select\_dimensions(10)
+D.plot\_dendrogram()
+D.scatter3d(n\_clusters=5)
 
 # 8. Jaccard motif distance ↔️
-J = DNAsignal._pairwiseJaccardMotifDistance(dnaSmix, scale=4)
+J = DNAsignal.\_pairwiseJaccardMotifDistance(dnaSmix, scale=4)
 J.name = "YAZB Jaccard"
-J.dimension_variance_curve()
-J.select_dimensions(10)
-J.plot_dendrogram()
-J.scatter3d(n_clusters=5)
+J.dimension\_variance\_curve()
+J.select\_dimensions(10)
+J.plot\_dendrogram()
+J.scatter3d(n\_clusters=5)
 ```
 
 ---
@@ -947,18 +948,18 @@ For simplicity and consistency, it is recommended to use both modules from a loc
 ```text
 📂 sig2dna/                <- your working directory
 │
-├── 📂 sig2dna_core/       <- folder for core modules
+├── 📂 sig2dna\_core/       <- folder for core modules
 │   ├── 🖨️ figprint.py     <- figure saving utilities
 │   └── 🧬 signomics.py    <- main symbolic signal processing module (>4 Klines)
 │
-├── 📂 sig2dna_tools/       <- folder for tools (not included in this release)
+├── 📂 sig2dna\_tools/       <- folder for tools (not included in this release)
 │
 ├── 📁 images/             <- output folder for saved figures (PDF, PNG, SVG)
 │
-├── 📝 yourscript.py       <- your script using sig2dna_core modules
+├── 📝 yourscript.py       <- your script using sig2dna\_core modules
 │
-├── 📄 test_signomics.py      <- minimal test and plotting script
-├── 📄 casestudy_signomics.py <- in-depth classification and clustering example
+├── 📄 test\_signomics.py      <- minimal test and plotting script
+├── 📄 casestudy\_signomics.py <- in-depth classification and clustering example
 ├── 📜 LICENSE
 └── 📑 README.md
 ```
@@ -970,7 +971,7 @@ For simplicity and consistency, it is recommended to use both modules from a loc
 In your scripts, import the components directly:
 
 ```python
-from sig2dna_core.signomics import peaks, signal_collection, DNAsignal
+from sig2dna\_core.signomics import peaks, signal\_collection, DNAsignal
 ```
 
 
