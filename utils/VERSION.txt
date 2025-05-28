@@ -25,4 +25,4 @@
 # Author: Generative Simulation\olivier.vitrac@gmail.fr
 # Revision: 2025-05-24
 #
-version="0.36"
+version="0.43"
