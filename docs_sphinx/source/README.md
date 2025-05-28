@@ -756,7 +756,7 @@ This is used to:
 
 **Class Inheritance Diagram**
 
-```mermaid
+```{mermaid}
 graph TD;
 DNACodes
 DNAFullCodes

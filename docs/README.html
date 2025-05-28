@@ -18,6 +18,14 @@
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true, "tags": "ams"}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -871,7 +879,8 @@ x\_b(t) &amp; \text{if } x\_b(t) &gt; T(t) \\
 </tbody>
 </table>
 <p><strong>Class Inheritance Diagram</strong></p>
-<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph TD;
+<pre  class="mermaid">
+        graph TD;
 DNACodes
 DNAFullCodes
 DNApairwiseAnalysis
@@ -892,9 +901,7 @@ object --&gt; generator
 object --&gt; peaks
 object --&gt; signal
 str --&gt; DNAstr
-</pre></div>
-</div>
-</section>
+    </pre></section>
 <hr class="docutils" />
 <section id="example-workflow">
 <h2>📏  9| <strong>Example Workflow</strong><a class="headerlink" href="#example-workflow" title="Link to this heading"></a></h2>
