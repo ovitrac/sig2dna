@@ -1,0 +1,1157 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📡🧬 sig2dna &mdash; sig2dna_core 0.43 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Welcome to sig2dna_core’s documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            sig2dna_core
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">📡🧬 sig2dna</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">📚 Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-components">🧩 1| <strong>Main Components</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#applications">🧠 2| <strong>Applications</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-concepts-overview">🧬 3| <strong>Core Concepts</strong> - Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#input-signal">3.1 <strong>Input Signa</strong>l ➡️</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wavelet-transform">3.2 <strong>Wavelet Transform</strong> 〰</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#relationship-of-w-s-t-with-the-second-derivative-x-t-frac-partial-2-x-t-partial-t-2">3.3 <strong>Relationship of $W_s(t)$ with the second derivative</strong> $x’’(t)=\frac{\partial^2 x(t)}{\partial t^2}$</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbolic-encoding">3.4 <strong>Symbolic Encoding</strong> 🔡</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbolic-compression">3.5 <strong>Symbolic Compression</strong> 🗜️</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#structural-meaning-e-g-yazb-motif">3.6 <strong>Structural Meaning</strong> (e.g., <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> Motif)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interpretation-when-gaussians-overlap">3.7 <strong>Interpretation When Gaussians Overlap</strong> 🌈⃤</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#entropy-and-distance-metrics">🧠 4| <strong>Entropy and Distance Metrics</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#shannon-entropy">4.1 <strong>Shannon Entropy</strong> ⚀⚁⚂⚃⚄⚅</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aligned-sequences-and-excess-entropy-distance">4.2 <strong>Aligned sequences and Excess Entropy Distance</strong>  ↔️</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jensen-shannon-distance">4.3 <strong>Jensen-Shannon Distance</strong> ↔️</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#interpretation">4.3.1 <strong>Interpretation</strong> 💡</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#use-cases">4.3.2 <strong>Use Cases</strong> 🧪</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#jaccard-motif-distance">4.4 <strong>Jaccard Motif Distance</strong> 🔍</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#key-features">4.4.1 Key Features:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#implementation-notes">4.4.2 Implementation Notes:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sinusoidal-encoding-of-symbolic-segments">🌀 5 | <strong>Sinusoidal Encoding of Symbolic Segments</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mathematical-basis">5.1 Mathematical Basis 📐</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decoding-implementation">5.2  Decoding implementation 🗝️</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sinencode-dna-letter-wise-sinusoidal-encoder">5.3 <code class="docutils literal notranslate"><span class="pre">sinencode_dna()</span></code> – Letter-wise Sinusoidal Encoder 🔡</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sindecode-dna-static-decoder-to-dnasignal">5.4 <code class="docutils literal notranslate"><span class="pre">sindecode_dna(...)</span></code> – Static Decoder to DNAsignal 🔁</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#summary-and-error-estimation-varepsilon-hat-t-t">5.5 Summary and error estimation  $\varepsilon = |\hat{t} - t|$  💬</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#baseline-filtering-and-poisson-noise-rejection">🔍 6| <strong>Baseline Filtering and Poisson Noise Rejection</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-median-baseline-subtraction">Step 1 — Median Baseline Subtraction ﹏𓊝﹏</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-poisson-noise-estimation">Step 2 — Poisson Noise Estimation ▶︎ ၊၊||၊|။|||| |</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-bienaymetchebychev-thresholding">Step 3 — Bienaymé–Tchebychev Thresholding 🗑️</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#synthetic-signal-generation">🧪 7| <strong>Synthetic Signal Generation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-classes">📦 8| <strong>Available Classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-workflow">📏  9| <strong>Example Workflow</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization">📊 10| <strong>Visualization</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#motif-detection">🔎 11| <strong>Motif Detection</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alignment">🤝 12| <strong>Alignment</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples-unsorted">🧪 13| <strong>Examples</strong> (unsorted)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">📦 14| <strong>Installation</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#recommended-file-structure">Recommended File Structure 🛠</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-example">Import Example 📥</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies 📦</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#recommendations">💡15| <strong>Recommendations</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#strategy-for-2d-or-multi-modal-chromatography">Strategy for 2D or Multi-modal Chromatography 🧭</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#substance-identification-and-library-matching">Substance Identification and Library Matching 🔍</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#license">📄 | License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contact">📧 | Contact</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sig2dna_core</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">📡🧬 sig2dna</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sig2dna">
+<h1>📡🧬 sig2dna<a class="headerlink" href="#sig2dna" title="Link to this heading"></a></h1>
+<p><strong>Symbolic Signal Transformation for Fingerprinting, Alignment, and AI-Based Classification</strong></p>
+<p>﹏ ﮩ٨ـﮩﮩ٨ـﮩ٨ـﮩﮩ٨ـ﹏﹏</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> is a Python module that transforms <strong>complex 1D analytical signals</strong> into <strong>DNA-like symbolic sequences</strong> via morphological encoding. These symbolic fingerprints enable fast alignment, motif recognition, classification, and high-throughput comparison of signals originating from:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GC-MS</span></code> / <code class="docutils literal notranslate"><span class="pre">GC-FID</span></code> - 🔍low and🔬high resolution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HPLC-MS</span></code>  - 🔍low and🔬high resolution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NMR</span></code> / <code class="docutils literal notranslate"><span class="pre">FTIR</span></code> / <code class="docutils literal notranslate"><span class="pre">Raman</span></code> / <code class="docutils literal notranslate"><span class="pre">RX</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>It supports <strong>large-scale applications</strong> such as identifying unknown substances in ♻️ recycled materials or mixtures containing <strong>NIAS</strong> (<em>Non-Intentionally Added Substances</em>). 🗜️ Symbolic compression (up to 95%+) enables scalable storage and alignment—and seamless integration with <strong>Large Language Models (LLMs)</strong>.</p>
+<p><img alt="si2dna Illustrations" src="_images/sig2dna_banner.png" /></p>
+<p><small>🎨 Credits: Olivier Vitrac</small></p>
+<blockquote>
+<div><p>📚 This approach was developed and tested as part of the PhD thesis:</p>
+<p><strong>Julien Kermorvant</strong>, <em>“Concept of chemical fingerprints applied to the management of chemical risk of materials, recycled deposits and food packaging”</em>, AgroParisTech. 2023.
+https://theses.hal.science/tel-04194172</p>
+</div></blockquote>
+<p>💡 <strong>Note for ND-signals and multi-detector or multi-technique data</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> natively supports signal alignment and comparison across heterogeneous sources. This makes it particularly suited for <strong>ND-signals</strong> (<em>non-destructive signals</em>) or <strong>aggregated data</strong> from different detectors or acquisition techniques.</p>
+<p>➡️ You can seamlessly concatenate or compare signals originating from <strong>different instruments or modes</strong> (e.g., UV + MS, GC×GC, LC-FTIR, etc.) — the symbolic coding abstracts away intensity scales and detector-specific artifacts, focusing instead on <strong>morphological motifs</strong>.</p>
+<blockquote>
+<div><p>Additional recommendations for 🖼️ 2D and 🗂️ multimodal acquisition systems are given at the end of this document 📄.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="table-of-contents">
+<h2>📚 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading"></a></h2>
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<ul class="simple">
+<li><p><a class="reference internal" href="#-1-main-components"><span class="xref myst">🧩 1| <strong>Main Components</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-2-applications"><span class="xref myst">🧠 2| <strong>Applications</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-3-core-concepts---overview"><span class="xref myst">🧬 3| <strong>Core Concepts</strong> - Overview</span></a></p></li>
+<li><p><a class="reference internal" href="#-4-entropy-and-distance-metrics"><span class="xref myst">🧠 4| <strong>Entropy and Distance Metrics</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-5--sinusoidal-encoding-of-symbolic-segments"><span class="xref myst">🌀 5 | <strong>Sinusoidal Encoding of Symbolic Segments</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-6-baseline-filtering-and-poisson-noise-rejection"><span class="xref myst">🔍 6| <strong>Baseline Filtering and Poisson Noise Rejection</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-7-synthetic-signal-generation"><span class="xref myst">🧪 7| <strong>Synthetic Signal Generation</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-8-available-classes"><span class="xref myst">📦 8| <strong>Available Classes</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#--9-example-workflow"><span class="xref myst">📏  9| <strong>Example Workflow</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-10-visualization"><span class="xref myst">📊 10| <strong>Visualization</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-11-motif-detection"><span class="xref myst">🔎 11| <strong>Motif Detection</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-12-alignment"><span class="xref myst">🤝 12| <strong>Alignment</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-13-examples-unsorted"><span class="xref myst">🧪 13| <strong>Examples</strong> (unsorted)</span></a></p></li>
+<li><p><a class="reference internal" href="#-14-installation"><span class="xref myst">📦 14| <strong>Installation</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#15-recommendations"><span class="xref myst">💡15| <strong>Recommendations</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#--license"><span class="xref myst">📄 | License</span></a></p></li>
+<li><p><a class="reference internal" href="#--contact"><span class="xref myst">📧 | Contact</span></a></p></li>
+</ul>
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+</section>
+<hr class="docutils" />
+<section id="main-components">
+<h2>🧩 1| <strong>Main Components</strong><a class="headerlink" href="#main-components" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p>Encodes numerical signal as symbolic sequence (multi-scale wavelet transform)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p>A symbolic string with alignment, entropy, motif search, plotting, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p>Computes and visualizes distances, PCoA, clustering, scatter, dendrogram</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="applications">
+<h2>🧠 2| <strong>Applications</strong><a class="headerlink" href="#applications" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>High-throughput chemical pattern recognition 🆔, -ˋˏ✄┈┈┈┈</p></li>
+<li><p>NIAS tracking in complex matrices ⌬,🔔⚠️</p></li>
+<li><p>AI-compatible signal fingerprints 🫆🔎</p></li>
+<li><p>Classification of recycled material batches ♻️ 👍</p></li>
+<li><p>Detection of structural motif distortions (due to overlapping compounds) 🕵🏻</p></li>
+<li><p>AI-assisted quality control</p></li>
+<li><p>AI-assisted compliance testing 🍽️</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="core-concepts-overview">
+<h2>🧬 3| <strong>Core Concepts</strong> - Overview<a class="headerlink" href="#core-concepts-overview" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p><strong>Morphology Encoding as a “Genetic” Code</strong>. Chemical signals are subjected to signal morphology encoding using continuous, symmetric wavelet transforms. The symbolic sequences are similar to genetic code. It is based on a limited number of letters,  symbols appear grouped into motifs which behave like  codons  As a result, a motif table can be used to recognize n-upplets in ^1^H-NMR, mass spectra, retention times, etc.</p>
+<p><strong>Motif Recognition.</strong> Searches of substances or typical patterns can be carried out via regular expressions or via transition probabilities (A→Z vs. Z→B vs. A→A) over a sliding window. All operations can be carried out in parallel for efficiency and automated treatment.</p>
+<p><strong>Scalable Machine-Learning</strong>. High compression ratios enable the efficient storage of millions of chemical signatures.</p>
+</div></blockquote>
+<section id="input-signal">
+<h3>3.1 <strong>Input Signa</strong>l ➡️<a class="headerlink" href="#input-signal" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>One-dimensional <code class="docutils literal notranslate"><span class="pre">signal</span></code> objects (NumPy-based)</p></li>
+<li><p>Supports synthetic and experimental sources</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">S</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">from_peaks</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>🟥</p>
+</section>
+<section id="wavelet-transform">
+<h3>3.2 <strong>Wavelet Transform</strong> 〰<a class="headerlink" href="#wavelet-transform" title="Link to this heading"></a></h3>
+<p>A <strong>Mexican hat (Ricker)</strong> wavelet is used:</p>
+<p>$$
+\psi_s(t) = \left(1 - \frac{t^2}{s^2}\right)e^{-\frac{t^2}{2s^2}}
+$$</p>
+<p>The Continuous Wavelet Transform (CWT) of a signal $x(t)$ is:</p>
+<p>$$
+W_s(t) = x(t)*\psi_s(t) = \int x(\tau) \cdot \psi_s(t - \tau) , d\tau
+$$</p>
+<p>where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and $*$ the convolution operator.</p>
+<p>🟪</p>
+</section>
+<section id="relationship-of-w-s-t-with-the-second-derivative-x-t-frac-partial-2-x-t-partial-t-2">
+<h3>3.3 <strong>Relationship of $W_s(t)$ with the second derivative</strong> $x’’(t)=\frac{\partial^2 x(t)}{\partial t^2}$<a class="headerlink" href="#relationship-of-w-s-t-with-the-second-derivative-x-t-frac-partial-2-x-t-partial-t-2" title="Link to this heading"></a></h3>
+<p>Applying the <strong>Ricker wavelet (second derivative of a Gaussian</strong>) to the signal $x(t)$ via convolution (i.e., CWT) is equivalent to computing the <strong>second derivative of $x(t)$</strong> smoothed by the Gaussian kernel $g_s(t)$:</p>
+<p>$$
+W_s(t) = x(t)*\psi_s(t) = x(t) * g’‘(t) = x’’(t) * g(t)
+$$</p>
+<details>
+    <summary>Click here for the demonstration</summary>
+<p>The <strong>convolution</strong> of $x(t)$ with the second derivative of $g(t)$ is:</p>
+<p>$(x * g’‘)(t) = \int_{-\infty}^{\infty} x(\tau) g’’(t - \tau) , d\tau$</p>
+<p>We perform a <strong>change of variable</strong>: let $u = t - \tau$, so $\tau = t - u$ and $d\tau = -du$. This gives:</p>
+<p>$(x * g’‘)(t) = \int_{-\infty}^{\infty} x(t - u) g’’(u) , du$</p>
+<p>Now consider the convolution of the <strong>second derivative of $x(t)$</strong> with $g(t)$:</p>
+<p>$(x’’ * g)(t) = \int_{-\infty}^{\infty} x’’(\tau) g(t - \tau) , d\tau$</p>
+<p>Again, perform the <strong>change of variable</strong> $u = t - \tau$, yielding:</p>
+<p>$(x’’ * g)(t) = \int_{-\infty}^{\infty} x’’(t - u) g(u) , du$</p>
+<p><em>Now integrate by parts twice</em>:</p>
+<ul class="simple">
+<li><p><strong>First integration by parts</strong> (assuming $g(u) \to 0$ and $x’(t - u) \to 0$ as $u \to \pm \infty$):</p></li>
+</ul>
+<p>$\int x’‘(t - u) g(u) , du = - \int x’(t - u) g’(u) , du$</p>
+<ul class="simple">
+<li><p><strong>Second integration by part</strong>s:</p></li>
+</ul>
+<p>$-\int x’(t - u) g’(u) , du = \int x(t - u) g’’(u) , du$</p>
+<p>Which yields:</p>
+<p>$(x’’ * g)(t) = \int x(t - u) g’‘(u) , du = (x * g’’)(t)$</p>
+</details>
+<p>🟦</p>
+</section>
+<section id="symbolic-encoding">
+<h3>3.4 <strong>Symbolic Encoding</strong> 🔡<a class="headerlink" href="#symbolic-encoding" title="Link to this heading"></a></h3>
+<p>Each segment of the wavelet-transformed signal is encoded into one of the symbolic codes corresponding to the table of variation $\text{sign}\left(\frac{\partial}{\partial t}W_s(t)\right)$ and $\text{sign}\left(W_s(t)\right)$.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol: $\ell_i$</p></th>
+<th class="head text-center"><p>Variation</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><kbd>A</kbd></p></td>
+<td class="text-center"><p>-↗+</p></td>
+<td><p>Increasing crossing from − to + (zero-crossing)</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd>B</kbd></p></td>
+<td class="text-center"><p>-↗-</p></td>
+<td><p>Increasing negative</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd>C</kbd></p></td>
+<td class="text-center"><p>+↗+</p></td>
+<td><p>Increasing positive</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd>X</kbd></p></td>
+<td class="text-center"><p>+↘+</p></td>
+<td><p>Decreasing positive</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd>Y</kbd></p></td>
+<td class="text-center"><p>-↘-</p></td>
+<td><p>Decreasing negative</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd>Z</kbd></p></td>
+<td class="text-center"><p>+↘-</p></td>
+<td><p>Decreasing crossing from + to − (zero-crossing)</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd>_</kbd></p></td>
+<td class="text-center"><p>──</p></td>
+<td><p>Flat or noise segment</p></td>
+</tr>
+</tbody>
+</table>
+<p>Each segment stores its <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">height</span></code>, and <code class="docutils literal notranslate"><span class="pre">position</span></code>.</p>
+<blockquote>
+<div><p>The full-resolution symbolic sequence is reconstructed by interpolating or repeating these symbols proportionally to their span. A quantitative pseudo-inverse is proposed to reconstruct chemical signals from their code.</p>
+</div></blockquote>
+<p>🟩</p>
+</section>
+<section id="symbolic-compression">
+<h3>3.5 <strong>Symbolic Compression</strong> 🗜️<a class="headerlink" href="#symbolic-compression" title="Link to this heading"></a></h3>
+<p>Symbolic sequences can be compressed and encoded at full resolution via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dna</span><span class="o">.</span><span class="n">encode_dna</span><span class="p">()</span>
+<span class="n">dna</span><span class="o">.</span><span class="n">encode_dna_full</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Resulting in DNA-like sequences like:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&quot;YYAAZZBB_YAZB&quot;
+</pre></div>
+</div>
+<p>🟨</p>
+</section>
+<section id="structural-meaning-e-g-yazb-motif">
+<h3>3.6 <strong>Structural Meaning</strong> (e.g., <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> Motif)<a class="headerlink" href="#structural-meaning-e-g-yazb-motif" title="Link to this heading"></a></h3>
+<p>A single Gaussian peak transformed via the Ricker wavelet results in:</p>
+<ul class="simple">
+<li><p><kbd>Y</kbd>: rising pre-lobe ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷</p></li>
+<li><p><kbd>A</kbd>: left inflection (− to + crossing)</p></li>
+<li><p><kbd>Z</kbd>: right inflection (+ to − crossing)</p></li>
+<li><p><kbd>B</kbd>: trailing decay</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">YAZB</span></code> motif is a <strong>symbolic map of the Ricker wavelet transform (CWT) of a Gaussian</strong>.  An alteration of the pattern  reveals overlapping Gaussians ,  asymmetric signals or more generally interactions and interferences.</p>
+<p>🟧</p>
+</section>
+<section id="interpretation-when-gaussians-overlap">
+<h3>3.7 <strong>Interpretation When Gaussians Overlap</strong> 🌈⃤<a class="headerlink" href="#interpretation-when-gaussians-overlap" title="Link to this heading"></a></h3>
+<p>When two Gaussians overlap, especially at close proximity or with different amplitudes:</p>
+<ol class="arabic simple">
+<li><p>The <strong>central peak becomes asymmetric</strong>.</p></li>
+<li><p>The <strong>Ricker transform</strong> becomes a <strong>superposition</strong> of two wavelets.</p></li>
+<li><p>This causes:</p>
+<ul class="simple">
+<li><p>Emergence of <strong>extra inflection points</strong>,</p></li>
+<li><p>Distortion of the clean <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd>  sequence,</p></li>
+<li><p>Insertion of intermediary motifs (e.g., repeating <kbd>A</kbd>-<kbd>Z</kbd> transitions, shortened or elongated lobes),</p></li>
+<li><p>Possible merging of <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> motifs or partial truncation.</p></li>
+</ul>
+</li>
+</ol>
+<p>So <strong>changes in the symbolic code structure</strong> directly reflect <strong>signal interference</strong>, i.e., <strong>nonlinearity in overlapping peaks</strong>.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="entropy-and-distance-metrics">
+<h2>🧠 4| <strong>Entropy and Distance Metrics</strong><a class="headerlink" href="#entropy-and-distance-metrics" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Sig2dna</span></code> implements several metrics to evaluate the similarity of coded chemical signals. Alignment is essential to compare them while respecting order. It is performed via global/local pairwise alignment using <code class="docutils literal notranslate"><span class="pre">difflib</span></code> or <code class="docutils literal notranslate"><span class="pre">Biopython</span></code>. Excess Entropy and Jensen-Shannon are best choices in the presence of complex mixtures by enabling the detection of small structural changes.</p>
+</div></blockquote>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Distance</p></th>
+<th class="head"><p>Sensitive to</p></th>
+<th class="head"><p>Based on</p></th>
+<th class="head"><p>Alignment needed</p></th>
+<th class="head"><p>Suitable for</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Excess Entropy</strong></p></td>
+<td><p>Symbol order</p></td>
+<td><p>Shannon entropy</p></td>
+<td><p>✅ Yes</p></td>
+<td><p>Structural motif similarity</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Jensen-Shannon</strong></p></td>
+<td><p>Symbol usage</p></td>
+<td><p>Probability dist.</p></td>
+<td><p>❌ No</p></td>
+<td><p>Profile similarity (e.g., peak types)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Levenshtein</strong></p></td>
+<td><p>Edit steps</p></td>
+<td><p>Insertion/Deletion</p></td>
+<td><p>✅ Yes</p></td>
+<td><p>Sequence-level variation</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Jaccard</strong></p></td>
+<td><p>Pattern sets</p></td>
+<td><p>Motif occurrences</p></td>
+<td><p>❌ No</p></td>
+<td><p>Motif overlap, Motif density map</p></td>
+</tr>
+</tbody>
+</table>
+<section id="shannon-entropy">
+<h3>4.1 <strong>Shannon Entropy</strong> ⚀⚁⚂⚃⚄⚅<a class="headerlink" href="#shannon-entropy" title="Link to this heading"></a></h3>
+<p>Entropy provides a <strong>robust, physics-informed metric</strong> for morphological comparisons.  For a symbolic sequence $X$, it reads:
+$$
+H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i)
+$$</p>
+<p>where $p(\ell_i)$ is the frequency of letter $l_i$ in the sequence $X$.</p>
+<p>Entropy $H$ is an extensive quantity verify additivity properties for independent sequences. Its value is accumulated between structured and low structured regions. Entropy is <strong>invariant under translation and stable under small perturbations</strong>, especially when using symbolic codes rather than raw intensities. This makes it ideal for comparing:</p>
+<ul class="simple">
+<li><p>Signals with <strong>shifts in baseline</strong></p></li>
+<li><p>Morphologically similar but <strong>intensity-scaled</strong> signals</p></li>
+<li><p><strong>Partially distorted</strong> sequences (e.g., from mixtures or degradation)</p></li>
+</ul>
+<p>🔴</p>
+</section>
+<section id="aligned-sequences-and-excess-entropy-distance">
+<h3>4.2 <strong>Aligned sequences and Excess Entropy Distance</strong>  ↔️<a class="headerlink" href="#aligned-sequences-and-excess-entropy-distance" title="Link to this heading"></a></h3>
+<p>Let $A$ and $B$ be two symbolic sequences (<code class="docutils literal notranslate"><span class="pre">DNAstr</span></code>) representing two signals. After alignment (<em>e.g.,</em> via global/local pairwise alignment using <code class="docutils literal notranslate"><span class="pre">difflib</span></code> or <code class="docutils literal notranslate"><span class="pre">Biopython</span></code>), we obtain:</p>
+<ul class="simple">
+<li><p>$\tilde{A}$: aligned version of $A$ (with possible gap insertions)</p></li>
+<li><p>$\tilde{B}$: aligned version of $B$</p></li>
+<li><p>$\tilde{A} * \tilde{B}$: a new sequence formed by pairing corresponding symbols (possibly with gaps)</p></li>
+</ul>
+<p>Given sequences $A$ and $B$, the mutually exclusive information or excess entropy is defined as:</p>
+<p>$$
+D_{\text{excess}}(A, B) = H(A) + H(B) - 2 H(\tilde{A} * \tilde{B})
+$$</p>
+<p>where:</p>
+<ul class="simple">
+<li><p>$H(A)$ and $H(B)$ are the Shannon entropies of the original sequences</p></li>
+<li><p>$H(\tilde{A} * \tilde{B})$ is the Shannon entropy of the aligned signal pairs (treated as “joint letters”)</p></li>
+</ul>
+<p>🟠</p>
+</section>
+<section id="jensen-shannon-distance">
+<h3>4.3 <strong>Jensen-Shannon Distance</strong> ↔️<a class="headerlink" href="#jensen-shannon-distance" title="Link to this heading"></a></h3>
+<p>Let $P$ and $Q$ be the <strong>empirical frequency distributions</strong> of symbolic letters in two DNA-like coded signals $A$ and $B$, respectively. That is:</p>
+<ul class="simple">
+<li><p>$P = {p_\ell}$ where $p_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}$</p></li>
+<li><p>$Q = {q_\ell}$ where $q_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}$</p></li>
+</ul>
+<p>Let $M$ be the average distribution:</p>
+<p>$$
+M = \frac{1}{2}(P + Q)
+$$</p>
+<p>Then, the <strong>Jensen–Shannon distance</strong> between $P$ and $Q$ is defined as:</p>
+<p>$$
+D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P | M) + \frac{1}{2} D_{\text{KL}}(Q | M) }
+$$</p>
+<p>where $D_{\text{KL}}$ is the Kullback-Leibler divergence:</p>
+<p>$$
+D_{\text{KL}}(P | M) = \sum_\ell p_\ell \log_2 \left( \frac{p_\ell}{m_\ell} \right)
+$$</p>
+<p>and $m_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.</p>
+<section id="interpretation">
+<h4>4.3.1 <strong>Interpretation</strong> 💡<a class="headerlink" href="#interpretation" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>The <strong>Jensen–Shannon distance</strong> quantifies <strong>how different the symbol usage is</strong> between two signals, <strong>ignoring the order</strong> in which the symbols appear.</p></li>
+<li><p>It is <strong>bounded between 0 and 1</strong>, symmetric, and always finite (even when some symbols are missing in one sequence).</p></li>
+<li><p>A value of <strong>0</strong> indicates identical symbol distributions, while <strong>1</strong> indicates completely disjoint symbol usage.</p></li>
+</ul>
+</section>
+<section id="use-cases">
+<h4>4.3.2 <strong>Use Cases</strong> 🧪<a class="headerlink" href="#use-cases" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Robust against misalignment or noise</strong>: two signals with similar overall composition but different positions will still score low JSD.</p></li>
+<li><p><strong>Useful for clustering</strong> symbolic signals by type or composition, regardless of temporal structure.</p></li>
+<li><p><strong>Complementary to entropy or edit-based distances</strong>, which capture positional or morphological changes.</p></li>
+</ul>
+<p>🟡</p>
+</section>
+</section>
+<section id="jaccard-motif-distance">
+<h3>4.4 <strong>Jaccard Motif Distance</strong> 🔍<a class="headerlink" href="#jaccard-motif-distance" title="Link to this heading"></a></h3>
+<p>The <strong>Jaccard distance</strong> measures the similarity between two symbolic signals by comparing the sets of <strong>motifs</strong> (short symbolic substrings) they contain, without requiring alignment. It is particularly suited for identifying common structural patterns across signals, regardless of their order or spacing.</p>
+<p>Given two sequences $A$ and $B$, and a set of motifs $\mathcal{M}$ of length $k$ (typically 3–5 characters), we define:</p>
+<ul class="simple">
+<li><p>$\mathcal{M}(A)$: set of motifs found in $A$</p></li>
+<li><p>$\mathcal{M}(B)$: set of motifs found in $B$</p></li>
+</ul>
+<p>Then the <strong>Jaccard distance</strong> is defined as:</p>
+<p>$$
+D_{\text{Jaccard}}(A, B) = 1 - \frac{|\mathcal{M}(A) \cap \mathcal{M}(B)|}{|\mathcal{M}(A) \cup \mathcal{M}(B)|}
+$$</p>
+<section id="key-features">
+<h4>4.4.1 Key Features:<a class="headerlink" href="#key-features" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>✅ <strong>No alignment needed</strong> — motif presence is evaluated globally</p></li>
+<li><p>🔍 <strong>Sensitive to local patterns</strong> — detects repeated or shared symbolic structures</p></li>
+<li><p>📈 <strong>Sparse and interpretable</strong> — suitable for heatmaps and clustering</p></li>
+</ul>
+</section>
+<section id="implementation-notes">
+<h4>4.4.2 Implementation Notes:<a class="headerlink" href="#implementation-notes" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Motifs are extracted using a sliding window of fixed length (default: <code class="docutils literal notranslate"><span class="pre">k=4</span></code>)</p></li>
+<li><p>Symbol sequences are assumed to be from the encoded <code class="docutils literal notranslate"><span class="pre">DNAstr</span></code> outputs</p></li>
+<li><p>Motif sets are hashed to speed up large comparisons</p></li>
+<li><p>Jaccard scores are computed pairwise across a collection of symbolic sequences</p></li>
+</ul>
+<p>This metric is especially useful when:</p>
+<ul class="simple">
+<li><p>You expect <strong>common substructures</strong> across signals</p></li>
+<li><p>Signals may differ in length or alignment is unreliable</p></li>
+<li><p>You want to create <strong>density maps of motif usage</strong> or explore <strong>structural similarity clusters</strong></p></li>
+</ul>
+<hr class="docutils" />
+<p>Here is the complete, cleanly formatted <strong>README.md documentation section</strong> for the new <strong>sinusoidal encoder/decoder</strong> functions added to <code class="docutils literal notranslate"><span class="pre">sig2dna</span></code>, including appropriate emojis and explanations:</p>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="sinusoidal-encoding-of-symbolic-segments">
+<h2>🌀 5 | <strong>Sinusoidal Encoding of Symbolic Segments</strong><a class="headerlink" href="#sinusoidal-encoding-of-symbolic-segments" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> integrates a <strong>transformer-style positional encoding</strong> for symbolic segments, enabling conversion of <strong>morphological features</strong> into <strong>fixed-size vectors</strong>. This provides a compact, AI-ready representation of:</p>
+<ul class="simple">
+<li><p>⏱️ Position ($x_0$)</p></li>
+<li><p>📏 Width ($\Delta x$)</p></li>
+<li><p>📶 Amplitude ($\Delta y$)</p></li>
+</ul>
+<blockquote>
+<div><p>💡 This mechanism replaces long repetitions of letters by a <strong>numerically invertible vector encoding</strong>, useful for clustering, attention-based models, or compressed storage.</p>
+</div></blockquote>
+<section id="mathematical-basis">
+<h3>5.1 Mathematical Basis 📐<a class="headerlink" href="#mathematical-basis" title="Link to this heading"></a></h3>
+<p>Let $t \in \mathbb{R}$ be a scalar quantity (e.g., position, width, or height). The sinusoidal encoding $\mathbf{f}(t) \in \mathbb{R}^d$ is defined by:</p>
+<p>$$
+\begin{aligned}
+f_{2k}(t) &amp;= \sin\left(\frac{t}{r^k}\right), \
+f_{2k+1}(t) &amp;= \cos\left(\frac{t}{r^k}\right),
+\end{aligned}
+\quad \text{for } k = 0, \dots, \frac{d}{2}-1
+$$</p>
+<p>where:</p>
+<ul class="simple">
+<li><p>$r = N^{2/d}$ is a frequency base (default: $N = 10000$)</p></li>
+<li><p>$d$ is the number of embedding dimensions for the feature (default: $d = 32$)</p></li>
+<li><p>Each encoded feature (position, width, amplitude) gets its own $d$-vector</p></li>
+</ul>
+<p>Then the full vector for one symbolic segment becomes:</p>
+<p>$$
+\mathbf{v} = [\mathbf{f}(x_0) , | , \mathbf{f}(\Delta x) , | , \mathbf{f}(\Delta y)]
+\in \mathbb{R}^{3d}
+$$</p>
+<p>These vectors are computed for each letter (A, B, …, Z) and grouped accordingly.</p>
+<blockquote>
+<div><p>This encoding maps any scalar value $t$ (e.g., ⏱️, 📏, 📶) onto periodic functions. Due to the nature of sine and cosine, this representation is:</p>
+<ul class="simple">
+<li><p><strong>translation-equivariant</strong> for local displacements (relative order and spacing are preservd),</p></li>
+<li><p><strong>periodic</strong>, so absolute positions wrap with ambiguity (exact localization may be lossy).</p></li>
+</ul>
+<p>The <strong>key mathematical identity</strong> is:</p>
+<p>$$
+f(t + \Delta t) = \mathrm{diag}(f(\Delta t)) \cdot f(t)
+$$</p>
+<p>👉 <strong>shifting</strong> a position $t$ by $\Delta t$ corresponds to a <strong>linear transformation</strong> of its embedding.</p>
+<p>⚠️ To enable <strong>invertibility</strong>, we restrict $x_0$ within a known range $[0, L]$ with resolution determined by $N$ (current implementation), or add explicit absolute anchor</p>
+</div></blockquote>
+<p>🔵〰️〰️⚪️〰️〰️〰️🔴</p>
+</section>
+<section id="decoding-implementation">
+<h3>5.2  Decoding implementation 🗝️<a class="headerlink" href="#decoding-implementation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Encoding</strong>: $t \mapsto [\sin(t/r_k), \cos(t/r_k)]_{k=0}^{d/2 - 1}$</p></li>
+<li><p><strong>Decoding</strong>:</p></li>
+<li><p>Convert $\sin$, $\cos$ pairs into $z_k = \cos + i\sin = e^{ix/r_k}$</p></li>
+<li><p>Unwrap $\angle(z_k)$ → gives $\theta_k \approx t/r_k$</p></li>
+<li><p>Fit $t$ via least-squares:</p></li>
+</ul>
+<p>$$
+x_i = \frac{\sum_k \theta_{ik} \cdot \frac{1}{r_k}}{\sum_k \left(\frac{1}{r_k}\right)^2}
+$$</p>
+<ul class="simple">
+<li><p>Robust, differentiable, and avoids scalar-local minima traps.</p></li>
+</ul>
+<blockquote>
+<div><p>Four decoders have been implemented 🔧:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Stability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'least_squares'</span></code></p></td>
+<td><p>Fast, phase-unwrapped projection</p></td>
+<td><p>✅ Excellent</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'svd'</span></code></p></td>
+<td><p>SVD-regularized LSQ for robust inversion</p></td>
+<td><p>✅ Excellent</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'optimize'</span></code></p></td>
+<td><p>Scalar optimization (slow, fragile)</p></td>
+<td><p>❌ Unstable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'naive'</span></code></p></td>
+<td><p>Mean of phase-projected values (quick + dirty)</p></td>
+<td><p>❌ Wrong shifts</p></td>
+</tr>
+</tbody>
+</table>
+<p>Rules of Thumb 🔧:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Action</p></th>
+<th class="head"><p>Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Use scaling</p></td>
+<td><p>Normalize input to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">10]</span></code></p></td>
+<td><p>Accurate decoding for wide range</p></td>
+</tr>
+<tr class="row-odd"><td><p>Reduce <code class="docutils literal notranslate"><span class="pre">N</span></code></p></td>
+<td><p>Use e.g. <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">1000</span></code></p></td>
+<td><p>Higher range support</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>🔷〰️〰️🔷〰️〰️〰️🔷</p>
+</section>
+<section id="sinencode-dna-letter-wise-sinusoidal-encoder">
+<h3>5.3 <code class="docutils literal notranslate"><span class="pre">sinencode_dna()</span></code> – Letter-wise Sinusoidal Encoder 🔡<a class="headerlink" href="#sinencode-dna-letter-wise-sinusoidal-encoder" title="Link to this heading"></a></h3>
+<p>Encodes all symbolic segments at selected scale(s) into sinusoidal vectors, grouped by letter (<code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, etc.).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dna</span><span class="o">.</span><span class="n">sinencode_dna</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">d_part</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>🔧 Stored outputs:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">self.code_embeddings_grouped</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="mi">4</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">(</span><span class="n">n_A</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span>
+    <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">(</span><span class="n">n_Z</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span>
+    <span class="o">...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">self.code_embeddings_meta</span></code>:
+Metadata required for reconstruction:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;sampling_dt&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+  <span class="s2">&quot;x_label&quot;</span><span class="p">:</span> <span class="s2">&quot;RT&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;x_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;y_label&quot;</span><span class="p">:</span> <span class="s2">&quot;Intensity&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;y_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;a.u.&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;GC-MS peak trace&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;scales&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+  <span class="s2">&quot;d_part&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+  <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="mi">10000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>🔶〰️〰️🔶〰️〰️〰️🔶</p>
+</section>
+<section id="sindecode-dna-static-decoder-to-dnasignal">
+<h3>5.4 <code class="docutils literal notranslate"><span class="pre">sindecode_dna(...)</span></code> – Static Decoder to DNAsignal 🔁<a class="headerlink" href="#sindecode-dna-static-decoder-to-dnasignal" title="Link to this heading"></a></h3>
+<p>Reconstructs a new <code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code> instance from sinusoidal embeddings:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reconstructed</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">sindecode_dna</span><span class="p">(</span>
+    <span class="n">grouped_embeddings</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">code_embeddings_grouped</span><span class="p">,</span>
+    <span class="n">meta_info</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">code_embeddings_meta</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>🧬 Returns a complete <code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code> object with:</p>
+<ul class="simple">
+<li><p>reconstructed <code class="docutils literal notranslate"><span class="pre">codes[scale]</span></code> dictionaries:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">letters</span></code>, <code class="docutils literal notranslate"><span class="pre">widths</span></code>, <code class="docutils literal notranslate"><span class="pre">heights</span></code>, <code class="docutils literal notranslate"><span class="pre">iloc</span></code>, <code class="docutils literal notranslate"><span class="pre">xloc</span></code>, <code class="docutils literal notranslate"><span class="pre">dx</span></code></p></li>
+</ul>
+</li>
+<li><p>empty signal (since waveform cannot be recovered from symbol encoding alone)</p></li>
+</ul>
+<p>🧠 Ideal for:</p>
+<ul class="simple">
+<li><p>Embedding symbolic sequences for AI/ML workflows</p></li>
+<li><p>Comparing motifs without repeating long letters</p></li>
+<li><p>Visualizing symbolic structure in latent spaces</p></li>
+</ul>
+<p>⭐〰️〰️⭐〰️〰️〰️⭐</p>
+</section>
+<section id="summary-and-error-estimation-varepsilon-hat-t-t">
+<h3>5.5 Summary and error estimation  $\varepsilon = |\hat{t} - t|$  💬<a class="headerlink" href="#summary-and-error-estimation-varepsilon-hat-t-t" title="Link to this heading"></a></h3>
+<p>Each scalar $t$ (like $x_0$ or $\Delta x$) is <strong>encoded</strong> as:</p>
+<p>$$
+\mathbf{f}(t) = \left[ \sin\left(\frac{t}{r^0}\right), \cos\left(\frac{t}{r^0}\right), \dots, \sin\left(\frac{t}{r^{d/2-1}}\right), \cos\left(\frac{t}{r^{d/2-1}}\right) \right]
+$$</p>
+<p>with $r = N^{2/d}$, typically $N = 10000$, and $d \sim 32$.</p>
+<p>In decoding, we estimate $t$ by averaging multiple phase inversions:</p>
+<p>$$
+\hat{t} \approx \frac{1}{d/2} \sum_{k=0}^{d/2 - 1} r^k \cdot \theta_k,
+\quad \text{where } \theta_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)
+$$</p>
+<p>Let $L$ be the <strong>maximum span</strong> of $t$ values to encode (e.g., total signal length), and $d$ the embedding size (e.g., 32). Then:</p>
+<ul class="simple">
+<li><p>For $k=0$ (highest freq), $\text{period}_0 \sim 2\pi$</p></li>
+<li><p>For $k = d/2 - 1$, $\text{period}_k \sim 2\pi N$</p></li>
+</ul>
+<p>So the <strong>resolution</strong> behaves like:</p>
+<p>$$
+\varepsilon \sim \frac{L}{N}
+$$</p>
+<p>where $N$ is the frequency base and $L$ is the range of $t$ values being encoded (<em>e.g.</em>, max segment length or signal length)</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Error scales</p></td>
+<td><p>$\varepsilon \sim L / N$</p></td>
+</tr>
+<tr class="row-odd"><td><p>Depends on</p></td>
+<td><p>Signal span $L$, base $N$</p></td>
+</tr>
+<tr class="row-even"><td><p>Tunable by</p></td>
+<td><p>Increasing $d$ or $N$</p></td>
+</tr>
+<tr class="row-odd"><td><p>Accuracy</p></td>
+<td><p>Typically $&lt;0.1%$ %of signal range ($L=500$ and $N=10^4$ gives $\varepsilon \approx \frac{500}{10000} = 0.05$ )</p></td>
+</tr>
+<tr class="row-even"><td><p>Robustness</p></td>
+<td><p>Stable across most morphologies</p></td>
+</tr>
+</tbody>
+</table>
+<p>The errors are acceptable for:</p>
+<ul class="simple">
+<li><p>Motif alignment</p></li>
+<li><p>Classifiers</p></li>
+<li><p>Density maps</p></li>
+<li><p>Latent embeddings</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="baseline-filtering-and-poisson-noise-rejection">
+<h2>🔍 6| <strong>Baseline Filtering and Poisson Noise Rejection</strong><a class="headerlink" href="#baseline-filtering-and-poisson-noise-rejection" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p>The <strong>Ricker wavelet</strong> $\psi_s(t)$ used in <code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> is mathematically the <strong>second derivative of a Gaussian kernel</strong>. As such, applying the Continuous Wavelet Transform (CWT) with $\psi_s(t)$ is equivalent to performing a <strong>second-order differentiation</strong> of the signal $x(t)$ followed by a <strong>Gaussian smoothing</strong>, where the scale parameter $s$ controls the bandwidth.</p>
+<p>This structure makes the CWT intrinsically robust to <strong>low-frequency noise</strong>, <strong>baseline drifts</strong>, and <strong>stationary random noise</strong> (such as column bleeding in GC). Moreover, the symmetry of $\psi_s(t)$ ensures suppression of <strong>linear trends</strong>, enhancing signal clarity without distorting peak structures.</p>
+<p>For ideal Gaussian-shaped peaks, the optimal CWT response is obtained when the scale $s$ matches the peak’s width at its <strong>inflection points</strong>, which corresponds to <strong>half-height</strong> for a Gaussian. This is where the symbolic motif <code class="docutils literal notranslate"><span class="pre">YAZB</span></code> is most cleanly detected.</p>
+<p>However, on real-life signals, maximizing noise rejection by increasing $s$ can blur peak details. Preserving the <strong>morphological fidelity</strong> of peaks while ensuring their <strong>detectability</strong> requires operating <strong>near the optimal scale</strong>, not beyond it. To this end, <code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> integrates a <strong>robust preprocessing methodology</strong> tailored for signals acquired through <strong>accumulation or integration</strong> (i.e., <strong>counting statistics</strong>), such as total ion counts in mass spectrometry or spectroscopic intensities.</p>
+</div></blockquote>
+<section id="step-1-median-baseline-subtraction">
+<h3>Step 1 — Median Baseline Subtraction ﹏𓊝﹏<a class="headerlink" href="#step-1-median-baseline-subtraction" title="Link to this heading"></a></h3>
+<p>Let $x(t)$ be the input signal. We compute a moving median over a window of width $w$:</p>
+<p>$$
+\text{baseline}(t) = \text{median}\left[x(t - w/2), \dots, x(t + w/2)\right]
+$$</p>
+<p>Then, apply a non-negative correction:</p>
+<p>$$
+x_b(t) = \max\left(0,, x(t) - \text{baseline}(t)\right)
+$$</p>
+<p>🏻‎🏼‎🏽‎🏾🏿</p>
+</section>
+<section id="step-2-poisson-noise-estimation">
+<h3>Step 2 — Poisson Noise Estimation ▶︎ ၊၊||၊|။|||| |<a class="headerlink" href="#step-2-poisson-noise-estimation" title="Link to this heading"></a></h3>
+<p>From the baseline-corrected signal $x_b(t)$:</p>
+<ul class="simple">
+<li><p>Compute the local mean $\mu(t)$ and standard deviation $\sigma(t)$ using a uniform filter.</p></li>
+<li><p>Estimate the coefficient of variation:</p></li>
+</ul>
+<p>$$
+\text{cv}(t) = \frac{\sigma(t)}{\mu(t)}
+$$</p>
+<p>Assuming Poisson noise, infer the local Poisson parameter:</p>
+<p>$$
+\lambda(t) = \frac{1}{\text{cv}(t)^2}
+$$</p>
+<p>🏻‎🏼‎🏽‎🏾🏿</p>
+</section>
+<section id="step-3-bienaymetchebychev-thresholding">
+<h3>Step 3 — Bienaymé–Tchebychev Thresholding 🗑️<a class="headerlink" href="#step-3-bienaymetchebychev-thresholding" title="Link to this heading"></a></h3>
+<p>To reject noise, use a threshold $T(t)$ derived from $\lambda(t)$:</p>
+<p>$$
+T(t) = k \cdot \sqrt{10 \lambda(t) \Delta t}
+$$</p>
+<p>Filtered signal is then:</p>
+<p>$$
+x_{bf}(t) =
+\begin{cases}
+x_b(t) &amp; \text{if } x_b(t) &gt; T(t) \
+0 &amp; \text{otherwise}
+\end{cases}
+$$</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="synthetic-signal-generation">
+<h2>🧪 7| <strong>Synthetic Signal Generation</strong><a class="headerlink" href="#synthetic-signal-generation" title="Link to this heading"></a></h2>
+<p>Synthetic signals are modeled as a sum of Gaussian/Lorentzian/Triangle peaks. For Gaussian, they read</p>
+<p>$$
+s(t) = \sum_{i} h_i \cdot \exp\left(-\left(\frac{t - \mu_i}{0.6006 \cdot w_i}\right)^2\right)
+$$</p>
+<p>where:</p>
+<ul class="simple">
+<li><p>$h_i$: peak height</p></li>
+<li><p>$\mu_i$: center</p></li>
+<li><p>$w_i$: peak width (calibrated to Full <strong>Width Half Maximum</strong>)</p></li>
+</ul>
+<p>This is used to:</p>
+<ul class="simple">
+<li><p>Reconstruct symbolic segments</p></li>
+<li><p>Generate artificial mixtures</p></li>
+<li><p>Simulate motifs for clustering or ML training</p></li>
+<li><p>Parses sequences into <code class="docutils literal notranslate"><span class="pre">YAZB</span></code> motif candidates (Mass spectra)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="available-classes">
+<h2>📦 8| <strong>Available Classes</strong><a class="headerlink" href="#available-classes" title="Link to this heading"></a></h2>
+<p><strong>Module</strong> <code class="docutils literal notranslate"><span class="pre">sig2dna_core.signomics.py</span></code></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator</span></code></p></td>
+<td><p>Peak shape generator: Gaussian, Lorentzian, triangle</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p>Peak library with synthesis, parameter control, and arithmetic operations</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p>1D signal class with plotting, peak summation, transformations, and noise</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p>Wrapper for multi-signal analysis: mean, sum, scaling, alignment, synthesis</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p>Symbolic sequence class with entropy, motif search, edit distances</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p>Symbolic encoding/decoding from signals (DNA-like)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p>Tools for clustering, dimensionality reduction, dendrograms, visual metrics</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p>Encoder/decoder for symbolic and numeric data using sinusoidal projections</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
+<td><p>Dictionary-like symbolic representation of triplet codes (letter, width, height)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p>Dictionary-based encoder for resolution-based symbolic repetition</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Class Inheritance Diagram</strong></p>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph TD;
+DNACodes
+DNAFullCodes
+DNApairwiseAnalysis
+DNAsignal
+DNAstr
+SinusoidalEncoder
+generator
+peaks
+signal
+signal_collection
+UserDict --&gt; DNACodes
+dict --&gt; DNAFullCodes
+list --&gt; signal_collection
+object --&gt; DNApairwiseAnalysis
+object --&gt; DNAsignal
+object --&gt; SinusoidalEncoder
+object --&gt; generator
+object --&gt; peaks
+object --&gt; signal
+str --&gt; DNAstr
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="example-workflow">
+<h2>📏  9| <strong>Example Workflow</strong><a class="headerlink" href="#example-workflow" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">signomics</span><span class="w"> </span><span class="kn">import</span> <span class="n">DNAsignal</span>
+
+<span class="c1"># Load and encode</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">D</span><span class="o">.</span><span class="n">encode_dna</span><span class="p">()</span>
+<span class="n">D</span><span class="o">.</span><span class="n">encode_dna_full</span><span class="p">()</span>
+
+<span class="c1"># Visualize</span>
+<span class="n">D</span><span class="o">.</span><span class="n">plot_codes</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># Entropy and distances</span>
+<span class="n">entropy</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseEntropyDistance</span><span class="p">([</span><span class="n">D1</span><span class="p">,</span> <span class="n">D2</span><span class="p">,</span> <span class="n">D3</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="visualization">
+<h2>📊 10| <strong>Visualization</strong><a class="headerlink" href="#visualization" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">signal.plot()</span></code>, <code class="docutils literal notranslate"><span class="pre">signal_collection.plot()</span></code> : plot signals</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_signals()</span></code>: Original + CWT overlay</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_transforms()</span></code>: plot transformed signals a collection of signals</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_codes(scale=4)</span></code>: Colored triangle segments</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DNAstr.plot_mask</span></code>:  plot alignment mask</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DNAstr.plot_alignment</span></code>: plot aligned codes as reconstructed signals</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis.plot_dendrogram()</span></code>, <code class="docutils literal notranslate"><span class="pre">scatter3d(),</span> <span class="pre">scatter(),</span> <span class="pre">heatmap</span></code>, <code class="docutils literal notranslate"><span class="pre">dimension_variance_curve</span></code>:  Cluster and distance views</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="motif-detection">
+<h2>🔎 11| <strong>Motif Detection</strong><a class="headerlink" href="#motif-detection" title="Link to this heading"></a></h2>
+<p>Pattern search: ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">listPat</span><span class="o">=</span><span class="n">D</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">)</span>
+<span class="n">listPat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># show the first match as a signal</span>
+</pre></div>
+</div>
+<p>Extract and plot motifs: ▌│█║▌║▌║</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">extract_motifs</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">,</span> <span class="n">minlen</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="alignment">
+<h2>🤝 12| <strong>Alignment</strong><a class="headerlink" href="#alignment" title="Link to this heading"></a></h2>
+<p>☴ Fast symbolic alignment:⛓️⏱️</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">D1</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">D2</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;bio&quot;</span><span class="p">)</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">codes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">wrapped_alignment</span><span class="p">()</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">html_alignment</span><span class="p">()</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">plot_alignment</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="examples-unsorted">
+<h2>🧪 13| <strong>Examples</strong> (unsorted)<a class="headerlink" href="#examples-unsorted" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sig2dna_core.signomics</span><span class="w"> </span><span class="kn">import</span> <span class="n">peaks</span><span class="p">,</span> <span class="n">signal_collection</span><span class="p">,</span> <span class="n">DNAsignal</span>
+
+<span class="c1"># 1. Peak creation and basic signals 🏔️</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1"># 2. Signal collection 🗃️</span>
+<span class="n">s_noisy</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">s_scaled</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="n">coll</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s_noisy</span><span class="p">,</span> <span class="n">s_scaled</span><span class="p">)</span>
+<span class="n">s_mean</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">s_mean</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3. Synthetic mixtures 🥣</span>
+<span class="n">S</span><span class="p">,</span> <span class="n">pS</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_synthetic</span><span class="p">(</span><span class="n">n_signals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">Sfull</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">dna</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="p">(</span><span class="n">Sfull</span><span class="p">)</span>
+<span class="n">dna</span><span class="o">.</span><span class="n">compute_cwt</span><span class="p">()</span>
+<span class="n">dna</span><span class="o">.</span><span class="n">encode_dna_full</span><span class="p">()</span>
+<span class="n">dna</span><span class="o">.</span><span class="n">plot_codes</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># 4. Alignment of encoded sequences 🧬🧬</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">A</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="n">A</span><span class="o">.</span><span class="n">html_alignment</span><span class="p">()</span>
+<span class="n">A</span><span class="o">.</span><span class="n">plot_alignment</span><span class="p">()</span>
+
+<span class="c1"># 5. Extract motifs (e.g., YAZB segments ⚗️</span>
+<span class="n">pA</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">)</span>
+<span class="n">pAs</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pA</span><span class="p">])</span>
+<span class="n">pAs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1"># 6. Classification from mixtures 🏁</span>
+<span class="n">Smix</span><span class="p">,</span> <span class="n">pSmix</span><span class="p">,</span> <span class="n">idSmix</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_mixtures</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">dnaSmix</span> <span class="o">=</span> <span class="n">Smix</span><span class="o">.</span><span class="n">_toDNA</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">])</span>
+
+<span class="c1"># 7. Excess entropy distance &amp; clustering 🎲</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseEntropyDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;bio&quot;</span><span class="p">)</span>
+<span class="n">D</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Excess Entropy&quot;</span>
+<span class="n">D</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">()</span>
+<span class="n">D</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">D</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">()</span>
+<span class="n">D</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># 8. Jaccard motif distance ↔️</span>
+<span class="n">J</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="o">.</span><span class="n">_pairwiseJaccardMotifDistance</span><span class="p">(</span><span class="n">dnaSmix</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">J</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;YAZB Jaccard&quot;</span>
+<span class="n">J</span><span class="o">.</span><span class="n">dimension_variance_curve</span><span class="p">()</span>
+<span class="n">J</span><span class="o">.</span><span class="n">select_dimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">J</span><span class="o">.</span><span class="n">plot_dendrogram</span><span class="p">()</span>
+<span class="n">J</span><span class="o">.</span><span class="n">scatter3d</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="installation">
+<h2>📦 14| <strong>Installation</strong><a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> toolkit is composed of two core modules that must be used together:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>🧩 Module</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>🧬 <code class="docutils literal notranslate"><span class="pre">sig2dna_core.signomics</span></code></p></td>
+<td><p>Core module implementing symbolic transformation, wavelet coding, and signal comparison (compact code, &gt;4 Klines)</p></td>
+</tr>
+<tr class="row-odd"><td><p>🖨️ <code class="docutils literal notranslate"><span class="pre">sig2dna_core.figprint</span></code></p></td>
+<td><p>Utility module for saving and exporting Matplotlib figures (PDF, PNG, SVG)</p></td>
+</tr>
+</tbody>
+</table>
+<section id="recommended-file-structure">
+<h3>Recommended File Structure 🛠<a class="headerlink" href="#recommended-file-structure" title="Link to this heading"></a></h3>
+<p>For simplicity and consistency, it is recommended to use both modules from a local subfolder (e.g., <code class="docutils literal notranslate"><span class="pre">sig2dna_core</span></code>) within your working directory. You can clone or place the source files accordingly:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>📂 sig2dna/                &lt;- your working directory
+│
+├── 📂 sig2dna_core/       &lt;- folder for core modules
+│   ├── 🖨️ figprint.py     &lt;- figure saving utilities
+│   └── 🧬 signomics.py    &lt;- main symbolic signal processing module (&gt;4 Klines)
+│
+├── 📂 sig2dna_tools/       &lt;- folder for tools (not included in this release)
+│
+├── 📁 images/             &lt;- output folder for saved figures (PDF, PNG, SVG)
+│
+├── 📝 yourscript.py       &lt;- your script using sig2dna_core modules
+│
+├── 📄 test_signomics.py      &lt;- minimal test and plotting script
+├── 📄 casestudy_signomics.py &lt;- in-depth classification and clustering example
+├── 📜 LICENSE
+└── 📑 README.md
+</pre></div>
+</div>
+</section>
+<section id="import-example">
+<h3>Import Example 📥<a class="headerlink" href="#import-example" title="Link to this heading"></a></h3>
+<p>In your scripts, import the components directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sig2dna_core.signomics</span><span class="w"> </span><span class="kn">import</span> <span class="n">peaks</span><span class="p">,</span> <span class="n">signal_collection</span><span class="p">,</span> <span class="n">DNAsignal</span>
+</pre></div>
+</div>
+</section>
+<section id="dependencies">
+<h3>Dependencies 📦<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h3>
+<p>The project relies only on standard scientific Python libraries and a few well-known optional packages. All can be installed with <code class="docutils literal notranslate"><span class="pre">conda</span></code> or <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>pywavelets<span class="w"> </span>seaborn<span class="w"> </span>scikit-learn
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>python-Levenshtein<span class="w"> </span>biopython
+</pre></div>
+</div>
+<p>Or using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>PyWavelets<span class="w"> </span>seaborn<span class="w"> </span>scikit-learn<span class="w"> </span>python-Levenshtein<span class="w"> </span>biopython
+</pre></div>
+</div>
+<blockquote>
+<div><p>✅ <em>No installation script is needed; simply place the module files in your working directory and ensure the structure above is respected.</em></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="recommendations">
+<h2>💡15| <strong>Recommendations</strong><a class="headerlink" href="#recommendations" title="Link to this heading"></a></h2>
+<section id="strategy-for-2d-or-multi-modal-chromatography">
+<h3>Strategy for 2D or Multi-modal Chromatography 🧭<a class="headerlink" href="#strategy-for-2d-or-multi-modal-chromatography" title="Link to this heading"></a></h3>
+<p>For <strong>2D chromatographic systems</strong>, such as GC×GC or LC×LC, or in workflows combining retention time and mass detection, we suggest the following dual encoding strategy:</p>
+<ul class="simple">
+<li><p><strong>Along the retention axis</strong>: perform symbolic encoding of <strong>TIC</strong> (Total Ion Current) or a selected ion trace, to track <strong>retention-based morphology</strong>.</p></li>
+<li><p><strong>Along the $m/z$ axis</strong>: use time-averaged spectra to encode <strong>mass distribution patterns</strong>, capturing molecular-level information.</p></li>
+</ul>
+<p>🔄 This combined coding captures both <strong>substance separation</strong> and <strong>substance identity</strong>, improving both <strong>detection</strong> (peak finding) and <strong>quantification</strong>.</p>
+</section>
+<section id="substance-identification-and-library-matching">
+<h3>Substance Identification and Library Matching 🔍<a class="headerlink" href="#substance-identification-and-library-matching" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> includes signal reconstruction capabilities from the symbolic code, allowing for <strong>approximate substance identification</strong> against reference libraries.</p>
+<p>However, when precise identification is required:</p>
+<blockquote>
+<div><p>✅ It is preferable to <strong>transform the mass spectra of reference substances using <code class="docutils literal notranslate"><span class="pre">sig2dna</span></code></strong> and compare them directly to the coded signal.</p>
+</div></blockquote>
+<p>This enables <strong>symbol-level matching</strong>, which is more robust to noise, shifts, and peak distortion than traditional numerical similarity or library lookup.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="license">
+<h2>📄 | License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>MIT License — 2025 Olivier Vitrac</p>
+</section>
+<section id="contact">
+<h2>📧 | Contact<a class="headerlink" href="#contact" title="Link to this heading"></a></h2>
+<p>Author: Olivier Vitrac
+Contact: <a class="reference external" href="mailto:olivier&#46;vitrac&#37;&#52;&#48;gmail&#46;com">olivier<span>&#46;</span>vitrac<span>&#64;</span>gmail<span>&#46;</span>com</a>
+Version: 0.43 (2025-05-28)</p>
+<hr class="docutils" />
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Sig2dna</span></code> is part of the <strong>Generative Simulation</strong> initiative 🌱: building modular, interpretable <strong>AI-ready</strong> tools for scientific modeling.</p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to sig2dna_core’s documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Olivier Vitrac (Generative Simulation).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

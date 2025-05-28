@@ -47,15 +47,24 @@ Symbolic Encoding and compressed representation
 
 The transformed signal Ts at scale s is converted to a sequence of symbolic letters using the rules:
 
-| Symbol | Description                                       |
-| ------ | ------------------------------------------------- |
-| A      | Monotonic increase crossing from − to +           |
-| B      | Monotonic increase from − to − (no zero crossing) |
-| C      | Monotonic increase from + to +                    |
-| X      | Monotonic decrease from + to + (no zero crossing) |
-| Y      | Monotonic decrease from − to −                    |
-| Z      | Monotonic decrease crossing from + to −           |
-| _      | Zero or noise (after filtering)                   |
++--------+---------------------------------------------------------------+
+| Symbol | Description                                                   |
++========+===============================================================+
+| A      | Monotonic increase crossing from − to +                       |
++--------+---------------------------------------------------------------+
+| B      | Monotonic increase from − to − (no zero crossing)             |
++--------+---------------------------------------------------------------+
+| C      | Monotonic increase from + to +                                |
++--------+---------------------------------------------------------------+
+| X      | Monotonic decrease from + to + (no zero crossing)             |
++--------+---------------------------------------------------------------+
+| Y      | Monotonic decrease from − to −                                |
++--------+---------------------------------------------------------------+
+| Z      | Monotonic decrease crossing from + to −                       |
++--------+---------------------------------------------------------------+
+| _      | Zero or noise (after filtering)                               |
++--------+---------------------------------------------------------------+
+
 
 Each encoded segment is associated with:
 - width: number of points
@@ -122,11 +131,14 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@gmail.com"
-__version__ = "0.41"
+__version__ = "0.43"
 
 # %% Dependencies
 # note:
 # cwt and ricker are depreciated since scipy v1.12, pwywalets is used instead. See: https://docs.scipy.org/doc/scipy-1.12.0/reference/generated/scipy.signal.cwt.html
+#
+# Conda users (from a fresn environment)
+# conda install -c conda-forge tqdm numpy pandas scipy matplotlib ipython ipykernel pywavelets python-Levenshtein biopython scikit-learn, seaborn
 
 # Generic libs
 import os, sys, socket, getpass, datetime, uuid, operator, json, gzip, hashlib, re
@@ -141,11 +153,9 @@ from time import time
 from tqdm import tqdm
 
 # Math, machine-learning and visualization libs
-import random
-import pickle
+import random, pickle
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from numpy.lib.stride_tricks import sliding_window_view
 from scipy.interpolate import interp1d
 from scipy.signal import  medfilt
@@ -154,7 +164,11 @@ from scipy.stats import entropy
 from scipy.spatial.distance import jensenshannon
 from scipy.optimize import minimize_scalar
 from difflib import SequenceMatcher
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm # from matplotlib.cm import get_cmap
+import matplotlib.colors as mcolors
 from matplotlib.patches import Polygon, Rectangle
+from matplotlib.colors import Normalize
 from mpl_toolkits.mplot3d import Axes3D
 from IPython.display import HTML, display
 
@@ -1111,6 +1125,8 @@ class DNACodes(UserDict):
         Decodes sinusoidal embeddings back to symbolic segment structure.
     summary()
         Displays segment or vector counts by scale.
+    plot(figsize=(12, 4), d_part=None, N=None)
+        Plot method for DNACodes
     """
 
     def __init__(self, *args, meta=None, encoded=False, **kwargs):
@@ -1179,7 +1195,63 @@ class DNACodes(UserDict):
             else:
                 print(f"🔡 Scale {scale} → {len(content['letters'])} segments")
 
+    def plot(self, figsize=(12, 4), d_part=None, N=None):
+        """
+        Plot method for DNACodes: visualizes encoded vectors or symbolic segment distribution.
 
+        Parameters
+        ----------
+        figsize : tuple
+            Figure size for the entire plot.
+        d_part : int, optional
+            Number of dimensions per segment part (only for encoded).
+        N : int, optional
+            Frequency base (for metadata or title info).
+        """
+        if not self:
+            print("DNACodes is empty.")
+            return
+        d_part = d_part or self.meta.get("d_part", 32)
+        N = N or self.meta.get("N", 10000)
+        if self.encoded:
+            all_letters = sorted({l for scale_data in self.values() for l in scale_data})
+            n_letters = len(all_letters)
+
+            fig, axes = plt.subplots(n_letters, 3, figsize=(figsize[0], figsize[1] * n_letters), squeeze=False)
+            norm = Normalize(vmin=min(self.keys()), vmax=max(self.keys()))
+            colors = cm.viridis(norm(list(self.keys())))
+
+            for i, letter in enumerate(all_letters):
+                for j, field in enumerate(["start", "width", "height"]):
+                    ax = axes[i][j]
+                    for idx, scale in enumerate(sorted(self.keys())):
+                        data = self[scale].get(letter)
+                        if data is not None:
+                            segment = data[:, j * d_part:(j + 1) * d_part]
+                            for dim in range(min(3, d_part)):  # Plot only 3 components max
+                                ax.plot(segment[:, dim], color=colors[idx], alpha=0.6)
+                    if i == 0:
+                        ax.set_title(field.capitalize())
+                    if j == 0:
+                        ax.set_ylabel(letter)
+            handles = [plt.Line2D([0], [0], color=colors[i], label=f"scale {s}") for i, s in enumerate(sorted(self.keys()))]
+            fig.legend(handles=handles, loc='upper right')
+            fig.suptitle("Encoded DNACodes grouped by letter and field")
+        else:
+            # Plot bar plots for raw letter frequencies
+            fig, axes = plt.subplots(1, len(self), figsize=(figsize[0], figsize[1]))
+            if len(self) == 1:
+                axes = [axes]
+            for ax, (scale, code) in zip(axes, sorted(self.items())):
+                letters = code['letters']
+                unique, counts = np.unique(list(letters), return_counts=True)
+                ax.bar(unique, counts)
+                ax.set_title(f"Scale {scale}")
+                ax.set_ylabel("Frequency")
+            fig.suptitle("Raw DNACodes frequency per letter")
+        plt.tight_layout()
+        plt.show()
+        return fig
 
 class DNAFullCodes(dict):
     """
@@ -1196,6 +1268,8 @@ class DNAFullCodes(dict):
         Optional metadata about sampling, units, labels, etc.
     encoded : bool
         True if this structure has been encoded via a sinusoidal encoder.
+    plot(figsize=(12, 4))
+        Plot method for DNAFullCodes
 
     Example
     -------
@@ -1247,6 +1321,60 @@ class DNAFullCodes(dict):
 
     def __str__(self):
         return "\n".join([f"scale {s} → {len(v)} letters" for s, v in self.items()])
+
+    def plot(self, figsize=(12, 4)):
+        """
+        Plot method for DNAFullCodes: visualizes encoded vectors or DNA string composition.
+
+        Parameters
+        ----------
+        figsize : tuple
+            Figure size for the entire plot.
+        """
+        if not self:
+            print("DNAFullCodes is empty.")
+            return
+        if self.encoded:
+            all_letters = sorted({ch for self in self.values() for ch in self})
+            n_letters = len(all_letters)
+            scales = sorted(self.keys())
+            fig, axs = plt.subplots(n_letters, 1, figsize=(figsize[0], figsize[1]*n_letters), squeeze=False)
+            axs = axs[:, 0]
+            cmap = cm.get_cmap('viridis', len(scales))
+            for i, letter in enumerate(all_letters):
+                ax = axs[i]
+                for j, scale in enumerate(scales):
+                    scale_data = self[scale]
+                    if letter not in scale_data:
+                        continue
+                    arr = scale_data[letter]
+                    x = np.arange(arr.shape[1])
+                    y_mean = arr.mean(axis=0)
+                    ax.plot(x, y_mean, label=f"scale {scale}", color=cmap(j))
+                ax.set_title(f"Letter '{letter}'")
+                ax.set_ylabel("Mean Encoding")
+                ax.set_xlabel("Embedding Dimension")
+                ax.grid(True)
+                ax.legend()
+
+            plt.tight_layout()
+            plt.show()
+            fig.suptitle("Encoded DNAFullCodes grouped by letter")
+        else:
+            all_letters = sorted({c for v in self.values() if not isinstance(v, dict) for c in str(v)})
+            n_letters = len(all_letters)
+            fig, axes = plt.subplots(1, len(self), figsize=(figsize[0], figsize[1]))
+            if len(self) == 1:
+                axes = [axes]
+            for ax, (scale, seq) in zip(axes, sorted(self.items())):
+                unique, counts = np.unique(list(str(seq)), return_counts=True)
+                ax.bar(unique, counts)
+                ax.set_title(f"Scale {scale}")
+                ax.set_ylabel("Frequency")
+            fig.suptitle("Raw DNAFullCodes frequency per letter")
+        plt.tight_layout()
+        plt.show()
+        return fig
 
 
 # %% Main classes DNAsignal, DNAstr, DNApairwiseAnalysis
@@ -1654,6 +1782,7 @@ class DNAsignal:
                                  'xloc':xloc,
                                  'iloc':iloc,
                                  'dx':dx}
+            return self.codes # for chaining
 
     def sinencode_dna(self, scales=None, d_part=32, N=10000):
         """
@@ -1664,10 +1793,12 @@ class DNAsignal:
         """
         if not isinstance(self.codes, DNACodes):
             raise ValueError("self.codes must be a DNACodes instance")
-        if scales is not None:
-            self.codes = DNACodes({s: self.codes[s] for s in scales if s in self.codes},
+        if scales is None:
+            scales = self.scales
+        codes = DNACodes({s: self.codes[s] for s in scales if s in self.codes},
                                   meta=self.codes.meta, encoded=False)
-        self.codes = self.codes.sinencode(d_part=d_part, N=N)
+        self.sincodes = codes.sinencode(d_part=d_part, N=N)
+        return self.sincodes # for chaining
 
     @staticmethod
     def sindecode_dna(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000):
@@ -1779,6 +1910,7 @@ class DNAsignal:
                                    xloc=(code["xloc"][0][0],code["xloc"][-1][-1]),
                                    x_label=self.x_label, x_unit=self.x_unit)
         self.codesfull = result
+        return self.codesfull # for chaining
 
     def sinencode_dna_full(self, d_model=96, N=10000):
         """
@@ -1808,7 +1940,8 @@ class DNAsignal:
             "d_model": d_model,
             "N": N
         })
-        self.codesfull_encoded = self.codesfull.sinencode(d_model=d_model, N=N)
+        self.sincodesfull = self.codesfull.sinencode(d_model=d_model, N=N)
+        return self.sincodesfull # for chaining
 
 
     @staticmethod
@@ -3705,7 +3838,7 @@ class DNApairwiseAnalysis:
 
 
 
-# %% signal and signal_collection classes
+# %% Signal and signal_collection classes
 
 # ------------------------
 # signal
@@ -4982,7 +5115,7 @@ class signal_collection(list):
             scales : list (default=[1,3,4,8,16,32])
         """
         return [DNAsignal(s,scales=scales,encode=encode) for s in self]
-# %% peaks class
+# %% Peaks class
 # ------------------------
 class peaks:
     """
@@ -5357,10 +5490,10 @@ if __name__ == "__main__":
     # Transform
     dna = DNAsignal(Sfull)
     dna.compute_cwt()
-    # dna.transforms.plot()
+    dna.transforms.plot().print("synthetic_transformed_signal",outputfolder)
     dna.encode_dna()
     dna.encode_dna_full()
-    dna.plot_codes(4)
+    dna.plot_codes(4).print("synthetic_DNA_signal",outputfolder)
     A=dna.codesfull[4]
     B=dna.codesfull[2]
     # Alignement
@@ -5378,6 +5511,14 @@ if __name__ == "__main__":
     pA =[s.to_signal() for s in pA_list]
     pAs = signal_collection(*[s.to_signal() for s in pA_list])
     pAs.plot()
+
+    # Sinusoidal enoding
+    dna.sinencode_dna()
+    dna.sinencode_dna_full()
+    dna.codes.plot().print("synthetic_DNA_raw",outputfolder)
+    dna.sincodes.plot().print("synthetic_DNA_raw_sinencoded",outputfolder)
+    dna.codesfull.plot().print("synthetic_DNA_letters",outputfolder)
+    dna.sincodesfull.plot().print("synthetic_DNA_letters_sinencoded",outputfolder)
 
     # Signal mixtures and their classification
     Smix, pSmix, idSmix = signal_collection.generate_mixtures(
@@ -5471,7 +5612,7 @@ if __name__ == "__main__":
     s1code.plot_mask()
     print(s1code.wrapped_alignment(width=1024))
 
-    # --------------------- [SinEnCoder/DeCoder] --------------------------
+    # --------------------- [SinEnCoder/DeCoder demo] --------------------------
     # 1. Construct a test input signal with smooth and jump segments
     x_smooth = np.linspace(0, 20, 100)
     x_jumps = np.array([25, 25, 26, 27, 100, 101, 130])
@@ -5523,7 +5664,7 @@ if __name__ == "__main__":
     plt.show()
     fig.print("Sinusoidal-Encoder-Decoder",outputfolder)
 
-# %% obsolete
+# %% Obsolete
 """
     # Early examples
     x = np.linspace(0, 1000, 1000)
