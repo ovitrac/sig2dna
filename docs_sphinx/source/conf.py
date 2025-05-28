@@ -24,7 +24,7 @@ import sig2dna_core.signomics
 
 # -- Project information -----------------------------------------------------
 
-project = 'sig2dna_core'
+project = '📡🧬sig2dna_core'
 copyright = '2025, Olivier Vitrac (Generative Simulation)'
 author = 'Olivier Vitrac (Generative Simulation)'
 
