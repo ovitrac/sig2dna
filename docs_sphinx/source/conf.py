@@ -29,7 +29,7 @@ copyright = '2025, Olivier Vitrac (Generative Simulation)'
 author = 'Olivier Vitrac (Generative Simulation)'
 
 # The full version, including alpha/beta/rc tags
-release = '0.43'
+release = '0.45'
 
 # -- General configuration ---------------------------------------------------
 
@@ -49,7 +49,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',  # For Google/Numpy style docstrings
     'myst_parser',          # Optional, if you use Markdown in docs
-     'sphinxcontrib.mermaid',
+    'sphinxcontrib.mermaid',
 ]
 extensions += ['sphinx.ext.mathjax']
 
