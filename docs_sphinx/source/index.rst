@@ -6,4 +6,5 @@ Welcome to 📡🧬 sig2dna_core's documentation
    :caption: Contents:
 
    README
+   Pseudo-Inverse_Reconstruction
    api

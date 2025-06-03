@@ -1,0 +1,2728 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to sig2dna_core’s documentation &mdash; 📡🧬sig2dna_core 0.43 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            📡🧬sig2dna_core
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">📡🧬 sig2dna</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">📡🧬sig2dna_core</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to sig2dna_core’s documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/OV/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="welcome-to-sig2dna-cores-documentation">
+<h1>Welcome to sig2dna_core’s documentation<a class="headerlink" href="#welcome-to-sig2dna-cores-documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>… py:module:: sig2dna_core.signomics</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="module-sig2dna-core-signomics-py-from-the-generative-simulation-initiative">
+<h1>Module: sig2dna_core.signomics.py (from the Generative Simulation Initiative)<a class="headerlink" href="#module-sig2dna-core-signomics-py-from-the-generative-simulation-initiative" title="Link to this heading"></a></h1>
+<p>This is the core module of the sig2dna framework, dedicated to transforming numerical chemical signals into DNA-like symbolic representations. The module enables symbolic analysis, fingerprinting, alignment, and classification of complex analytical signals, such as:</p>
+<ul class="simple">
+<li><p>GC-MS / GC-FID</p></li>
+<li><p>HPLC-MS</p></li>
+<li><p>NMR / FTIR / Raman</p></li>
+<li><p>RX and other spectroscopy data</p></li>
+</ul>
+<p>It is designed to facilitate high-throughput pattern recognition, compression, clustering, and AI/ML-based classification. Symbolic transformation is based on <strong>wavelet decomposition (Mexican Hat/Ricker)</strong> and segment encoding into letters (e.g., A, B, C, X, Y, Z). The representation preserves key structural patterns (e.g., peak transitions) across multiple scales and supports entropy-based distances.</p>
+<section id="main-components">
+<h2>Main Components<a class="headerlink" href="#main-components" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>DNAsignal — core class to transform a signal into DNA-like symbolic representation</p></li>
+<li><p>DNAstr — string subclass enabling alignment, entropy analysis, visualization, and reconstruction</p></li>
+<li><p>DNApairwiseAnalysis — distance and clustering toolbox for aligned DNA codes (PCoA, dendrogram, 2D/3D plots)</p></li>
+</ul>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Multi-scale wavelet transform with symbolic encoding</p></li>
+<li><p>Symbolic entropy and mutual information measures</p></li>
+<li><p>Fast symbolic alignment using <code class="docutils literal notranslate"><span class="pre">difflib</span></code> or <code class="docutils literal notranslate"><span class="pre">biopython</span></code></p></li>
+<li><p>Pairwise symbolic distances (Shannon, excess entropy, Jaccard, Jensen-Shannon)</p></li>
+<li><p>Interactive plotting: segments, alignment masks, triangle patches</p></li>
+<li><p>Motif search, alignment visualization, HTML and terminal rendering</p></li>
+<li><p>Dimensionality reduction (MDS), clustering, dendrogram and heatmaps</p></li>
+</ul>
+</section>
+<section id="core-concept">
+<h2>Core Concept<a class="headerlink" href="#core-concept" title="Link to this heading"></a></h2>
+<p>Input Signal</p>
+<ul class="simple">
+<li><p>1D NumPy array S of shape (m,)</p></li>
+<li><p>Data type: np.float64 (default) or np.float32</p></li>
+<li><p>Typically sparse and non-negative, such as GC-MS total ion chromatograms</p></li>
+</ul>
+<p>Wavelet Transform</p>
+<ul class="simple">
+<li><p>CWT with Ricker (Mexican hat) wavelet</p></li>
+<li><p>Scales: $s = 2^0, 2^1,…, 2^n</p></li>
+<li><p>Downsampling by scale (to reduce data volume and capture features at relevant resolutions)</p></li>
+</ul>
+<p>Symbolic Encoding and compressed representation</p>
+<p>The transformed signal Ts at scale s is converted to a sequence of symbolic letters using the rules:</p>
+<p>±——-±————————————————————–+
+| Symbol | Description                                                   |
++========+===============================================================+
+| A      | Monotonic increase crossing from − to +                       |
+±——-±————————————————————–+
+| B      | Monotonic increase from − to − (no zero crossing)             |
+±——-±————————————————————–+
+| C      | Monotonic increase from + to +                                |
+±——-±————————————————————–+
+| X      | Monotonic decrease from + to + (no zero crossing)             |
+±——-±————————————————————–+
+| Y      | Monotonic decrease from − to −                                |
+±——-±————————————————————–+
+| Z      | Monotonic decrease crossing from + to −                       |
+±——-±————————————————————–+
+| _      | Zero or noise (after filtering)                               |
+±——-±————————————————————–+</p>
+<p>Each encoded segment is associated with:</p>
+<ul class="simple">
+<li><p>width: number of points</p></li>
+<li><p>height: amplitude difference</p></li>
+</ul>
+<p>These form the compressed representation</p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>Install all dependencies with:</p>
+<p>conda install pywavelets seaborn scikit-learn
+conda install -c conda-forge python-Levenshtein biopython</p>
+<p>… rubric:: Examples</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>from signomics import DNAsignal
+from signal import signal</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><h1 class="rubric" id="load-a-sampled-signal-e-g-from-gc-ms-raman">Load a sampled signal (e.g., from GC-MS, Raman)</h1>
+<p>S = signal.from_peaks(…)  # or any constructor for sampled signals</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><h1 class="rubric" id="encode-into-dna-like-format">Encode into DNA-like format</h1>
+<p>D = DNAsignal(S, encode=True)
+D.encode_dna()
+D.plot_codes(scale=4)</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><h1 class="rubric" id="compare-samples-and-cluster">Compare samples and cluster</h1>
+<p>Dlist = [DNAsignal(S1, encode=True), DNAsignal(S2, encode=True), …]
+analysis = DNAsignal._pairwiseEntropyDistance(Dlist, scale=4)
+analysis.plot_dendrogram()
+analysis.scatter(n_clusters=3)</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>… rubric:: Notes</p>
+<p>The methodology implemented in this module covers and extends the approaches initially tested during the PhD of Julien Kermorvant.
+“Concept of chemical fingerprints applied to the management of chemical risk of materials, recycled deposits and food packaging”. PhD thesis AgroParisTech. December 2023. https://theses.hal.science/tel-04194172</p>
+</section>
+<section id="maintenance-forking">
+<h2>Maintenance &amp; forking<a class="headerlink" href="#maintenance-forking" title="Link to this heading"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>       $ git init -b main
+       $ gh repo create sig2dna --public --source=. --remote=origin --push
+       $ # alternatively
+       $ # git remote add origin git@github.com:ovitrac/sig2dna.git
+       $ # git branch -M main        # Ensure current branch is named &#39;main&#39;
+       $ # git push -u origin main   # Push and set upstream tracking
+
+       $ tree -P &#39;*.py&#39; -P &#39;*.md&#39; -P &#39;LICENSE&#39; -I &#39;__pycache__|.*&#39; --prune
+       $ pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
+       $ doctoc --github  --maxlevel 2 README.md
+</pre></div>
+</div>
+<p>Author: Olivier Vitrac — olivier.vitrac&#64;gmail.com
+Revision: 2025-06-02</p>
+<p>… py:class:: DNACodes(*args, meta=None, encoded=False, **kwargs)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">~collections.UserDict</span></code></p>
+<p>🧬 DNACodes
+Dictionary-like container for symbolic signal encodings at multiple scales.</p>
+<p>… attribute:: meta</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Metadata describing the signal and encoding parameters.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: encoded</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Whether the content has been sinusoidally encoded.
+
+  :type: bool
+</pre></div>
+</div>
+<p>… method:: sinencode(d_part=32, N=10000)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encodes symbolic segments using transformer-style sinusoidal embeddings.
+</pre></div>
+</div>
+<p>… method:: sindecode(reference_dx=None)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Decodes sinusoidal embeddings back to symbolic segment structure.
+</pre></div>
+</div>
+<p>… method:: summary()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Displays segment or vector counts by scale.
+</pre></div>
+</div>
+<p>… method:: plot(figsize=(12, 4), d_part=None, N=None)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot method for DNACodes
+</pre></div>
+</div>
+<p>… py:method:: DNACodes.plot(figsize=(12, 4), d_part=None, N=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot method for DNACodes: visualizes encoded vectors or symbolic segment distribution.
+
+  :param figsize: Figure size for the entire plot.
+  :type figsize: tuple
+  :param d_part: Number of dimensions per segment part (only for encoded).
+  :type d_part: int, optional
+  :param N: Frequency base (for metadata or title info).
+  :type N: int, optional
+</pre></div>
+</div>
+<p>… py:method:: DNACodes.sindecode(reference_dx=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Decode sinusoidally embedded codes grouped by letter into symbolic segment structure.
+
+  :param reference_dx: Sampling interval used to reconstruct `xloc`. Defaults to meta[&quot;sampling_dt&quot;].
+  :type reference_dx: float, optional
+
+  :returns: Decoded symbolic codes for each scale.
+  :rtype: DNACodes
+</pre></div>
+</div>
+<p>… py:method:: DNACodes.sinencode(d_part=32, N=10000)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encode symbolic segments at each scale using sinusoidal encoding grouped by letter.
+
+  :param d_part: Number of dimensions for each component (start, width, height).
+  :type d_part: int
+  :param N: Frequency base for sinusoidal embedding.
+  :type N: int
+
+  :returns: Encoded version of the current codes, grouped by letter per scale.
+  :rtype: DNACodes
+</pre></div>
+</div>
+<p>… py:method:: DNACodes.summary()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Print the number of encoded vectors or symbolic segments per scale.
+</pre></div>
+</div>
+<p>… py:class:: DNAFullCodes(*args, meta=None, encoded=False, **kwargs)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">dict</span></code></p>
+</section>
+<section id="dnafullcodes-dict">
+<h2>🧬 DNAFullCodes(dict)<a class="headerlink" href="#dnafullcodes-dict" title="Link to this heading"></a></h2>
+<p>Container for symbolic full-resolution DNA-like strings per scale.</p>
+<p>Each entry in the dictionary maps a scale (int) to a DNAstr object or str sequence.
+This class supports future extensions such as sinusoidal encoding or pattern-based decoding.</p>
+<p>… attribute:: meta</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Optional metadata about sampling, units, labels, etc.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: encoded</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  True if this structure has been encoded via a sinusoidal encoder.
+
+  :type: bool
+</pre></div>
+</div>
+<p>… attribute:: plot(figsize=(12, 4))</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot method for DNAFullCodes
+</pre></div>
+</div>
+<p>… rubric:: Example</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>codes = DNAFullCodes({4: ‘YAABZZ’}, meta={“sampling_dt”: 0.5})
+print(codes.summary())</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>… py:method:: DNAFullCodes.plot(figsize=(12, 4))
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot method for DNAFullCodes: visualizes encoded vectors or DNA string composition.
+
+  :param figsize: Figure size for the entire plot.
+  :type figsize: tuple
+</pre></div>
+</div>
+<p>… py:method:: DNAFullCodes.sindecode()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sindecode method
+</pre></div>
+</div>
+<p>… py:method:: DNAFullCodes.sinencode(d_model=96, N=10000)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sinencode method
+</pre></div>
+</div>
+<p>… py:method:: DNAFullCodes.summary()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a brief summary of the full codes per scale.
+
+  :returns: Mapping from scale to summary string or code length.
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:class:: DNApairwiseAnalysis(D, names, DNAsignals, name=None)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to handle pairwise distance analysis, PCoA, clustering, and visualization
+for DNA-coded signals.</p>
+<p>… attribute:: D</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Pairwise excess entropy distance matrix.
+
+  :type: np.ndarray
+</pre></div>
+</div>
+<p>… attribute:: names</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Names of the DNA signals.
+
+  :type: list
+</pre></div>
+</div>
+<p>… attribute:: DNAsignals</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  original DNAsignal objects
+
+  :type: list
+</pre></div>
+</div>
+<p>… attribute:: coords</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Coordinates in reduced space (PCoA).
+
+  :type: np.ndarray
+</pre></div>
+</div>
+<p>… attribute:: dimensions</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Selected dimensions for reduced analysis.
+
+  :type: list
+</pre></div>
+</div>
+<p>… attribute:: linkage_matrix</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Linkage matrix used for hierarchical clustering.
+
+  :type: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.best_dimension(max_dim=10)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Determine optimal dimension by maximizing silhouette score.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.cluster(t=1.0, criterion=‘distance’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Assign cluster labels from linkage matrix.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.compute_linkage(method=‘ward’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute hierarchical clustering.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.dimension_variance_curve(threshold=0.5, plot=True, figsize=(8, 5))
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Computes the cumulative explained variance (based on pairwise distances) as a function of
+  the number of dimensions used (from 1 to n-1). Optionally plots the curve and the point
+  where the threshold (default 0.5) is reached.
+
+  :param threshold: Fraction of total variance to reach (default 0.5).
+  :type threshold: float
+  :param plot: If True, display the variance curve and highlight dhalf.
+  :type plot: bool
+  :param figsize: Size of the figure if plotted.
+  :type figsize: tuple
+
+  :returns: * **dhalf** (*int*) -- Number of dimensions needed to reach the threshold.
+            * **curve** (*list of float*) -- Normalized cumulative variance (in [0, 1]) for dimensions 1 to n-1.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.get_cluster_labels(n_clusters=2, method=‘ward’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Returns cluster labels from hierarchical clustering. If not computed yet, computes linkage.
+
+  :param n_clusters: Number of clusters to assign.
+  :type n_clusters: int
+  :param method: Linkage method to use if recomputing linkage.
+  :type method: str
+
+  :returns: **labels** -- Cluster IDs for each sample.
+  :rtype: np.ndarray of int
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.heatmap(figsize=(10, 8))
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot heatmap of pairwise distances.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.load(path)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Load analysis from file.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.pcoa(n_components=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Perform Principal Coordinate Analysis (PCoA).
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.plot_dendrogram(truncate_mode=None, p=10)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot dendrogram from linkage matrix.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.reduced_distances()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Recompute distances on selected subspace.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.save(path)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Save current analysis to file.
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.scatter(dims=(0, 1), annotate=True, figsize=(8, 6), n_clusters=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  2D scatter plot in selected dimensions with optional cluster-based coloring.
+
+  :param dims: Dimensions to plot (default: (0, 1)).
+  :type dims: tuple
+  :param annotate: If True, annotate points with their index.
+  :type annotate: bool
+  :param figsize: Size of the plot.
+  :type figsize: tuple
+  :param n_clusters: If provided, use clustering to color points.
+  :type n_clusters: int or None
+
+  :returns: **fig**
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.scatter3d(dims=(0, 1, 2), annotate=True, n_clusters=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  3D scatter plot in selected dimensions with optional cluster-based coloring.
+
+  :param dims: Dimensions to plot.
+  :type dims: tuple
+  :param annotate: Annotate points with their index.
+  :type annotate: bool
+  :param n_clusters: If provided, use clustering to color points.
+  :type n_clusters: int or None
+
+  :returns: **fig**
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNApairwiseAnalysis.select_dimensions(dims)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Update active dimensions.
+</pre></div>
+</div>
+<p>… py:class:: DNAsignal(signal_obj, sampling_dt=1.0, dtype=&lt;class ‘numpy.float64’&gt;, encode=False, encoder=[‘compute_cwt’, ‘encode_dna’, ‘encode_dna_full’], scales=[1, 2, 4, 8, 16, 32], x_label=‘index’, x_unit=‘-’, y_label=‘Intensity’, y_unit=‘’, plot=False, plotter=[‘plot_signals’, ‘plot_transforms’, ‘plot_codes’])
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">object</span></code></p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="dnasignal-signal">
+<h1>DNAsignal(signal):<a class="headerlink" href="#dnasignal-signal" title="Link to this heading"></a></h1>
+<p>A class to encode a numerical signal (typically a 1D GC-MS trace, NMR/FTIR/Raman spectra
+or time series) into a DNA-like symbolic representation using wavelet analysis.
+This symbolic coding enables fast comparison, search, and alignment of signal features
+using abstracted patterns (e.g., ‘YAZB’).</p>
+<p>The class supports:</p>
+<ul class="simple">
+<li><p>Continuous Wavelet Transform (CWT) using Ricker wavelets</p></li>
+<li><p>Symbolic conversion of wavelet features to DNA-like letters (A, B, C, X, Y, Z)</p></li>
+<li><p>Visualization of CWTs, symbolic encodings, and signal overlays</p></li>
+<li><p>Reversible decoding of symbolic segments back into approximate signals</p></li>
+<li><p>Substring extraction and matching</p></li>
+<li><p>Storage of multi-scale representations (multi-resolution DNA encoding)</p></li>
+</ul>
+<p>This class is part of the symbolic signal transformation pipeline (<code class="docutils literal notranslate"><span class="pre">sig2dna</span></code>), compatible with <code class="docutils literal notranslate"><span class="pre">signal</span></code>, <code class="docutils literal notranslate"><span class="pre">peaks</span></code>, and <code class="docutils literal notranslate"><span class="pre">signal_collection</span></code>.</p>
+<p>:param signal: An instance of the <code class="docutils literal notranslate"><span class="pre">signal</span></code> class representing a sampled waveform. It must
+have <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, and a valid name or identifier.
+:type signal: signal
+:param encode: Launch encoders = [“compute_cwt”,“encode_dna”,“encode_dna_full”] if True
+:type encode: bool (default = False)
+:param plot: Plot with plotter = [“plot_signals”,“plot_transforms”,“plot_codes”]
+:type plot: bool (default = False)</p>
+<p>… attribute:: signal</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Original numerical signal (values only; x stored via `sampling_dt`).
+
+  :type: np.ndarray
+</pre></div>
+</div>
+<p>… attribute:: dtype</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Data type of the stored signal.
+
+  :type: data-type
+</pre></div>
+</div>
+<p>… attribute:: sampling_dt</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sampling interval along the x-axis.
+
+  :type: float
+</pre></div>
+</div>
+<p>… attribute:: dx</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  The nominal x-resolution of the signal (automatically derived).
+
+  :type: float (depreciated)
+</pre></div>
+</div>
+<p>… attribute:: n</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Number of points in the signal (length of x/y arrays).
+
+  :type: int
+</pre></div>
+</div>
+<p>… attribute:: name</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Name of the signal.
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: x_label</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Label of the x-axis.
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: x_unit</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Unit of the x-axis.
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: y_label</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Label of the y-axis.
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: y_unit</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Unit of the y-axis.
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: scales</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  List of scales used for encoding.
+
+  :type: list[int]
+</pre></div>
+</div>
+<p>… attribute:: codes</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Dictionary-like container of symbolic triplet encodings by scale.
+
+  :type: DNACodes
+</pre></div>
+</div>
+<p>… attribute:: codesfull</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Dictionary-like container of full-resolution symbolic strings per scale.
+
+  :type: DNAFullCodes
+</pre></div>
+</div>
+<p>… attribute:: scales</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Set of scales used in the Continuous Wavelet Transform (powers of 2 by default).
+
+  :type: array-like
+</pre></div>
+</div>
+<p>… attribute:: transforms</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Stores the CWT-transformed signals, each as a `signal` object, indexed by scale.
+
+  :type: signal_collection
+</pre></div>
+</div>
+<p>… attribute:: codes</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Symbolic codes by scale level. Each is a `DNAstr` object representing
+  the symbolic sequence at that scale.
+
+  :type: dict[int, DNAstr]
+</pre></div>
+</div>
+<p>… attribute:: codesfull</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Same as `codes`, but uses full resolution symbolic representation.
+
+  :type: dict[int, DNAstr]
+</pre></div>
+</div>
+<p>… attribute:: peaks</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Optional `peaks` object used to index real peak positions from the signal.
+
+  :type: peaks
+</pre></div>
+</div>
+<p>… attribute:: codebook</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Mapping between symbolic characters (A, B, C, X, Y, Z, _) and wavelet features.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: generator</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Name of the wavelet basis used (default: &#39;ricker&#39;).
+
+  :type: str
+</pre></div>
+</div>
+<p>… method:: normalize_signal(mode=“zscore+shift”)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Normalizes the internal signal (preserves positivity).
+</pre></div>
+</div>
+<p>… method:: compute_cwt(scales=None, normalize=False)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Computes the Continuous Wavelet Transform using the Ricker wavelet
+  and stores the transformed signals in `transforms`.
+</pre></div>
+</div>
+<p>… method:: sparsify_cwt(self, scale: Union[int, float], threshold: float, inplace: bool = True)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Zero out wavelet coefficients below a threshold for a specific scale.
+</pre></div>
+</div>
+<p>… method:: encode_dna()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encodes each scale&#39;s transformed signal into a symbolic `DNAstr` sequence
+  using local maximum coding (ABCXYZ).
+</pre></div>
+</div>
+<p>… method:: encode_dna_full()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encodes signals at each scale using the full encoding scheme, preserving
+  the flat regions (_) and finer symbolic transitions.
+</pre></div>
+</div>
+<p>… method:: plot_signals()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plots signals.
+</pre></div>
+</div>
+<p>… method:: plot_codes(scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plots both the wavelet transform and the symbolic code for the given scale.
+</pre></div>
+</div>
+<p>… method:: plot_transforms</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plots the stored CWT-transformed signals as a signal collection.
+</pre></div>
+</div>
+<p>… method:: plot_scalogram():</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plots a scalogram with two subplots
+</pre></div>
+</div>
+<p>… method:: decode_dna(scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Reconstructs the approximate signal for a given scale from its DNA encoding.
+</pre></div>
+</div>
+<p>… method:: <strong>getitem</strong>(scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Shortcut to access the `DNAstr` object for a specific scale.
+</pre></div>
+</div>
+<p>… method:: summary()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Returns a dictionary summarizing encoded scales and metadata.
+</pre></div>
+</div>
+<p>… method:: has(scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Checks whether a DNAstr encoding exists at the given scale.
+</pre></div>
+</div>
+<p>… method:: pseudoinverse(scales=None, rank=None, return_weights=False, name=None):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Approximates signal reconstruction via pseudo-inverse using stored CWT coefficients
+</pre></div>
+</div>
+<p>… method:: Static pairwise distance methods</p>
+<p>… method:: ——————————–</p>
+<p>… method:: _pairwiseEntropyDistance(list of DNAstr objects, scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a DNApairwiseAnalysis instance based on the mutually exclusive information
+  after DNA/code alignment.
+</pre></div>
+</div>
+<p>… method:: _pairwiseJaccardMotifDistance(list of DNAstr objects, scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a DNApairwisedistance based on the presence/absence of a pattern (default=YAZB)
+</pre></div>
+</div>
+<p>… method:: _pairwiseJensenShannonDistance(list of DNAstr objects, scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a DNApairwisedistance based on the Jensen-Shannon distance of a pattern
+</pre></div>
+</div>
+<p>… method:: _pairwiseLevenshteinDistance(list of DNAstr objects, scale)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a DNApairwisedistance based on the Levenshtein Distance
+</pre></div>
+</div>
+<p>… method:: Methods: Symbolic Encoding</p>
+<p>… method:: ————————–</p>
+<p>… method:: encode_dna(scales=None)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Convert signal into triplet-based symbolic encoding (per scale).
+</pre></div>
+</div>
+<p>… method:: encode_dna_full(scales=None, resolution=‘index’, repeat=True, n_points=None)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Generate full-resolution DNA strings by repeating letters (to `codesfull`).
+</pre></div>
+</div>
+<p>… method:: Methods: Sinusoidal Encoding</p>
+<p>… method:: —————————-</p>
+<p>… method:: sinencode_dna(scales=None, d_part=32, N=10000)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encode symbolic segments (from `codes`) into sinusoidal vectors.
+</pre></div>
+</div>
+<p>… method:: sinencode_dna_full(scales=None, d_part=32, N=10000)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encode symbolic full strings (from `codesfull`) into sinusoidal vectors.
+</pre></div>
+</div>
+<p>… method:: Methods: Sinusoidal Decoding (Static)</p>
+<p>… method:: ————————————-</p>
+<p>… method:: sindecode_dna(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  [static] Decode grouped sinusoidal embeddings → `DNACodes` structure.
+</pre></div>
+</div>
+<p>… method:: sindecode_dna_full(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  [static] Decode full sinusoidal embeddings → `DNAFullCodes` structure.
+</pre></div>
+</div>
+<p>… method:: Methods: Signal Reconstruction</p>
+<p>… method:: ——————————</p>
+<p>… method:: tosignal(scale=None, codes_attr=‘codes’)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Reconstruct approximate signal (as `signal` instance) from symbolic encoding.
+</pre></div>
+</div>
+<p>… rubric:: Examples</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>S = signal.from_peaks(…)  # define a signal
+dna = DNAsignal(S)
+dna.compute_cwt()
+dna.encode_dna()
+dna.codes[4]
+DNAstr(“AAAZZZYY…”)
+dna.plot_codes(4)
+dna.codes[4].find(“YAZB”)</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>… py:method:: DNAsignal.align_with(other, scale=1)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Align symbolic sequences and compute mutual entropy.
+
+  :returns:
+
+            with fields
+                - seq1_aligned (str)
+                - seq2_aligned (str)
+                - aligned_signal (list of tuples)
+                - mutual_entropy (float)
+  :rtype: SimpleNamespace
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.apply_baseline_filter(signal, w=None, k=2, delta_t=1.0)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Apply baseline filtering using moving median and local Poisson-based thresholding.
+
+  :param signal: Input signal (expected to be non-negative or baseline-dominated).
+  :type signal: np.ndarray
+  :param w: Window size for baseline and statistics (must be odd).
+            Defaults to max(11, 2% of signal length).
+  :type w: int or None
+  :param k: Bienaymé-Tchebychev multiplier.
+  :type k: float
+  :param delta_t: Sampling time step.
+  :type delta_t: float
+
+  :returns: **filtered** -- Signal with baseline removed and low-intensity noise suppressed.
+  :rtype: np.ndarray
+
+  .. note:: This method is static, use signal.apply_baseline_filter() whenever appropriate instead.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.compute_cwt(scales=None, apply_filter=False, wavelet=‘mexh’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute Continuous Wavelet Transform (CWT) using the Mexican Hat wavelet.
+
+  :param scales: List of scales (or a single scale) to compute. If None, default to [1, 2, 4, 8, 16].
+  :type scales: list, int, or None
+  :param apply_filter: Whether to apply a baseline filter to the input signal before transforming.
+  :type apply_filter: bool
+  :param wavelet: The name of the PyWavelets-compatible wavelet.
+  :type wavelet: str (default=&#39;mexh&#39;)
+  :param Sets:
+  :param ----:
+  :param self.scales: The list of actual scales used.
+  :type self.scales: list
+  :param self.filtered_signal: Filtered or raw signal used for CWT.
+  :type self.filtered_signal: ndarray
+  :param self.cwt_coeffs: Dictionary mapping each scale to its 1D coefficient array.
+  :type self.cwt_coeffs: dict
+  :param self.transforms: Collection of `signal` objects storing the transformed signals for each scale.
+  :type self.transforms: signal_collection
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.encode_dna(scales=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encode each transformed signal into a symbolic DNA-like sequence of monotonic segments.
+
+  :param scales: List of scales (or a single scale) to encode. If None, use self.scales.
+  :type scales: list, int, or None
+  :param The encoding detects strictly monotonic (or flat) segments and labels them with symbolic letters:
+  :param - A:
+  :type - A: crosses 0 upward (neg → pos)
+  :param - Z:
+  :type - Z: crosses 0 downward (pos → neg)
+  :param - B:
+  :type - B: strictly increasing negative segment
+  :param - Y:
+  :type - Y: strictly decreasing negative segment
+  :param - C:
+  :type - C: strictly increasing positive segment
+  :param - X:
+  :type - X: strictly decreasing positive segment
+  :param - _:
+  :type - _: flat or ambiguous segment
+  :param Sets:
+  :param ----:
+  :param self.codes:
+                     Dictionary mapping each scale to a struct with:
+                         - letters : str (symbolic encoding)
+                         - widths  : list of float (x-span of each segment)
+                         - heights : list of float (y-delta of each segment)
+                         - iloc    : list of index-pair tuples (start, end+1)
+                         - xloc    : list of x-span tuples (x_start, x_end)
+                         - dx      : segment step (dx)
+  :type self.codes: dict
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.encode_dna_full(scales=None, resolution=‘index’, repeat=True, n_points=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Convert symbolic codes into DNA-like strings by repeating letters proportionally to their span.
+
+  :param scales: List of scales (or a single scale) to convert. If None, use self.scales.
+  :type scales: list, int, or None
+  :param resolution:
+                     Repetition mode:
+                         - &#39;index&#39;: repeat letters by number of indices (j - i from iloc)
+                         - &#39;x&#39;    : interpolate letter values over physical x-axis distance (xloc)
+  :type resolution: {&#39;index&#39;, &#39;x&#39;}
+  :param repeat: If True, repeat or interpolate letters to form a string of desired resolution.
+                 If False, return the symbolic sequence without repetition.
+  :type repeat: bool
+  :param n_points: Used only for resolution=&#39;x&#39; to control the number of interpolation points.
+                   If None, defaults to ~10 points per x-unit.
+  :type n_points: int or None
+
+  :returns: * *dict* -- Dictionary mapping each scale to its DNA-like string.
+            * *Sets*
+            * *----*
+            * **self.codesfull** (*dict*) -- Dictionary storing the resulting full DNA-like string per scale.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.entropy_from_string(s)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  return the entropy of a string
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.find_sequence(pattern, scale)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Find occurrences of a specific letter pattern in encoded sequence.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.get_code(scale)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Retrieve encoded data for a specific scale.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.get_entropy(scale)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Calculate Shannon entropy for encoded signal.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.has(scale)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Check if a DNA encoding exists for the specified scale.
+
+  :param scale: The wavelet scale to check.
+  :type scale: int
+
+  :returns: True if a symbolic DNAstr encoding exists at the given scale, False otherwise.
+  :rtype: bool
+
+  .. rubric:: Examples
+
+  &gt;&gt;&gt; dna.has(4)
+  True
+  &gt;&gt;&gt; dna.has(16)
+  False
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.normalize_signal(mode=‘zscore+shift’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Normalize the internal signal using one of several strategies that ensure positivity.
+
+  :param mode: Normalization mode passed to `signal.normalize()`.
+               See `signal.normalize()` for available modes.
+  :type mode: str
+
+  :raises AttributeError: If `signal` attribute is missing or of the wrong type.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.plot_codes(scale, ax=None, colormap=None, alpha=0.4)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot the symbolic DNA-like encoding as colored triangle segments.
+
+  :param scale: The scale at which the signal was encoded.
+  :type scale: int
+  :param ax: Axis to draw on. If None, a new figure is created.
+  :type ax: matplotlib.axes.Axes, optional
+  :param colormap: Custom mapping of letters to colors. Default uses 7 distinct colors.
+  :type colormap: dict, optional
+  :param alpha: Transparency for the patches. Default is 0.4.
+  :type alpha: float
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.plot_scalogram()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot a scalogram with two subplots:
+  - Top: colored image of CWT coefficient amplitudes
+  - Bottom: line curves of selected scales
+
+  :returns: **fig** -- The matplotlib figure object.
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.plot_signals(scales=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot signals.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.plot_transforms(indices=None, **kwargs)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot the stored CWT-transformed signals as a signal collection.
+
+  :param indices: Specific scales or names to plot.
+  :type indices: list[int or str], optional
+  :param kwargs:
+  :type kwargs: passed to `signal_collection.plot`
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.print_alignment(seq1, seq2, width=80)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  print aligned sequences
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.pseudoinverse(scales=None, rank=None, return_weights=False, name=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Approximate signal reconstruction via pseudo-inverse using stored CWT coefficients.
+
+  :param scales: Scales to include in the reconstruction. If None, all scales in self.cwt_coeffs are used.
+  :type scales: list, float, int, or None
+  :param rank: Optional truncation rank for the SVD decomposition (for denoising or dimensionality reduction).
+  :type rank: int or None
+  :param return_weights: If True, also return the weights (contributions) of each scale.
+  :type return_weights: bool
+  :param name: Optional name for the returned signal. Defaults to &quot;pseudoinverse&quot; with included scales.
+  :type name: str or None
+
+  :returns: * **reconstructed_signal** (*signal*) -- Reconstructed signal instance from the pseudo-inverse of the CWT decomposition.
+            * **weights** (*np.ndarray, optional*) -- Returned only if `return_weights=True`, gives the contribution of each scale.
+
+  :raises ValueError: If CWT coefficients are not available.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.reconstruct_aligned_string(seq, aligned)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Fast reconstruction of aligned signals
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.reconstruct_signal(scale, return_signal=True)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Reconstruct the signal from symbolic features (e.g., YAZB).
+
+  :param scale: Scale to use for reconstruction.
+  :type scale: int
+  :param return_signal: If True, return a `signal` object. Else return y array.
+  :type return_signal: bool
+
+  :returns: Reconstructed signal.
+  :rtype: signal or np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.sindecode_dna(grouped_embeddings, reference_dx=1.0, d_part=32, N=10000)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Decode sinusoidal grouped embeddings into a DNACodes structure.
+
+  :param grouped_embeddings: {scale: {letter: np.ndarray}} sinusoidal representations
+  :type grouped_embeddings: dict
+  :param reference_dx: Sampling resolution used to reconstruct xloc and iloc
+  :type reference_dx: float
+  :param d_part: Dimensionality per component (start, width, height)
+  :type d_part: int
+  :param N: Frequency base
+  :type N: int
+
+  :returns: Decoded symbolic structure
+  :rtype: DNACodes
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.sinencode_dna(scales=None, d_part=32, N=10000)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encode `self.codes` into sinusoidal embeddings (grouped by letter).
+
+  Sets:
+      - self.codes (DNACodes): Encoded version of original codes.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.sinencode_dna_full(d_model=96, N=10000)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  🌀 Encode full-resolution DNA-like strings into sinusoidal embeddings grouped by letter.
+
+  :param d_model: Dimensionality of the sinusoidal embedding (must be even).
+  :type d_model: int
+  :param N: Frequency base used for sinusoidal encoding.
+  :type N: int
+  :param Sets:
+  :param ----:
+  :param self.codesfull: Full-resolution symbolic strings at each scale.
+  :type self.codesfull: DNAFullCodes (if not already set)
+  :param self.codesfull_encoded: Sinusoidally encoded version of the full DNA strings.
+  :type self.codesfull_encoded: DNAFullCodes
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.sparsify_cwt(scale=None, threshold=None, inplace=True)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sparsify CWT coefficients by zeroing values below a threshold.
+
+  :param scale: Scale(s) to sparsify. If None, all available scales in self.cwt_coeffs are used.
+  :type scale: int, float, list, or None
+  :param threshold: Absolute value below which coefficients are set to zero.
+                    If None, uses 1% of the maximum absolute value at each scale.
+  :type threshold: float or None
+  :param inplace: If True, modifies current instance. If False, returns a modified copy.
+  :type inplace: bool
+
+  :returns: Modified copy if inplace is False, otherwise None.
+  :rtype: DNAsignal or None
+
+  :raises ValueError: If scale(s) not found in self.cwt_coeffs.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.synthetic_signal(x, peaks, baseline=None)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Generate flexible synthetic signals. (obsolete)
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal.tosignal(scale=None, codes_attr=‘codes’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Reconstruct an approximate signal from symbolic encodings.
+
+  :param scale: Scale level to use (defaults to first available if None).
+  :type scale: int or None
+  :param codes_attr: Attribute from which to decode (&#39;codes&#39; or &#39;codesfull&#39;).
+  :type codes_attr: str
+
+  :returns: An approximate `signal` object reconstructed from symbolic information.
+  :rtype: signal
+</pre></div>
+</div>
+<p>… py:class:: DNAstr(content, dx=1.0, iloc=0, xloc=None, x_label=‘index’, x_unit=‘-’, engine=‘difflib’, engineOpts=None)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+<p>A symbolic DNA-like sequence class supporting alignment, entropy analysis,
+edit-distance metrics, and signal reconstruction from symbolic codes.</p>
+<p>Extended from <code class="docutils literal notranslate"><span class="pre">str</span></code>, it is designed for symbolic transformations of signals
+(e.g., wavelet-encoded GC-MS peaks or time series).</p>
+<section id="main-features">
+<h2>Main Features<a class="headerlink" href="#main-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Supports symbolic operations for pattern recognition, entropy, alignment.</p></li>
+<li><p>Encodes x-resolution (<code class="docutils literal notranslate"><span class="pre">dx</span></code>), original index (<code class="docutils literal notranslate"><span class="pre">iloc</span></code>), and physical x-range (<code class="docutils literal notranslate"><span class="pre">xloc</span></code>).</p></li>
+<li><p>Aligns sequences with visual inspection and rich diffs.</p></li>
+<li><p>Converts symbolic strings into synthetic numerical signals.</p></li>
+</ul>
+</section>
+<section id="operators">
+<h2>Operators<a class="headerlink" href="#operators" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>: concatenate two DNAstr objects</p></li>
+</ul>
+<ul class="simple">
+<li><p>: symbolic difference after alignment (mismatches only)
+== : equality comparison (exact content and dx)</p></li>
+</ul>
+</section>
+<section id="key-methods">
+<h2>Key Methods<a class="headerlink" href="#key-methods" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>init</strong> / <strong>new</strong>      : Constructor with metadata (<code class="docutils literal notranslate"><span class="pre">dx</span></code>, <code class="docutils literal notranslate"><span class="pre">iloc</span></code>, <code class="docutils literal notranslate"><span class="pre">xloc</span></code>)</p></li>
+<li><p>align(other)            : Align this DNAstr to another, update mask and aligned views</p></li>
+<li><p>wrapped_alignment()     : Pretty terminal view of the alignment with colors and symbols</p></li>
+<li><p>html_alignment()        : Rich HTML display of the alignment (Jupyter)</p></li>
+<li><p>plot_alignment()        : Visualize waveform alignment with symbolic signals</p></li>
+<li><p>plot_mask()             : Color block plot showing matches/mismatches/gaps</p></li>
+<li><p>find(pattern, regex=False) : Search for symbolic patterns with fuzziness or regex</p></li>
+<li><p>to_signal()             : Convert symbolic code into synthetic signal (NumPy)</p></li>
+<li><p>vectorized()            : Convert string to integer codes</p></li>
+<li><p>summary()               : Print entropy and character frequencies</p></li>
+<li><p>mutation_counts         : Property: {‘matches’, ‘mismatches’, ‘indels’}</p></li>
+<li><p>entropy                 : Property: Shannon entropy</p></li>
+<li><p>mutual_entropy(other)   : Mutual entropy of two sequences</p></li>
+<li><p>excess_entropy(other)   : Excess entropy H1 + H2 - 2 * H12</p></li>
+<li><p>jensen_shannon(other)   : Jensen-Shannon divergence</p></li>
+<li><p>jaccard(other)          : Jaccard similarity</p></li>
+<li><p>alignment_stats         : Property: Match, substitution, gap counts</p></li>
+<li><p>score(normalized=True) : Alignment score (fraction of matches)</p></li>
+<li><p>has(other: str)         : Check if a pattern or substring exists</p></li>
+</ul>
+<p>… attribute:: dx</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Average resolution along the x-axis.
+
+  :type: float
+</pre></div>
+</div>
+<p>… attribute:: iloc</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Positional index or index range in the source DNA string.
+
+  :type: int or tuple of int
+</pre></div>
+</div>
+<p>… attribute:: xloc</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Corresponding x-value(s) for the symbolic sequence.
+
+  :type: float or tuple of float
+</pre></div>
+</div>
+<p>… attribute:: aligned_with</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Aligned form of self with insertions (spaces) where needed.
+
+  :type: str or None
+</pre></div>
+</div>
+<p>… attribute:: other_copy</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Aligned form of the reference sequence.
+
+  :type: str or None
+</pre></div>
+</div>
+<p>… attribute:: ref_hash</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  SHA256 hash of the aligned reference sequence.
+
+  :type: str or None
+</pre></div>
+</div>
+<p>… attribute:: mask</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Alignment mask: &#39;=&#39; for matches, &#39;*&#39; for substitutions, &#39; &#39; for gaps.
+
+  :type: str or None
+</pre></div>
+</div>
+<p>… attribute:: engine</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Alignment engine: &#39;difflib&#39; or &#39;bio&#39;.
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: engineOpts</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Options passed to the alignment engine.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… rubric:: Examples</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>s1 = DNAstr(“YYAAZZBB”, dx=0.5)
+s2 = DNAstr(“YAABZBB”, dx=0.5)
+s1.align(s2)
+print(s1.wrapped_alignment(40))
+s1.plot_alignment()
+segments = s1.find(“YAZB”)
+segments[0].to_signal().plot()</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>… py:method:: DNAstr.align(other, engine=None, engineOpts=None, forced=False)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Align this DNAstr sequence to another, allowing insertions/deletions to maximize matches.
+
+  :param other: Another DNAstr object to align with.
+  :type other: DNAstr
+  :param engine:
+                 Alignment engine to use:
+                     - &#39;difflib&#39;: uses difflib.SequenceMatcher (fast, approximate).
+                     - &#39;bio&#39;   : uses Bio.Align.PairwiseAligner (biologically inspired global alignment).
+                 If None, defaults to self.engine.
+  :type engine: {&#39;difflib&#39;, &#39;bio&#39;} or None
+  :param engineOpts: Dictionary of alignment parameters for the selected engine.
+  :type engineOpts: dict, optional
+  :param forced: If True, allow alignment even if `dx` values differ. If False (default), a mismatch in
+                 `dx` will raise an error to prevent incorrect alignment of signals with different sampling.
+  :type forced: bool
+
+  :returns: * **aligned_self** (*str*) -- Aligned version of this sequence (with gaps inserted where needed).
+            * **aligned_other** (*str*) -- Aligned version of the other sequence.
+
+  .. rubric:: Notes
+
+  The alignment is symmetric and permanent: both sequences are aligned with
+  gaps introduced (spaces) to preserve positional correspondence. A hash of
+  the aligned `other` sequence is stored to detect redundant alignments.
+
+  A match mask (`self.mask`) is generated with:
+      &#39;=&#39; for exact matches,
+      &#39;*&#39; for mismatches (substitutions),
+      &#39; &#39; for insertions/deletions (gaps).
+
+  The method updates:
+      - self.aligned_with
+      - self.other_copy
+      - self.mask
+      - self.ref_hash
+
+  Example:
+  --------
+  S1 = DNAstr(&quot;AABBCC&quot;)
+  S2 = DNAstr(&quot;AACBCC&quot;)
+  S1.align(S2,&quot;difflib&quot;)
+  print(S1.mask)
+  print(S1.wrapped_alignment())
+  ==*===
+  AACBCC
+  || |||
+  AABBCC
+
+  S1 = DNAstr(&quot;AABBCC&quot;)
+  S2 = DNAstr(&quot;AACBCC&quot;)
+  S1.align(S2,&quot;bio&quot;)
+  print(S1.mask)
+  print(S1.wrapped_alignment())
+  ==  ==
+  AAB·CC
+  ||  ||
+  AA·BCC
+
+  S1 = DNAstr(&quot;AABBCCXYZZZ&quot;)
+  S2 = DNAstr(&quot;AACBCCZZXXX&quot;)
+  S1.align(S2,&quot;bio&quot;)
+  print(S1.mask)
+  print(S1.wrapped_alignment())
+  == *   ==
+  AABCC··ZZ
+  ||     ||
+  AA·B·CCZZ
+</pre></div>
+</div>
+<p>… py:property:: DNAstr.aligned_code
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  return aligned code
+</pre></div>
+</div>
+<p>… py:property:: DNAstr.alignment_stats
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Retrun DNAstr alignment statistics
+</pre></div>
+</div>
+<p>… py:property:: DNAstr.entropy
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the Shannon entropy of the DNAstr sequence
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.excess_entropy(other)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the excess Shannon entropy of two DNAstr sequences H(A)+H(B)-2*H(AB)
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.extract_motifs(pattern=‘YAZB’, minlen=4, plot=True)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Extract and analyze YAZB motifs (canonical and distorted) from the symbolic sequence.
+
+  :param pattern: Canonical motif pattern (default is &#39;YAZB&#39;).
+  :type pattern: str
+  :param minlen: Minimum motif length to be considered valid.
+  :type minlen: int
+  :param plot: If True, generate a motif density plot using xloc or sequence index.
+  :type plot: bool
+
+  :returns: Table of detected motifs with start/end positions, length, and classification.
+  :rtype: pd.DataFrame
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.find(pattern, regex=False)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Finds all fuzzy (or regex-based) occurrences of a DNA-like sequence pattern.
+
+  :param pattern: The symbolic sequence to search for (e.g., &quot;YAZB&quot;).
+  :type pattern: str
+  :param regex: If False (default), interprets pattern as symbolic and inserts &#39;.&#39; between characters.
+                If True, uses the raw pattern as a regular expression.
+  :type regex: bool, optional
+
+  :returns:
+
+            A list of DNAstr slices with attributes:
+                - iloc: (start_idx, end_idx)
+                - xloc: (x_start, x_end)
+                - width: segment width
+  :rtype: list of DNAstr
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.html_alignment()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Render the alignment using HTML with color coding:
+  - green: match
+  - blue: gap
+  - red: substitution
+
+  :returns: Displays HTML directly in Jupyter/Notebook environments.
+  :rtype: None
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.jaccard(other)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the Jaccard distance between two DNAstr sequences.
+
+  :param other: The other DNAstr sequence to compare with.
+  :type other: DNAstr
+
+  :returns: Jaccard distance: 1 - (intersection / union) of unique letters.
+  :rtype: float
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.jensen_shannon(other, base=2)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the Jensen-Shannon distance between self and another DNAstr.
+
+  :param other: Another DNAstr instance.
+  :type other: DNAstr
+  :param base: Base for the logarithm (default: 2)
+  :type base: float, optional
+
+  :returns: Jensen-Shannon distance.
+  :rtype: float
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.levenshtein(other, use_alignment=True, engine=None, engineOpts=None, forced=False)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the Levenshtein distance between this DNAstr and another one.
+
+  :param other: Another DNAstr object to compare against.
+  :type other: DNAstr
+  :param use_alignment: If True, uses the aligned sequences (computed if necessary).
+                        If False, compares the raw sequences directly.
+  :type use_alignment: bool, default=True
+  :param engine: Alignment engine to use if alignment is needed.
+  :type engine: {&#39;difflib&#39;, &#39;bio&#39;}, optional
+  :param engineOpts: Parameters for the selected alignment engine.
+  :type engineOpts: dict, optional
+  :param forced: Force alignment even if dx values differ.
+  :type forced: bool, default=False
+
+  :returns: **dist** -- Levenshtein distance between the two sequences (aligned or raw).
+  :rtype: int
+
+  .. rubric:: Examples
+
+  A = DNAstr(&quot;YAZBZAY&quot;)
+  B = DNAstr(&quot;YAZBZZY&quot;)
+  A.levenshtein_distance(B, use_alignment=False)  # raw
+  A.levenshtein_distance(B, use_alignment=True, engine=&quot;bio&quot;)  # aligned
+</pre></div>
+</div>
+<p>… py:property:: DNAstr.mutation_counts
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Counts of insertions, deletions/substitutions, and matches.
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.mutual_entropy(other=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the Shannon mutual entropy of two DNAstr sequences from their aligned segments
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.plot_alignment(dx=1.0, dy=1.0, width=20, normalize=True)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot a block alignment view of two DNAstr sequences with color-coded segments.
+
+  :param dx: Horizontal step between segments (defaults to 1.0).
+  :type dx: float
+  :param dy: Vertical height increment for symbolic waveform visualization.
+  :type dy: float
+  :param width: Number of characters per row (line wrapping).
+  :type width: int
+
+  :returns: * *matplotlib.figure.Figure*
+            * *matplotlib.axes.Axes*
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.plot_mask()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot a color-coded mask of the alignment between sequences.
+
+  :returns: Matplotlib figure of the alignment mask.
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.score(normalized=True)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return an alignment score, optionally normalized.
+
+  :param normalized: If True (default), return score as a fraction of total aligned positions.
+  :type normalized: bool
+
+  :returns: Alignment score.
+  :rtype: float
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.summary()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Summarize the DNAstr with key stats: length, unique letters, entropy, etc.
+
+  :returns: Dictionary containing length, letter frequency, Shannon entropy, and dx.
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.to_signal()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Converts the symbolic DNA sequence into a synthetic NumPy array mimicking the original wavelet-transformed signal.
+
+  Rules per letter:
+      - &#39;A&#39;: Crosses zero upward → linear from -1 to +1, zero in the middle
+      - &#39;Z&#39;: Crosses zero downward → linear from +1 to -1, zero in the middle
+      - &#39;B&#39;: Increasing negative → from -1 to 0
+      - &#39;Y&#39;: Decreasing negative → from 0 to -1
+      - &#39;C&#39;: Increasing positive → from 0 to +1
+      - &#39;X&#39;: Decreasing positive → from +1 to 0
+      - &#39;_&#39;: Flat at 0
+
+  :returns: Synthetic signal array matching the symbolic encoding.
+  :rtype: numpy.ndarray
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.vectorized(codebook={‘A’: 1, ‘B’: 2, ‘C’: 3, ‘X’: 4, ‘Y’: 5, ‘Z’: 6, ‘_’: 0})
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Map the DNAstr content to an integer array using a codebook.
+
+  :param codebook: Dictionary mapping characters to integer values.
+                   default = {&quot;A&quot;:1,&quot;B&quot;:2,&quot;C&quot;:3,&quot;X&quot;:4,&quot;Y&quot;:5,&quot;Z&quot;:6,&quot;_&quot;:0}
+                   None will generate a codebook based on current symbols only
+  :type codebook: dict, optional
+
+  :returns: Vectorized integer representation of the string.
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: DNAstr.wrapped_alignment(width=80, colors=True)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a line-wrapped alignment view (multi-line), optionally color-coded
+  for terminal/IPython usage (Spyder, Jupyter).
+
+  :param width: Number of characters per line in wrapped display.
+  :type width: int
+  :param colors: If True, use ANSI codes to highlight differences. May be overridden
+                 if terminal does not support ANSI (e.g., Spyder).
+  :type colors: bool
+
+  :returns: Wrapped, optionally colorized alignment.
+  :rtype: str
+</pre></div>
+</div>
+<p>… py:class:: SinusoidalEncoder(d_model=96, N=10000, dtype=&lt;class ‘numpy.float32’&gt;)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>🌀 Generic sinusoidal encoder/decoder supporting symbolic and numeric sequences.</p>
+<p>Each scalar value is transformed into a vector of dimension <code class="docutils literal notranslate"><span class="pre">d_model</span></code>, where alternating components
+contain sinusoidal features of increasing frequency. The mapping is based on:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>   For k = 0 to d_model/2 - 1:
+       f_{2k}(x)   = sin(x / r_k)
+       f_{2k+1}(x) = cos(x / r_k)
+
+   where r_k = N^(2k / d_model)
+</pre></div>
+</div>
+<p>This representation preserves relative positions and scaling in a smooth, topologically faithful
+embedding space. The class supports multiple decoding strategies, scaling logic, residual control,
+and round-trip verification.</p>
+<p>:param d_model: Dimensionality of each sinusoidal encoding (must be even).
+:type d_model: int
+:param N: Frequency base for the positional encoding.
+:type N: int
+:param dtype: Output data type (default: np.float32).
+:type dtype: np.dtype</p>
+<p>… attribute:: d_model</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Embedding dimensionality.
+
+  :type: int
+</pre></div>
+</div>
+<p>… attribute:: N</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Frequency base.
+
+  :type: int
+</pre></div>
+</div>
+<p>… attribute:: dtype</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Data type for encoded output.
+
+  :type: np.dtype
+</pre></div>
+</div>
+<p>… attribute:: _last_input_type</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Last input type passed to `encode`.
+
+  :type: type
+</pre></div>
+</div>
+<p>… attribute:: _last_input_length</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Last input length passed to `encode`.
+
+  :type: int
+</pre></div>
+</div>
+<p>… attribute:: _scale</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Scaling factor applied to normalize input values.
+
+  :type: float or None
+</pre></div>
+</div>
+<p>… attribute:: _auto_scale_enabled</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Whether autoscaling is enabled.
+
+  :type: bool
+</pre></div>
+</div>
+<p>… attribute:: _decode_residual_tolerance</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Tolerance for residual error checking in decode verification.
+
+  :type: float
+</pre></div>
+</div>
+<p>… method:: encode(values, scale=None)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encodes a sequence of values (scalar or symbolic) into sinusoidal embeddings.
+</pre></div>
+</div>
+<p>… method:: decode(embedding, method=‘least_squares’, return_error=False)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Decodes the embedding to the original values using the selected inverse method.
+</pre></div>
+</div>
+<p>… method:: fit_encoder(values, target_range=10.0)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Automatically estimates and stores a scaling factor to normalize input values.
+</pre></div>
+</div>
+<p>… method:: set_decode_tolerance(tol)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sets the residual error threshold above which decoding results will raise a warning.
+</pre></div>
+</div>
+<p>… method:: verify_roundtrip(values, method=‘least_squares’, scale=‘auto’, verbose=True, return_details=False)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Checks round-trip accuracy of encoding and decoding. Warns if residuals exceed tolerance.
+</pre></div>
+</div>
+<p>… method:: sinencode_dna_grouped(code, d_part, N)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encodes a `codes` entry (triplet-based segments grouped by letter).
+</pre></div>
+</div>
+<p>… method:: sindecode_dna_grouped(grouped, reference_code, d_part, N)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Reconstructs code dictionary from grouped sinusoidal embeddings.
+</pre></div>
+</div>
+<p>… method:: sinencode_dnafull_grouped(dnafull, d_model, N)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encodes `codesfull` entries (strings) into grouped embeddings.
+</pre></div>
+</div>
+<p>… method:: sindecode_dnafull_grouped(grouped)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Decodes grouped full embeddings back to `DNAstr`.
+</pre></div>
+</div>
+<p>… method:: Static Methods</p>
+<p>… method:: ————–</p>
+<p>… method:: to_complex(emb)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Convert a sinusoidal embedding (sin, cos) into complex numbers using Euler&#39;s identity.
+</pre></div>
+</div>
+<p>… method:: complex_distance(emb1, emb2, norm=‘L2’)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute pointwise distances between two embeddings in the complex sinusoidal space.
+</pre></div>
+</div>
+<p>… method:: angle_difference(emb)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute angular differences Δθ between consecutive elements of a sinusoidal embedding.
+</pre></div>
+</div>
+<p>… method:: phase_alignment(emb, ref)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Align the phase of an embedding `emb` to a reference embedding `ref` using complex phase factors.
+</pre></div>
+</div>
+<p>… method:: pairwise_similarity(emb, metric=‘cosine’)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute a pairwise similarity or distance matrix (&#39;cosine&#39; or &#39;L2&#39;) between all elements.
+</pre></div>
+</div>
+<p>… method:: group_centroid(emb, labels=None, return_std=False)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the centroid (and optionally standard deviation) of groups in complex embedding space.
+</pre></div>
+</div>
+<p>… method:: phase_unwrap(emb, normalize=False)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Perform phase unwrapping (à la Fourier) on the sinusoidal embedding, optionally normalized to [0, 1].
+</pre></div>
+</div>
+<p>… method:: Example (without scaling)</p>
+<p>… method:: ————————–</p>
+<p>… method:: &gt;&gt;&gt; s = SinusoidalEncoder(8, 100)  # poor encoder (8 dimensions, high N)</p>
+<p>… method:: &gt;&gt;&gt; a = s.encode([0, 1, 1, 2, 2, 3, 4, 5, 6, 6])</p>
+<p>… method:: &gt;&gt;&gt; s.decode(a)</p>
+<p>… method:: Output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  [0.0,
+   1.0000000072927564,
+   1.0000000072927564,
+   1.9999999989612762,
+   1.9999999989612762,
+   2.9999999881593866,
+   3.9999997833243714,
+   5.000000005427378,
+   5.999999552487366,
+   5.999999552487366]
+</pre></div>
+</div>
+<p>… method:: Notes:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  - Use lower N (e.g., N = 1000) to compress phase variation and allow larger input range.
+  - Use scaling (via `fit_encoder()` or `scale=`) for large or high-resolution inputs.
+</pre></div>
+</div>
+<p>… method:: Example (with scaling)</p>
+<p>… method:: ———————-</p>
+<p>… method:: &gt;&gt;&gt; s2 = SinusoidalEncoder(128, 10000)</p>
+<p>… method:: &gt;&gt;&gt; a2 = s2.encode([0, 1, 1, 2, 2, 3, 4, 5, 6, 6, 7, 7, 7, 8, 8, 8, 8, 16, 99, 130], scale=100)</p>
+<p>… method:: &gt;&gt;&gt; s2.decode(a2)</p>
+<p>… method:: Output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  [0.0,
+   1.0000000127956146,
+   1.0000000127956146,
+   1.999999922004248,
+   1.999999922004248,
+   2.999999960015871,
+   3.9999999840341935,
+   5.000000076901334,
+   5.999999935247362,
+   5.999999935247362,
+   6.999999909109446,
+   6.999999909109446,
+   6.999999909109446,
+   8.000000084954152,
+   8.000000084954152,
+   8.000000084954152,
+   8.000000084954152,
+   16.000000431016925,
+   99.00000148970207,
+   129.99999823222058]
+</pre></div>
+</div>
+<p>… method:: Advanced Example</p>
+<p>… method:: —————–</p>
+<p>… method:: import numpy as np</p>
+<p>… method:: import matplotlib.pyplot as plt</p>
+<p>… method:: &gt;&gt;&gt; # 1. Construct a test input signal with smooth and jump segments</p>
+<p>… method:: &gt;&gt;&gt; x_smooth = np.linspace(0, 20, 100)</p>
+<p>… method:: &gt;&gt;&gt; x_jumps = np.array([25, 25, 26, 27, 100, 101, 130])</p>
+<p>… method:: &gt;&gt;&gt; x = np.concatenate([x_smooth, x_jumps])</p>
+<p>… method:: &gt;&gt;&gt; # 2. Initialize encoder with high d_model and N</p>
+<p>… method:: &gt;&gt;&gt; s = SinusoidalEncoder(d_model=128, N=10000)</p>
+<p>… method:: &gt;&gt;&gt; # 3. Fit auto-scaling to compress input into sinusoidal-friendly space</p>
+<p>… method:: &gt;&gt;&gt; s.fit_encoder(x, target_range=10)</p>
+<p>… method:: &gt;&gt;&gt; # 4. Encode and decode using all robust methods</p>
+<p>… method:: &gt;&gt;&gt; a = s.encode(x)</p>
+<p>… method:: &gt;&gt;&gt; decoded_lsq, err_lsq = s.decode(a, method=‘least_squares’, return_error=True)</p>
+<p>… method:: &gt;&gt;&gt; decoded_svd, err_svd = s.decode(a, method=‘svd’, return_error=True)</p>
+<p>… method:: &gt;&gt;&gt; # 5. Compare errors</p>
+<p>… method:: &gt;&gt;&gt; true = x</p>
+<p>… method:: &gt;&gt;&gt; lsq_error = np.abs(decoded_lsq - true)</p>
+<p>… method:: &gt;&gt;&gt; svd_error = np.abs(decoded_svd - true)</p>
+<p>… method:: &gt;&gt;&gt; # 6. Plot results</p>
+<p>… method:: &gt;&gt;&gt; fig, axs = plt.subplots(2, 2, figsize=(12, 8))</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 0].plot(true, label=“Original”)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 0].plot(decoded_lsq, ‘–’, label=“Decoded (LSQ)”)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 0].plot(decoded_svd, ‘:’, label=“Decoded (SVD)”)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 0].set_title(“Decoded vs Original”)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 0].legend()</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 1].plot(lsq_error, label=“Abs Error (LSQ)”)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 1].plot(svd_error, label=“Abs Error (SVD)”)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 1].set_yscale(‘log’)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 1].set_title(“Absolute Decoding Error (log scale)”)</p>
+<p>… method:: &gt;&gt;&gt; axs[0, 1].legend()</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 0].plot(err_lsq, label=“Residual Norm (LSQ)”)</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 0].plot(err_svd, label=“Residual Norm (SVD)”)</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 0].set_yscale(‘log’)</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 0].set_title(“Reconstruction Residuals”)</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 0].legend()</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 1].hist(lsq_error, bins=50, alpha=0.7, label=“LSQ”)</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 1].hist(svd_error, bins=50, alpha=0.5, label=“SVD”)</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 1].set_title(“Histogram of Absolute Errors”)</p>
+<p>… method:: &gt;&gt;&gt; axs[1, 1].legend()</p>
+<p>… method:: &gt;&gt;&gt; plt.suptitle(“🌀 SinusoidalEncoder: Accuracy Evaluation”, fontsize=14)</p>
+<p>… method:: &gt;&gt;&gt; plt.tight_layout()</p>
+<p>… method:: &gt;&gt;&gt; plt.show()</p>
+<p>… method:: References (for the encoding)</p>
+<p>… method:: ——————————</p>
+<p>… method:: * Vaswani et al. (2017), “Attention is All You Need”</p>
+<p>… method:: * https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)</p>
+<p>… py:method:: SinusoidalEncoder.angle_difference(emb)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute angular differences (∆θ) between consecutive embeddings.
+
+  :param emb: Encoded array of shape (n, 2d)
+  :type emb: np.ndarray
+
+  :returns: Array of shape (n-1, d) of angular differences in radians
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.complex_distance(emb1, emb2, norm=‘L2’)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute distance between two encoded arrays using complex projection.
+
+  :param emb1: Encoded arrays of shape (..., 2d) to compare.
+  :type emb1: np.ndarray
+  :param emb2: Encoded arrays of shape (..., 2d) to compare.
+  :type emb2: np.ndarray
+  :param norm: &#39;L2&#39; for Euclidean norm, &#39;cos&#39; for cosine angle distance.
+  :type norm: str
+
+  :returns: Distance values per sample (1D array)
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.decode(embedding, method=‘least_squares’, return_error=False)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Decode sinusoidal embeddings back to original values using selected method.
+
+  :param embedding: Encoded sinusoidal array of shape (n, d_model)
+  :type embedding: np.ndarray
+  :param method: Decoding strategy: &#39;least_squares&#39; (default), &#39;optimize&#39;, or &#39;naive&#39;
+  :type method: str
+  :param return_error: If True, returns (decoded_values, residual_error) as a tuple
+  :type return_error: bool
+
+  :returns: * **decoded** (*list or array*) -- Reconstructed input values
+            * **residual** (*np.ndarray, optional*) -- Residuals of decoding (per sample), returned only if return_error=True
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.encode(values, scale=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encode input values into sinusoidal embeddings.
+
+  :param values: Values to encode.
+  :type values: array-like
+  :param scale: Rescaling factor. If None, auto-scaling is applied if enabled.
+  :type scale: float or None
+
+  :returns: Embedded values of shape (n, d_model)
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.fit_encoder(values, target_range=10.0)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Fit a scaling factor to normalize values into a target sinusoidal-safe range.
+
+  :param values: Original values to encode (will determine scale).
+  :type values: array-like
+  :param target_range: Maximum scaled range to span (e.g. [0, 10]).
+  :type target_range: float
+
+  :returns: Recommended scale factor stored internally.
+  :rtype: float
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.group_centroid(emb, labels=None, return_std=False)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the centroid (average embedding) of each group in complex sinusoidal space.
+
+  :param emb: Encoded array of shape (n, 2d), with sin and cos interleaved.
+  :type emb: np.ndarray
+  :param labels: Group labels (n,). If None, the entire set is treated as one group.
+  :type labels: list or np.ndarray, optional
+  :param return_std: Whether to also return the standard deviation per group.
+  :type return_std: bool
+
+  :returns: Dictionary mapping each group label to its centroid (2d real array).
+            If return_std=True, also includes key &#39;&lt;label&gt;_std&#39; with standard deviation.
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.pairwise_similarity(emb, metric=‘cosine’)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute a pairwise similarity (or distance) matrix in sinusoidal embedding space.
+
+  :param emb: Encoded array of shape (n, 2d).
+  :type emb: np.ndarray
+  :param metric: Distance metric: &#39;cosine&#39; for 1 - cosine similarity, &#39;L2&#39; for Euclidean norm.
+  :type metric: str
+
+  :returns: Pairwise similarity matrix of shape (n, n)
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.phase_alignment(emb, ref)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Align embedding `emb` to reference `ref` using complex phase.
+
+  :param emb: Encoded array to align (n, 2d)
+  :type emb: np.ndarray
+  :param ref: Reference encoded array (n, 2d)
+  :type ref: np.ndarray
+
+  :returns: Aligned encoding of `emb`, same shape as input.
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.phase_unwrap(emb, normalize=False)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Perform Fourier-like phase unwrapping on sinusoidal embedding.
+
+  :param emb: Encoded array of shape (n, 2d).
+  :type emb: np.ndarray
+  :param normalize: Whether to scale unwrapped phases to [0, 1].
+  :type normalize: bool
+
+  :returns: Phase unwrapped matrix of shape (n, d), optionally normalized.
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.set_decode_tolerance(tol=0.001)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Set maximum acceptable residual error for decoding.
+
+  :param tol: Residual threshold above which a warning is triggered.
+  :type tol: float
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.sindecode_dna_grouped(grouped, reference_code, d_part=32, N=10000)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Decode sinusoidal embeddings grouped by letter into symbolic segments.
+
+  :param grouped: Dictionary of letter: embeddings
+  :type grouped: dict
+  :param reference_code: Must include &#39;dx&#39; (sampling resolution).
+  :type reference_code: dict
+  :param d_part: Number of dimensions per part (start, width, height)
+  :type d_part: int
+  :param N: Frequency base
+  :type N: int
+
+  :returns: Dictionary with keys: letters, widths, heights, xloc, iloc, dx
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.sinencode_dna_grouped(code, d_part=32, N=10000)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encode symbolic code segments grouped by letter into sinusoidal embeddings.
+
+  :param code:
+               Must contain:
+                   - &#39;letters&#39;: str
+                   - &#39;xloc&#39;: list of (start, end) tuples
+                   - &#39;widths&#39;: list of float
+                   - &#39;heights&#39;: list of float
+  :type code: dict
+  :param d_part: Number of dimensions per field (position, width, height)
+  :type d_part: int
+  :param N: Sinusoidal frequency base
+  :type N: int
+
+  :returns: Dictionary of embeddings by letter: {letter: np.ndarray(n, 3*d_part)}
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.to_complex(emb)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Convert sinusoidal embedding into a complex array using Euler&#39;s identity.
+
+  :param emb: Array of shape (..., 2d) where sin/cos pairs are stored.
+  :type emb: np.ndarray
+
+  :returns: Complex array of shape (..., d) with values exp(i * theta)
+  :rtype: np.ndarray
+</pre></div>
+</div>
+<p>… py:method:: SinusoidalEncoder.verify_roundtrip(values, method=‘least_squares’, scale=‘auto’, verbose=True, return_details=False)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Perform an encode → decode → compare roundtrip and report accuracy.
+
+  :param values: Original values to test.
+  :type values: array-like
+  :param method: Decoding method: &#39;least_squares&#39;, &#39;svd&#39;, &#39;optimize&#39;, or &#39;naive&#39;.
+  :type method: str
+  :param scale: Scaling strategy: &#39;auto&#39; uses fit_encoder(), float uses fixed scaling, None disables scaling.
+  :type scale: float or &#39;auto&#39; or None
+  :param verbose: If True, prints accuracy report.
+  :type verbose: bool
+  :param return_details: If True, also returns the encoded array, decoded values, and residuals.
+  :type return_details: bool
+
+  :returns: * **success** (*bool*) -- Whether all values were accurately recovered within residual tolerance.
+            * **details** (*tuple, optional*) -- Tuple (encoded, decoded, residuals) if return_details=True
+</pre></div>
+</div>
+<p>… py:class:: generator(kind=‘gauss’)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>… py:function:: import_local_module(name: str, relative_path: str)
+:module: sig2dna_core.signomics</p>
+<p>Import a module by name from a file path relative to the calling module.</p>
+</section>
+<section id="usage-here">
+<h2>Usage here:<a class="headerlink" href="#usage-here" title="Link to this heading"></a></h2>
+<p>import_local_module(“figprint”, “figprint.py”) replaces import figprint (zero-installation)</p>
+</section>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<p>name : str
+Name to assign to the module (used internally).
+relative_path : str
+Path relative to the calling module’s location.</p>
+</section>
+<section id="returns">
+<h2>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<p>module
+Imported module object.</p>
+</section>
+<section id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>figprint = import_local_module(“figprint”, “figprint.py”)
+figprint.print_pdf(…)</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>… py:class:: peaks(data=None)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for managing a collection of peak definitions used in synthetic signal generation.</p>
+<p>Each peak is represented as a dictionary with the following fields:</p>
+<ul class="simple">
+<li><p>‘name’ (str): unique identifier (autogenerated if not provided)</p></li>
+<li><p>‘x’ (float): center position (e.g., time, wavenumber, index)</p></li>
+<li><p>‘w’ (float): width (related to FWHM)</p></li>
+<li><p>‘h’ (float): peak height</p></li>
+<li><p>‘type’ (str): generator type (e.g., ‘gauss’, ‘lorentz’, ‘triangle’)</p></li>
+</ul>
+<p>Supports:</p>
+<ul class="simple">
+<li><p>Flexible addition and broadcasting of peak parameters</p></li>
+<li><p>Named or indexed access to individual or multiple peaks</p></li>
+<li><p>Overloaded operators for peak translation and scaling</p></li>
+<li><p>Utility methods: update, sort, rename, remove_duplicates, copy</p></li>
+<li><p>Conversion to signal object via <code class="docutils literal notranslate"><span class="pre">.to_signal()</span></code></p></li>
+<li><p>Informative <strong>str</strong> and <strong>repr</strong> output</p></li>
+</ul>
+<p>This class is used to build reproducible and structured test cases for symbolic encoding (e.g., sig2dna).</p>
+<p>… py:method:: peaks.add(x, w=1.0, h=1.0, name=None, type=‘gauss’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Add one or multiple peaks to the collection.
+
+  :param x: Center positions of the peaks.
+  :type x: float or array-like
+  :param w: Width(s) of the peaks (broadcastable).
+  :type w: float or array-like
+  :param h: Height(s) of the peaks (broadcastable).
+  :type h: float or array-like
+  :param name: Peak name(s); auto-generated if None or duplicate.
+  :type name: str or list of str or None
+  :param type: Generator type, e.g., &#39;gauss&#39;, &#39;lorentz&#39;, etc.
+  :type type: str
+</pre></div>
+</div>
+<p>… py:method:: peaks.as_dict()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return the list of peaks as dict
+</pre></div>
+</div>
+<p>… py:method:: peaks.copy()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a deep-copy of the peaks
+</pre></div>
+</div>
+<p>… py:method:: peaks.names()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return the list of names
+</pre></div>
+</div>
+<p>… py:method:: peaks.remove_duplicates()
+:module: sig2dna_core.signomics</p>
+<p>… py:method:: peaks.rename(prefix=‘P’)
+:module: sig2dna_core.signomics</p>
+<p>… py:method:: peaks.sort(order=‘asc’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sort peaks in-place based on their center positions (x values).
+
+  :param order:
+                Sorting direction. Use:
+                    - &quot;asc&quot; for ascending (default)
+                    - &quot;desc&quot; for descending
+  :type order: str
+</pre></div>
+</div>
+<p>… py:method:: peaks.to_signal(index=None, name=None, generator_map=None, x=None, x0=0.0, n=1000)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Generate a signal from a peaks object. Optionally restrict to a subset.
+</pre></div>
+</div>
+<p>… py:method:: peaks.update(data)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Update or insert peaks from a list of dictionaries.
+
+  :param data: Each dict must include at least &#39;x&#39;, &#39;w&#39;, &#39;h&#39;.
+               If &#39;name&#39; matches an existing peak, it will be updated.
+               If &#39;name&#39; is new or missing, the peak is appended.
+  :type data: list of dict
+</pre></div>
+</div>
+<p>… py:class:: signal(x=None, y=None, name=‘signal’, type=‘generic’, x_label=‘index’, x_unit=‘-’, y_label=‘intensity’, y_unit=‘a.u.’, metadata=None, source=‘array’, user=None, date=None, host=None, cwd=None, version=None, color=None, linewidth=2, linestyle=‘-’, message=None, fullhistory=True)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>signal: A self-documented 1D analytical signal container for reproducible scientific workflows.</p>
+<p>This class is designed for lab-grade signal processing and traceable data storage.
+It represents a discrete 1D signal (e.g., chromatogram, spectrum, transient) with full metadata,
+support for symbolic transformation, numerical operations, plotting, and structured saving/loading.</p>
+<p>Key features include:</p>
+<ul class="simple">
+<li><p>Portable metadata (user, time, host, cwd, version)</p></li>
+<li><p>Domain-aware plots and operations</p></li>
+<li><p>Reproducible signal serialization in JSON or compressed format</p></li>
+<li><p>Full traceability of all transformation events</p></li>
+<li><p>Optional recursive backup of prior states</p></li>
+</ul>
+<p>… attribute:: x</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sampling domain (e.g., time, wavelength, chemical shift).
+
+  :type: np.ndarray
+</pre></div>
+</div>
+<p>… attribute:: y</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Signal values aligned with x.
+
+  :type: np.ndarray
+</pre></div>
+</div>
+<p>… attribute:: name</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Label for plots and file storage (used as default filename).
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: type</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Optional tag (e.g., &#39;GC-MS&#39;, &#39;FTIR&#39;, &#39;NMR&#39;, &#39;synthetic&#39;).
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: x_label</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Label for the x-axis (e.g., &#39;wavenumber&#39;).
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: x_unit</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Unit of the x-axis (e.g., &#39;cm⁻¹&#39;).
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: source</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Origin label (&#39;array&#39;, &#39;peaks&#39;, &#39;noise&#39;, &#39;imported&#39;...).
+
+  :type: str
+</pre></div>
+</div>
+<p>… attribute:: metadata</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Includes user, date, host, cwd, version — filled automatically unless overridden.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: color (str or [rgb]), linestyle (str), linewidth (str)</p>
+<p>… attribute:: _previous</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  deep-copy of current object
+
+  :type: signal
+</pre></div>
+</div>
+<p>… attribute:: _history</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  &quot;user@host:timestamp | uidkey&quot; :{&quot;action&quot;:str, &quot;details&quot;: str}
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: Key Methods</p>
+<p>… attribute:: ———–</p>
+<p>… attribute:: - normalize(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Normalize the signal to positive values
+</pre></div>
+</div>
+<p>… attribute:: - from_peaks(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Construct signal from a `peaks` object
+</pre></div>
+</div>
+<p>… attribute:: - add_noise(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Return noisy variant (Poisson, Gaussian, ramp or constant bias)
+</pre></div>
+</div>
+<p>… attribute:: - align_with(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Align this signal with another (same x domain)
+</pre></div>
+</div>
+<p>… attribute:: - copy()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Deep copy
+</pre></div>
+</div>
+<p>… attribute:: - save(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Save as JSON or .gz (optional CSV export)
+</pre></div>
+</div>
+<p>… attribute:: - load(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Load from saved file
+</pre></div>
+</div>
+<p>… attribute:: - plot(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Plot the signal with axis labels
+</pre></div>
+</div>
+<p>… attribute:: - backup(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Backup current signal (deep-copy stored in _previous)
+</pre></div>
+</div>
+<p>… attribute:: - restore(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Restore the previous state of the signal
+</pre></div>
+</div>
+<p>… attribute:: - apply_poisson_baseline_filter(…)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Apply a Poisson-based filter
+</pre></div>
+</div>
+<p>… attribute:: - enable_fullhistory</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: enable full history
+</pre></div>
+</div>
+<p>… attribute:: - disable_fullhistory</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: disable full history
+</pre></div>
+</div>
+<p>… attribute:: - _toDNA(signal)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: DNAsignal
+</pre></div>
+</div>
+<p>… attribute:: Overloaded Operators</p>
+<p>… attribute:: ——————–</p>
+<p>… attribute:: - +, -, *, /</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Operates on signals or scalars, aligns if needed
+</pre></div>
+</div>
+<p>… attribute:: - +=, -=, *=, /=</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: In-place functional versions (returns new signal)
+</pre></div>
+</div>
+<p>… attribute:: Low-level Methods</p>
+<p>… attribute:: —————–</p>
+<p>… attribute:: - _current_stamp()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: stamp for events (static method)
+</pre></div>
+</div>
+<p>… attribute:: - _copystatic()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: deep-copy of signal only (use copy for a full copy) (static method)
+</pre></div>
+</div>
+<p>… attribute:: - _events()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: register a processing step
+</pre></div>
+</div>
+<p>… attribute:: - _to_serializable</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: Convert the signal into a dictionary suitable for JSON export
+</pre></div>
+</div>
+<p>… attribute:: - _from_serizalizable</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  :type: convert a dict (e.g., from JSON import) to signal
+</pre></div>
+</div>
+<p>… rubric:: Example</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>s = signal(x, y, name=“sample”, type=“FTIR”, x_label=“wavenumber”, x_unit=“cm⁻¹”)
+s.add_noise(“gaussian”, 0.05).plot()
+s.save()  # saves to ./sample.json.gz
+s2 = signal.load(“sample.json.gz”)</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>… py:method:: signal.add_noise(kind=‘gaussian’, scale=1.0, bias=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a new signal with noise and/or bias added.
+</pre></div>
+</div>
+<p>… py:method:: signal.align_with(other, mode=‘union’, n=1000)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Align two signals to a common x grid with interpolation and padding.
+
+  :param other: the other signal to align with
+  :type other: signal
+  :param mode: &#39;union&#39; (default) or &#39;intersection&#39;
+  :type mode: str
+  :param n: number of points for the new grid
+  :type n: int
+
+  :returns: (self_interp, other_interp) as new signal instances
+  :rtype: tuple
+</pre></div>
+</div>
+<p>… py:method:: signal.apply_poisson_baseline_filter(window_ratio=0.02, gain=1.0, proba=0.9)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>          Apply a baseline filter assuming Poisson-dominated statistics with adjustable gain
+          and a rejection threshold based on the Bienaymé-Tchebychev inequality.
+
+          The signal is filtered by removing values likely caused by statistical noise
+          (false peaks) using a per-point threshold defined from local statistics:
+
+          - Local mean: $$ \mu_t =
+  rac{1}{w} \sum_{i \in W(t)} y_i $$
+          - Local std dev: $$ \sigma_t = \sqrt{\mu_t \cdot        ext{gain}} $$
+          - Coefficient of variation: $$  ext{cv}_t =
+  rac{\sigma_t}{\mu_t} $$
+          - Estimated local intensity (lambda): $$ \lambda_t =
+  rac{1}{   ext{cv}_t^2} $$
+          - Bienaymé-Tchebychev threshold: $$     ext{threshold}_t =
+  rac{1}{\sqrt{1 - p}} \cdot \sqrt{10 \lambda_t \cdot \Delta t} $$
+
+          Parameters
+          ----------
+          window_ratio : float, default=0.02
+              Ratio of signal length used as window size (must yield odd integer ≥ 11).
+          gain : float, default=1.0
+              Linear amplification factor applied to simulate signal counts.
+          proba : float, default=0.9
+              Minimum probability to consider a signal point significant. Must be in (0, 1).
+
+          Returns
+          -------
+          signal
+              The current signal instance (self), with updated `y`.
+
+          Raises
+          ------
+          ValueError
+              If the window size is too small for reliable statistics.
+</pre></div>
+</div>
+<p>… py:method:: signal.backup(fullhistory=None, message=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Backup current state in _previous
+</pre></div>
+</div>
+<p>… py:method:: signal.copy()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Deep copy of the signal, excluding full history control flag
+</pre></div>
+</div>
+<p>… py:method:: signal.disable_fullhistory()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Disable full history tracking
+</pre></div>
+</div>
+<p>… py:method:: signal.enable_fullhistory()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Enable full history tracking
+</pre></div>
+</div>
+<p>… py:method:: signal.from_peaks(peaks_obj, x=None, generator_map=None, name=‘from_peaks’, x0=None, n=1000)
+:module: sig2dna_core.signomics
+:classmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Generate a signal from a set of peaks.
+
+  :param peaks_obj: A list-like object containing peak definitions.
+  :type peaks_obj: peaks
+  :param x: If None: compute x domain from peaks.
+            If scalar: interpreted as xmax; linspace from x0 to xmax.
+            If array: use as x directly.
+  :type x: array-like, float, or None
+  :param generator_map: Optional map of peak type → generator instance (default is Gaussian).
+  :type generator_map: dict or None
+  :param name: Name of the signal instance.
+  :type name: str
+  :param x0: Left bound of the domain (used only if x is None or scalar).
+             If None: inferred from peaks.
+  :type x0: float or None
+  :param n: Number of points in the generated x array.
+  :type n: int
+
+  :returns: A new signal instance generated from the peaks.
+  :rtype: signal
+
+  .. rubric:: Example
+
+  p = peaks()
+  p.add(x=[400, 800, 1600], w=30, h=[1.0, 0.6, 0.9], type=&quot;gauss&quot;)
+  s = signal.from_peaks(p, x0=300, n=2048)
+  s.plot()
+</pre></div>
+</div>
+<p>… py:method:: signal.load(filepath)
+:module: sig2dna_core.signomics
+:staticmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Load a signal from a JSON or gzipped JSON file, including recursive _previous.
+
+  :param filepath: Path to the JSON or .gz file
+  :type filepath: str or Path
+
+  :returns: A fully reconstructed signal object
+  :rtype: signal
+</pre></div>
+</div>
+<p>… py:property:: signal.n
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return the length of the signal and None if it is None
+</pre></div>
+</div>
+<p>… py:method:: signal.normalize(mode=‘zscore+shift’, inplace=True, shift_eps=1e-06)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Normalize the signal to positive values using different normalization strategies.
+
+  :param mode: Normalization mode:
+               - &quot;zscore+shift&quot;   : (y - mean) / std, then shift so min is shift_eps
+               - &quot;minmax&quot;         : (y - min) / (max - min), scales to [0, 1]
+               - &quot;max&quot;            : y / max, scales to [0, 1]
+               - &quot;l1&quot;             : y / sum(|y|), sums to 1 (like probability)
+               - &quot;energy&quot;         : y / sqrt(sum(y^2)), unit energy
+               - &quot;none&quot;           : No normalization, just returns a copy or itself
+  :type mode: str
+  :param inplace: Whether to modify the signal in place. If False, returns a new signal.
+  :type inplace: bool
+  :param shift_eps: Minimum value to add after z-score shift to ensure strictly positive output.
+  :type shift_eps: float
+
+  :returns: Normalized signal (if inplace is False), else None.
+  :rtype: signal or None
+
+  :raises ValueError: If the normalization fails (e.g., due to division by zero).
+</pre></div>
+</div>
+<p>… py:method:: signal.plot(ax=None, label=None, color=None, linestyle=None, linewidth=None, fontsize=12, newfig=False)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot the signal using matplotlib, applying either internal style settings
+  or overrides provided at call time.
+
+  :param ax: Axis to plot on. If None, uses current axis or new figure if newfig=True.
+  :type ax: matplotlib.axes.Axes, optional
+  :param label: Legend label. Defaults to self.name.
+  :type label: str, optional
+  :param color: Line color. If None, uses default matplotlib cycling.
+  :type color: str or None
+  :param linestyle: Line style (e.g., &#39;-&#39;, &#39;--&#39;). If None, uses self.linestyle.
+  :type linestyle: str or None
+  :param linewidth: Line width. If None, uses self.linewidth.
+  :type linewidth: float or None
+  :param fontsize: Font size for axis labels and legend. Can use values like &#39;small&#39;, &#39;large&#39;.
+  :type fontsize: int or str
+  :param newfig: If True, creates a new figure before plotting.
+  :type newfig: bool
+
+  :returns: * *matplotlib.figure.Figure*
+            * *matplotlib.axes.Axes*
+</pre></div>
+</div>
+<p>… py:method:: signal.restore()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Restore the previous signal version if available
+</pre></div>
+</div>
+<p>… py:method:: signal.sample(x_new)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Interpolate values from x
+</pre></div>
+</div>
+<p>… py:method:: signal.save(filepath=None, zip=True, export_csv=False)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Save signal to JSON (optionally compressed) and optionally CSV.
+
+  :param filepath: If None, builds path from metadata[&#39;cwd&#39;] and self.name + &#39;.json[.gz]&#39;.
+                   If a directory, appends name + &#39;.json[.gz]&#39;.
+                   If a file, uses as is.
+  :type filepath: str or Path or None
+  :param zip: Whether to compress the JSON file using gzip. Default: True.
+  :type zip: bool
+  :param export_csv: If True, also save a .csv file (x,y) alongside the JSON.
+  :type export_csv: bool
+</pre></div>
+</div>
+<p>… py:class:: signal_collection(*signals, n=1024, mode=‘union’, name=None, force=True)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>A container class for multiple <code class="docutils literal notranslate"><span class="pre">signal</span></code> instances that ensures alignment on a shared x-grid.</p>
+<p>The collection is used to manage, compare, combine, or visualize multiple signals (e.g., from
+replicates, experiments, synthetic scenarios). Signals are interpolated and padded on insertion
+so all have the same shape and domain. Arithmetic, matrix extraction, and overlay plots are supported.</p>
+</section>
+<section id="id1">
+<h2>Parameters:<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>*signals : signal
+One or more signal instances to include (they are copied and aligned).
+n : int
+Number of sampling points in the aligned x grid (default: 1000).
+mode : str
+Alignment mode: ‘union’ or ‘intersection’ of x-ranges.</p>
+</section>
+<section id="core-attributes">
+<h2>Core Attributes:<a class="headerlink" href="#core-attributes" title="Link to this heading"></a></h2>
+<p>mode : str
+Alignment strategy used (“union” or “intersection”).
+n : int
+Number of x-points used in alignment (default=1024).</p>
+</section>
+<section id="id2">
+<h2>Key Methods:<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>append(signal)              → add and align a new signal</p></li>
+<li><p>to_matrix()                 → convert signals to a 2D array (n_signals x n_points)</p></li>
+<li><p>mean(coeffs=None)           → weighted or unweighted mean</p></li>
+<li><p>sum(coeffs=None)            → weighted or unweighted sum</p></li>
+<li><p>plot(…)                   → overlay signals with optional mean/sum</p></li>
+<li><p>copy                        → all signals stored are deep copies</p></li>
+<li><p>generate_synthetic          → signal collection composed of random peaks.</p></li>
+<li><p><strong>getitem</strong>(…)            → slice, list, or name-based access to signals</p></li>
+<li><p><strong>repr</strong> / <strong>str</strong>          → report contents with span and names</p></li>
+<li><p>_toDNA(signal_collection)   → list of DNAsignals</p></li>
+</ul>
+</section>
+<section id="access-patterns">
+<h2>Access Patterns:<a class="headerlink" href="#access-patterns" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>sc[0:3]           → subcollection by slice</p></li>
+<li><p>sc[[0, 2]]        → subcollection by list of indices</p></li>
+<li><p>sc[“name”]        → return a copy of signal with that name</p></li>
+<li><p>sc[“A”, “B”]      → return a subcollection with those names</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples:<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>sc = signal_collection(s1, s2, s3)
+sc.plot(show_mean=True)</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>sc[0:2]         # sub-collection (copy)
+sc[“peak1”]     # get copy of signal named ‘peak1’
+mat = sc.to_matrix()</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>sc.mean().plot()
+sc.sum(coeffs=[0.4, 0.6]).plot()</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>… py:method:: signal_collection.append(new_signal)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Append and align the new signal to the existing collection.
+</pre></div>
+</div>
+<p>… py:method:: signal_collection.generate_mixtures(n_mixtures=10, max_peaks=16, peaks_per_mixture=(3, 8), amplitude_range=(0.5, 2), flatten=‘mean’, n_signals=1, n_peaks=1, kinds=(‘gauss’,), width_range=(0.5, 3), height_range=(1.0, 5.0), x_range=(0, 500), n_points=1024, normalize=False, seed=None, **kwargs)
+:module: sig2dna_core.signomics
+:classmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Generate synthetic mixtures of signals by combining a subset of base peaks.
+
+  :param n_mixtures: Number of synthetic mixtures to generate.
+  :type n_mixtures: int
+  :param max_peaks: Maximum number of base signals (from which peaks are taken).
+  :type max_peaks: int
+  :param peaks_per_mixture: Range (min, max) for the number of peaks to combine in each mixture.
+                            Cannot exceed `max_peaks`.
+  :type peaks_per_mixture: tuple of (int, int)
+  :param amplitude_range: Random scaling range applied to peak amplitudes in each mixture.
+  :type amplitude_range: tuple of (float, float)
+  :param flatten: How to combine the signals for each mixture.
+  :type flatten: {&#39;sum&#39;, &#39;mean&#39;}, default=&#39;mean&#39;
+  :param \*\*kwargs: All other keyword arguments passed to `generate_synthetic`.
+  :type \*\*kwargs: dict
+
+  :returns: * **result_collection** (*signal_collection*) -- A collection of synthetic mixed signals.
+            * **all_peaks** (*list of dict*) -- All individual peaks originally generated.
+            * **used_peak_ids** (*list of list of str*) -- For each mixture, the list of peak names used.
+
+  .. rubric:: Examples
+
+  S, pS = signal_collection.generate_mixtures(
+  ...     n_mixtures=30,
+  ...     max_peaks=12,
+  ...     peaks_per_mixture=(4, 8),
+  ...     amplitude_range=(0.2, 1.5),
+  ...     n_signals=12,
+  ...     kinds=(&quot;gauss&quot;,),
+  ...     width_range=(0.5, 3),
+  ...     height_range=(1.0, 5.0),
+  ...     x_range=(0, 500),
+  ...     n_points=2048,
+  ...     normalize=False,
+  ...     seed=123
+  ... )
+  &gt;&gt;&gt; S.plot()
+</pre></div>
+</div>
+<p>… py:method:: signal_collection.generate_synthetic(n_signals=5, n_peaks=5, kind_distribution=‘uniform’, kinds=(‘gauss’, ‘lorentz’, ‘triangle’), x_range=(0, 1000), n_points=1024, avoid_overlap=True, width_range=(20, 60), height_range=(0.5, 1.0), normalize=True, noise=None, bias=None, name_prefix=‘synthetic’, seed=None)
+:module: sig2dna_core.signomics
+:classmethod:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Generate a synthetic signal collection composed of random peaks.
+
+  :param n_signals: Number of synthetic signals to generate.
+  :type n_signals: int
+  :param n_peaks: Number of peaks per signal.
+  :type n_peaks: int
+  :param kind_distribution: &#39;uniform&#39; → use all peak kinds equally; &#39;random&#39; → random draw from kinds.
+  :type kind_distribution: str
+  :param kinds: Generator types to choose from (&#39;gauss&#39;, &#39;lorentz&#39;, &#39;triangle&#39;).
+  :type kinds: tuple[str]
+  :param x_range: Start and end of x-domain.
+  :type x_range: tuple[float, float]
+  :param n_points: Number of sampling points for each signal (default: 1024).
+  :type n_points: int
+  :param avoid_overlap: Prevent peaks from overlapping by checking spacing vs. width.
+  :type avoid_overlap: bool
+  :param width_range: Range of widths for the peaks.
+  :type width_range: tuple[float, float]
+  :param height_range: Range of peak heights.
+  :type height_range: tuple[float, float]
+  :param normalize: Normalize each signal so the highest peak has intensity 1.
+  :type normalize: bool
+  :param noise: Optional noise model, e.g. {&quot;kind&quot;: &quot;gaussian&quot;, &quot;scale&quot;: 0.01}.
+  :type noise: dict or None
+  :param bias: Optional signal bias: can be a constant, &#39;ramp&#39;, or signal.
+  :type bias: float, str, np.ndarray, or signal
+  :param name_prefix: Base name for each generated signal.
+  :type name_prefix: str
+  :param seed: Random seed for reproducibility.
+  :type seed: int or None
+
+  :returns: A collection of generated signals.
+  :rtype: signal_collection
+
+  .. rubric:: Examples
+
+  # 1. Default random peaks, Gaussian + ramp bias
+  sc = signal_collection.generate_synthetic(
+      n_signals=5,
+      n_peaks=6,
+      kinds=(&quot;gauss&quot;, &quot;lorentz&quot;, &quot;triangle&quot;),
+      noise={&quot;kind&quot;: &quot;gaussian&quot;, &quot;scale&quot;: 0.02},
+      bias=&quot;ramp&quot;,
+      name_prefix=&quot;test&quot;
+  )
+  sc.plot(show_mean=True, fontsize=&quot;large&quot;)
+
+  # 2. High-res signal, fixed width and height
+  sc2 = signal_collection.generate_synthetic(
+      n_signals=3,
+      n_peaks=8,
+      kinds=(&quot;gauss&quot;,),
+      width_range=(30, 30),
+      height_range=(1.0, 1.0),
+      x_range=(0, 500),
+      n_points=2048,
+      normalize=False,
+      seed=123
+  )
+  sc2.plot(fontsize=14)
+
+  # 3. Poisson noise, no overlap, save output
+  sc3 = signal_collection.generate_synthetic(
+      n_signals=2,
+      n_peaks=5,
+      noise={&quot;kind&quot;: &quot;poisson&quot;, &quot;scale&quot;: 2.0},
+      name_prefix=&quot;poisson_example&quot;
+  )
+  for s in sc3:
+      s.save(export_csv=True)
+</pre></div>
+</div>
+<p>… py:method:: signal_collection.mean(indices_or_names=None, coeffs=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Mean of selected signals, optionally weighted.
+
+  :param indices_or_names: Signal names or indices to include.
+  :type indices_or_names: list[int or str], optional
+  :param coeffs: Weights for selected signals.
+  :type coeffs: list[float], optional
+
+  :returns: Averaged signal.
+  :rtype: signal
+</pre></div>
+</div>
+<p>… py:method:: signal_collection.plot(indices=None, labels=True, title=None, newfig=None, ax=None, show_mean=False, show_sum=False, coeffs=None, fontsize=12, colormap=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot selected signals with style attributes and optional overlays.
+
+  :param indices: Signals to plot by index or name.
+  :type indices: list[int] or list[str], optional
+  :param labels: Whether to show signal labels.
+  :type labels: bool
+  :param title: Plot title.
+  :type title: str
+  :param newfig: If True, always open a new figure.
+                 If False, use current axes.
+                 If None, open new figure only the first time this collection is plotted.
+  :type newfig: bool or None
+  :param ax: Axis to draw on.
+  :type ax: matplotlib axis, optional
+  :param show_mean: Overlay mean curve.
+  :type show_mean: bool
+  :param show_sum: Overlay sum curve.
+  :type show_sum: bool
+  :param coeffs: Optional weights for mean/sum.
+  :type coeffs: list[float], optional
+  :param fontsize: Font size for labels and legend.
+  :type fontsize: int or str
+  :param colormap: List of colors to cycle through when signal.color is None.
+  :type colormap: list[str], optional
+
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: signal_collection.sum(indices_or_names=None, coeffs=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sum selected signals, optionally weighted by coeffs.
+
+  :param indices_or_names: If provided, selects a subset by index or name.
+  :type indices_or_names: list[int or str], optional
+  :param coeffs: Weights matching the number of selected signals.
+  :type coeffs: list[float], optional
+
+  :returns: Summed signal.
+  :rtype: signal
+</pre></div>
+</div>
+<p>… py:method:: signal_collection.to_matrix()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return a 2D array (n_signals x n_points) of aligned signal values.
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Olivier Vitrac (Generative Simulation).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -19,10 +19,12 @@
 #
 #   List of versions:
 #   - 0.34: stable release
-#   - 0.36: sin encoder/decoder and its doc 
+#   - 0.36: sin encoder/decoder and its doc
+#   - 0.43: major release
+#   - 0.45: DNAsignal.pseudoinverse with its documentation
 #
 #
 # Author: Generative Simulation\olivier.vitrac@gmail.fr
-# Revision: 2025-05-24
+# Revision: 2025-06-02
 #
-version="0.43"
+version="0.45"

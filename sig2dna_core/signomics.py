@@ -120,7 +120,7 @@ Maintenance & forking
 
 
 Author: Olivier Vitrac — olivier.vitrac@gmail.com
-Revision: 2025-05-27
+Revision: 2025-06-02
 """
 
 # %% Indentication
@@ -131,7 +131,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@gmail.com"
-__version__ = "0.43"
+__version__ = "0.45"
 
 # %% Dependencies
 # note:
@@ -147,6 +147,7 @@ from pathlib import Path
 from collections import defaultdict, UserDict, OrderedDict, Counter
 from collections.abc import Sequence
 from types import SimpleNamespace
+#from dataclasses import dataclass
 #from itertools import islice
 from copy import deepcopy
 from time import time
@@ -163,6 +164,7 @@ from scipy.ndimage import uniform_filter1d
 from scipy.stats import entropy
 from scipy.spatial.distance import jensenshannon
 from scipy.optimize import minimize_scalar
+from scipy.linalg import svd, pinv
 from difflib import SequenceMatcher
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm # from matplotlib.cm import get_cmap
@@ -1457,17 +1459,27 @@ class DNAsignal:
 
     Methods
     -------
+    normalize_signal(mode="zscore+shift")
+        Normalizes the internal signal (preserves positivity).
     compute_cwt(scales=None, normalize=False)
         Computes the Continuous Wavelet Transform using the Ricker wavelet
         and stores the transformed signals in `transforms`.
+    sparsify_cwt(self, scale: Union[int, float], threshold: float, inplace: bool = True)
+        Zero out wavelet coefficients below a threshold for a specific scale.
     encode_dna()
         Encodes each scale's transformed signal into a symbolic `DNAstr` sequence
         using local maximum coding (ABCXYZ).
     encode_dna_full()
         Encodes signals at each scale using the full encoding scheme, preserving
         the flat regions (_) and finer symbolic transitions.
+    plot_signals()
+        Plots signals.
     plot_codes(scale)
         Plots both the wavelet transform and the symbolic code for the given scale.
+    plot_transforms
+        Plots the stored CWT-transformed signals as a signal collection.
+    plot_scalogram():
+        Plots a scalogram with two subplots
     decode_dna(scale)
         Reconstructs the approximate signal for a given scale from its DNA encoding.
     __getitem__(scale)
@@ -1476,6 +1488,8 @@ class DNAsignal:
         Returns a dictionary summarizing encoded scales and metadata.
     has(scale)
         Checks whether a DNAstr encoding exists at the given scale.
+    pseudoinverse(scales=None, rank=None, return_weights=False, name=None):
+        Approximates signal reconstruction via pseudo-inverse using stored CWT coefficients
 
     Static pairwise distance methods
     --------------------------------
@@ -1586,6 +1600,24 @@ class DNAsignal:
             if ("encode_dna_full" in encoder):
                 self.encode_dna_full()
 
+    def normalize_signal(self, mode="zscore+shift"):
+        """
+        Normalize the internal signal using one of several strategies that ensure positivity.
+
+        Parameters
+        ----------
+        mode : str
+            Normalization mode passed to `signal.normalize()`.
+            See `signal.normalize()` for available modes.
+
+        Raises
+        ------
+        AttributeError
+            If `signal` attribute is missing or of the wrong type.
+        """
+        if not hasattr(self, 'signal') or not isinstance(self.signal, signal):
+            raise AttributeError("DNAsignal must have a valid `signal` attribute of type `signal`.")
+        self.signal.normalize(mode=mode, inplace=True)
 
     def has(self, scale):
         """
@@ -1669,7 +1701,7 @@ class DNAsignal:
         s[s < threshold] = 0
         return s
 
-    def compute_cwt(self, scales=None, apply_filter=False):
+    def compute_cwt(self, scales=None, apply_filter=False, wavelet="mexh"):
         """
         Compute Continuous Wavelet Transform (CWT) using the Mexican Hat wavelet.
 
@@ -1680,6 +1712,8 @@ class DNAsignal:
         apply_filter : bool
             Whether to apply a baseline filter to the input signal before transforming.
 
+        wavelet : str (default='mexh')
+            The name of the PyWavelets-compatible wavelet.
         Sets
         ----
         self.scales : list
@@ -1702,7 +1736,7 @@ class DNAsignal:
             self.filtered_signal = self.signal
         self.transforms = signal_collection()
         for scale in self.scales:
-            coef, _ = pywt.cwt(self.filtered_signal, [scale], 'mexh')
+            coef, _ = pywt.cwt(self.filtered_signal, [scale], wavelet)
             self.cwt_coeffs[scale] = coef[0]  # Access directly via scale
             sig = signal(
                 x=self.x.copy(),
@@ -1713,6 +1747,132 @@ class DNAsignal:
                 y_unit="a.u.",
                 source="CWT")
             self.transforms.append(sig)
+
+    def pseudoinverse(self, scales=None, rank=None, return_weights=False, name=None):
+        """
+        Approximate signal reconstruction via pseudo-inverse using stored CWT coefficients.
+
+        Parameters
+        ----------
+        scales : list, float, int, or None
+            Scales to include in the reconstruction. If None, all scales in self.cwt_coeffs are used.
+        rank : int or None
+            Optional truncation rank for the SVD decomposition (for denoising or dimensionality reduction).
+        return_weights : bool
+            If True, also return the weights (contributions) of each scale.
+        name : str or None
+            Optional name for the returned signal. Defaults to "pseudoinverse" with included scales.
+
+        Returns
+        -------
+        reconstructed_signal : signal
+            Reconstructed signal instance from the pseudo-inverse of the CWT decomposition.
+        weights : np.ndarray, optional
+            Returned only if `return_weights=True`, gives the contribution of each scale.
+
+        Raises
+        ------
+        ValueError
+            If CWT coefficients are not available.
+        """
+        if not hasattr(self, "cwt_coeffs") or not self.cwt_coeffs:
+            raise ValueError("No CWT coefficients found. Run compute_cwt() first.")
+
+        if scales is None:
+            scales = sorted(self.cwt_coeffs.keys())
+        elif isinstance(scales, (int, float)):
+            scales = [scales]
+
+        # Assemble wavelet coefficient matrix
+        W = np.vstack([self.cwt_coeffs[s] for s in scales])  # shape: (n_scales, n_points)
+
+        # SVD-based pseudoinverse
+        U, S, Vt = np.linalg.svd(W, full_matrices=False)
+        if rank is not None:
+            U, S, Vt = U[:rank], S[:rank], Vt[:rank]
+
+        recon_proj = np.dot(U.T, W)
+        weights = np.dot(np.diag(1 / S), recon_proj)
+        recon_y = np.dot(weights.T, U).sum(axis=1)
+
+        # Build signal object
+        sig_name = name or f"pseudoinverse_{','.join(map(str, scales))}"
+        recon_signal = signal(
+            x=self.x.copy(),
+            y=recon_y,
+            name=sig_name,
+            type="reconstructed",
+            x_label=self.signal.x_label,
+            x_unit=self.signal.x_unit,
+            y_label=self.signal.y_label,
+            y_unit=self.signal.y_unit,
+            source=f"pseudo-inverse from scales {scales}",
+            color="black",
+            linestyle="--",
+            message=f"Reconstructed using pseudo-inverse with rank={rank}"
+        )
+        return (recon_signal, weights) if return_weights else recon_signal
+
+
+    def sparsify_cwt(self, scale=None, threshold=None, inplace=True):
+        """
+        Sparsify CWT coefficients by zeroing values below a threshold.
+
+        Parameters
+        ----------
+        scale : int, float, list, or None
+            Scale(s) to sparsify. If None, all available scales in self.cwt_coeffs are used.
+        threshold : float or None
+            Absolute value below which coefficients are set to zero.
+            If None, uses 1% of the maximum absolute value at each scale.
+        inplace : bool
+            If True, modifies current instance. If False, returns a modified copy.
+
+        Returns
+        -------
+        DNAsignal or None
+            Modified copy if inplace is False, otherwise None.
+
+        Raises
+        ------
+        ValueError
+            If scale(s) not found in self.cwt_coeffs.
+        """
+        if not hasattr(self, "cwt_coeffs") or not self.cwt_coeffs:
+            raise ValueError("No CWT coefficients found. Run compute_cwt() first.")
+
+        # Normalize scale input
+        if scale is None:
+            target_scales = list(self.cwt_coeffs.keys())
+        elif isinstance(scale, (int, float)):
+            target_scales = [scale]
+        elif isinstance(scale, (list, tuple)):
+            target_scales = scale
+        else:
+            raise TypeError(f"Invalid type for scale: {type(scale)}")
+
+        # Check all requested scales exist
+        missing = [s for s in target_scales if s not in self.cwt_coeffs]
+        if missing:
+            raise ValueError(f"Scales not found in computed CWT coefficients: {missing}")
+
+        # Work in-place or copy
+        target = self if inplace else self.copy()
+
+        for s in target_scales:
+            coeffs = target.cwt_coeffs[s]
+            thres = threshold if threshold is not None else 0.01 * np.max(np.abs(coeffs))
+            target.cwt_coeffs[s] = np.where(np.abs(coeffs) < thres, 0.0, coeffs)
+
+            if hasattr(target, "transforms"):
+                for sig in target.transforms:
+                    if sig.name == f"CWT_scale_{s}":
+                        sig.y = target.cwt_coeffs[s]
+                        sig._events("sparsify", {"scale": s, "threshold": thres})
+                        break
+
+        return None if inplace else target
+
 
     # --------------------------[ DNA coding segment-wise (no repetitions) ]----------------------------
 
@@ -2369,6 +2529,41 @@ class DNAsignal:
         ax.axhline(0, color='k', linewidth=0.5, linestyle=':')
         plt.tight_layout()
         plt.show()
+        return fig
+
+    def plot_scalogram(self):
+        """
+        Plot a scalogram with two subplots:
+        - Top: colored image of CWT coefficient amplitudes
+        - Bottom: line curves of selected scales
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The matplotlib figure object.
+        """
+        X = np.array(self.x)
+        scales = list(self.cwt_coeffs.keys())
+        coeffs = np.array([self.cwt_coeffs[scale] for scale in scales])
+
+        fig, axs = plt.subplots(2, 1, figsize=(10, 6), gridspec_kw={'height_ratios': [3, 2]}, sharex=True)
+
+        # Top scalogram (image)
+        im = axs[0].imshow(coeffs, aspect='auto', extent=[X[0], X[-1], scales[-1], scales[0]],
+                           cmap='viridis', interpolation='nearest')
+        axs[0].set_ylabel("Scale")
+        fig.colorbar(im, ax=axs[0], label="Amplitude")
+        axs[0].set_title("Scalogram")
+
+        # Bottom line plots
+        for i, scale in enumerate(scales):
+            axs[1].plot(X, coeffs[i] + i, label=f"Scale {scale}")
+        axs[1].set_xlabel("x")
+        axs[1].set_ylabel("Wavelet coefficients")
+        axs[1].set_title("Wavelet Coefficients by Scale")
+        axs[1].legend(loc="upper right", fontsize='small')
+
+        plt.tight_layout()
         return fig
 
     @staticmethod
@@ -3884,6 +4079,7 @@ class signal:
 
     Key Methods
     -----------
+    - normalize(...)          : Normalize the signal to positive values
     - from_peaks(...)         : Construct signal from a `peaks` object
     - add_noise(...)          : Return noisy variant (Poisson, Gaussian, ramp or constant bias)
     - align_with(...)         : Align this signal with another (same x domain)
@@ -3995,6 +4191,83 @@ class signal:
         self._history = {}
         self._fullhistory = fullhistory  # Do not serialize this field
         self._events("init", {"from": self.source, "message": message})
+
+    def normalize(self, mode="zscore+shift", inplace=True, shift_eps=1e-6):
+        """
+        Normalize the signal to positive values using different normalization strategies.
+
+        Parameters
+        ----------
+        mode : str
+            Normalization mode:
+            - "zscore+shift"   : (y - mean) / std, then shift so min is shift_eps
+            - "minmax"         : (y - min) / (max - min), scales to [0, 1]
+            - "max"            : y / max, scales to [0, 1]
+            - "l1"             : y / sum(|y|), sums to 1 (like probability)
+            - "energy"         : y / sqrt(sum(y^2)), unit energy
+            - "none"           : No normalization, just returns a copy or itself
+
+        inplace : bool
+            Whether to modify the signal in place. If False, returns a new signal.
+
+        shift_eps : float
+            Minimum value to add after z-score shift to ensure strictly positive output.
+
+        Returns
+        -------
+        signal or None
+            Normalized signal (if inplace is False), else None.
+
+        Raises
+        ------
+        ValueError
+            If the normalization fails (e.g., due to division by zero).
+        """
+        if self.y is None:
+            raise ValueError("Signal values (y) are not set.")
+
+        y = self.y.astype(float)
+
+        if mode == "zscore+shift":
+            mean, std = np.mean(y), np.std(y)
+            if std == 0:
+                raise ValueError("Zero std deviation: cannot z-score normalize.")
+            y = (y - mean) / std
+            y -= np.min(y)  # ensure min is zero
+            y += shift_eps  # ensure strictly positive
+        elif mode == "minmax":
+            miny, maxy = np.min(y), np.max(y)
+            if maxy - miny == 0:
+                raise ValueError("Constant signal: cannot min-max normalize.")
+            y = (y - miny) / (maxy - miny)
+        elif mode == "max":
+            maxy = np.max(np.abs(y))
+            if maxy == 0:
+                raise ValueError("Signal is zero everywhere.")
+            y = y / maxy
+        elif mode == "l1":
+            total = np.sum(np.abs(y))
+            if total == 0:
+                raise ValueError("L1 norm is zero.")
+            y = y / total
+        elif mode == "energy":
+            energy = np.sqrt(np.sum(y ** 2))
+            if energy == 0:
+                raise ValueError("Zero energy: cannot normalize.")
+            y = y / energy
+        elif mode == "none":
+            y = y.copy()
+        else:
+            raise ValueError(f"Unknown normalization mode: {mode}")
+
+        if inplace:
+            self.y = y
+            self._events("normalize", {"mode": mode})
+        else:
+            s = self.copy()
+            s.y = y
+            s._events("normalize", {"mode": mode})
+            return s
 
     @property
     def n(self):
@@ -5663,6 +5936,91 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
     fig.print("Sinusoidal-Encoder-Decoder",outputfolder)
+
+    #%% naive Pseudoinverse example
+
+    # Create a synthetic Gaussian signal
+    x = np.linspace(0, 1, 1024)
+    signal_data = np.exp(-(x - 0.5)**2 / (2 * 0.0025))
+
+    # Choose a compatible continuous wavelet
+    wavelet = pywt.ContinuousWavelet("mexh")  # Mexican Hat = Ricker
+
+    # Scales for the transform
+    scales = [1, 2, 4, 8, 16, 32]
+    wavelet_matrix = []
+
+    for scale in scales:
+        cwt_result, _ = pywt.cwt(signal_data, [scale], wavelet)
+        wavelet_matrix.append(cwt_result[0])
+
+    # Stack transforms into matrix W
+    W = np.vstack(wavelet_matrix)  # Shape: (n_scales, len(signal))
+
+    # SVD-based pseudoinverse
+    U, s, Vh = svd(W, full_matrices=False)
+    rank = 6  # Truncate if desired
+    S_inv = np.diag([1/s[i] if i < rank else 0 for i in range(len(s))])
+    recon_signal = (U @ S_inv @ U.T @ W).sum(axis=0)
+
+    # Plot
+    figNaive = plt.figure(figsize=(8, 4))
+    plt.plot(x, signal_data, label="Original", linewidth=2)
+    plt.plot(x, recon_signal, '--', label="Reconstructed (pseudo-inv)", linewidth=2)
+    plt.title("Pseudo-Inverse Reconstruction from Ricker CWT")
+    plt.xlabel("x"); plt.ylabel("Amplitude"); plt.grid(True); plt.legend()
+    plt.tight_layout(); plt.show()
+    figNaive.print("Naive_PseudoInversion",outputfolder)
+
+
+    # %% Advanced Pseudoinverse example
+
+    # Synthetic signal with three Gaussians (including overlapping)
+    x = np.linspace(0, 1, 1024)
+    gauss1 = np.exp(-(x - 0.3)**2 / (2 * 0.002))
+    gauss2 = np.exp(-(x - 0.5)**2 / (2 * 0.002))
+    gauss3 = np.exp(-(x - 0.52)**2 / (2 * 0.002))  # Overlaps with gauss2
+    signal_data = gauss1 + gauss2 + gauss3
+
+    # Define scales and initialize
+    scales = [1, 2, 4, 8, 16]
+    wavelet_matrix = []
+    energies = []
+
+    # Use PyWavelets for energy normalization
+    import pywt
+
+    for scale in scales:
+        coef, _ = pywt.cwt(signal_data, [scale], 'mexh')
+        wavelet_matrix.append(coef[0])
+
+        # Compute the wavelet kernel and its energy
+        wavelet_kernel = pywt.ContinuousWavelet('mexh').wavefun(level=10)[0]
+        energy = np.sqrt(np.sum(wavelet_kernel**2))  # L2 norm
+        energies.append(energy)
+
+    # Normalize each transformed scale by its wavelet energy
+    W = np.vstack([w / e for w, e in zip(wavelet_matrix, energies)])
+
+    # Perform SVD and pseudo-inverse reconstruction
+    U, s, Vh = svd(W, full_matrices=False)
+    S_inv = np.diag(1 / s)
+    recon_signal = U.T @ W
+    recon_signal = U @ S_inv @ recon_signal
+    recon_signal = recon_signal.sum(axis=0)
+
+    # Plot original and reconstructed signal
+    figAdv = plt.figure(figsize=(10, 4))
+    plt.plot(x, signal_data, label="Original Signal")
+    plt.plot(x, recon_signal, label="Reconstructed (Weighted SVD)", linestyle="--")
+    plt.xlabel("x")
+    plt.ylabel("Amplitude")
+    plt.title("Weighted Pseudoinverse Reconstruction from CWT")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+    figAdv.print("Weighted_PseudoInversion",outputfolder)
 
 # %% Obsolete
 """

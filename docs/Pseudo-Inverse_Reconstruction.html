@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets &mdash; 📡🧬sig2dna_core 0.43 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true, "tags": "ams"}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="📡🧬 sig2dna" href="README.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            📡🧬sig2dna_core
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">📡🧬 sig2dna</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#synopsis">📑 Synopsis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wavelet-transform-fundamentals">🌊 Wavelet Transform Fundamentals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-ricker-wavelet-properties-and-pitfalls">🌀 The Ricker Wavelet: Properties and Pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#energy-and-redundancy-considerations">⚖️ Energy and Redundancy Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theoretical-justification-parseval-property-of-cwt">📐 Theoretical Justification: Parseval Property of CWT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pseudo-inverse-via-svd-moorepenrose">🧮 Pseudo-Inverse via SVD (Moore–Penrose)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#weighted-reconstruction-strategy">⚖️ Weighted Reconstruction Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#weighted-matrix">Weighted matrix:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#python-example-using-pywt">🧪 Python Example Using <code class="docutils literal notranslate"><span class="pre">pywt</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implemented-methods">🧮 Implemented methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#improved-inversion-advanced-example">🌟 Improved inversion | Advanced example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#weighted-pseudoinverse-strategy">🧮 Weighted Pseudoinverse Strategy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">📡🧬sig2dna_core</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Pseudo-Inverse_Reconstruction.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="pseudo-inverse-reconstruction-of-signals-using-ricker-wavelets">
+<h1>🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets<a class="headerlink" href="#pseudo-inverse-reconstruction-of-signals-using-ricker-wavelets" title="Link to this heading"></a></h1>
+<section id="synopsis">
+<h2>📑 Synopsis<a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The Ricker wavelet offers good <strong>peak sensitivity</strong> and <strong>scale localization</strong>, ideal for chromatographic or spectroscopic signals.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">pywt</span></code> instead of deprecated <code class="docutils literal notranslate"><span class="pre">scipy.signal.ricker</span></code>.</p></li>
+<li><p><strong>Never add raw transforms across scales</strong> — it <strong>inflates energy</strong>.</p></li>
+<li><p>Use <strong><code class="docutils literal notranslate"><span class="pre">DNAsignal.pseudoinverse(scales)</span></code></strong> to apply the correct reconstruction.</p></li>
+</ul>
+<blockquote>
+<div><p>📌 This document explains how to reconstruct a 1D signal using a <strong>pseudo-inverse method</strong> based on <strong>Ricker wavelet transforms</strong> across multiple scales. This technique is implemented in <code class="docutils literal notranslate"><span class="pre">DNAsignal.pseudoinverse(scales,</span> <span class="pre">method=...)</span></code> and relies on <strong>SVD-based or energy-weighted inverse projections</strong>.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="wavelet-transform-fundamentals">
+<h2>🌊 Wavelet Transform Fundamentals<a class="headerlink" href="#wavelet-transform-fundamentals" title="Link to this heading"></a></h2>
+<p>Let <span class="math notranslate nohighlight">\(f(x)\)</span> be a real-valued signal and <span class="math notranslate nohighlight">\(\psi(x)\)</span> a real, symmetric wavelet. The <strong>scaled and translated</strong> wavelet is defined as:</p>
+<div class="math notranslate nohighlight">
+\[
+\psi_{a,x_0}(x) = \frac{1}{\sqrt{a}} \psi\left(\frac{x - x_0}{a}\right)
+\]</div>
+<p>The <strong>Continuous Wavelet Transform (CWT)</strong> of <span class="math notranslate nohighlight">\(f\)</span> with respect to <span class="math notranslate nohighlight">\(\psi\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{W}_f(a, x_0) = \int_{-\infty}^\infty f(t)\, \psi_{a,x_0}(t)\, dt
+\]</div>
+<p>This transform provides a <strong>multiscale analysis</strong> of <span class="math notranslate nohighlight">\(f\)</span>, revealing localized features such as peaks and singularities.</p>
+</section>
+<hr class="docutils" />
+<section id="the-ricker-wavelet-properties-and-pitfalls">
+<h2>🌀 The Ricker Wavelet: Properties and Pitfalls<a class="headerlink" href="#the-ricker-wavelet-properties-and-pitfalls" title="Link to this heading"></a></h2>
+<p>The <strong>Ricker wavelet</strong>, also known as the <strong>Mexican Hat</strong>, is defined as the second derivative of a Gaussian:</p>
+<div class="math notranslate nohighlight">
+\[
+\psi(x) = \left(1 - x^2\right) e^{-x^2 / 2}
+\]</div>
+<p>It is:</p>
+<ul class="simple">
+<li><p><strong>Real</strong></p></li>
+<li><p><strong>Symmetric</strong></p></li>
+<li><p><strong>Energy-normalized</strong> (its <span class="math notranslate nohighlight">\(L^2\)</span> norm does not depend on scale <span class="math notranslate nohighlight">\(a\)</span>)</p></li>
+</ul>
+<blockquote>
+<div><p>✅ The Ricker wavelet is <strong>not orthogonal</strong>, and its transforms at different scales are <strong>not independent</strong>. Therefore, naive summation across scales leads to energy inflation and inaccurate reconstruction.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="energy-and-redundancy-considerations">
+<h2>⚖️ Energy and Redundancy Considerations<a class="headerlink" href="#energy-and-redundancy-considerations" title="Link to this heading"></a></h2>
+<p>Each filtered signal <span class="math notranslate nohighlight">\(w_a(x) = f * \psi_a(x)\)</span> (convolution with wavelet at scale <span class="math notranslate nohighlight">\(a\)</span>) has a comparable <span class="math notranslate nohighlight">\(L^2\)</span> norm. Summing these directly:</p>
+<div class="math notranslate nohighlight">
+\[
+f_{\text{naive}}(x) = \sum_{a} w_a(x)
+\]</div>
+<p>leads to an <strong>overestimation of energy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\left\|f_{\text{naive}}\right\|^2 = \sum_{a} \| w_a \|^2 \gg \|f\|^2
+\]</div>
+<p>This is due to <strong>scale redundancy</strong> in the continuous wavelet transform.</p>
+</section>
+<hr class="docutils" />
+<section id="theoretical-justification-parseval-property-of-cwt">
+<h2>📐 Theoretical Justification: Parseval Property of CWT<a class="headerlink" href="#theoretical-justification-parseval-property-of-cwt" title="Link to this heading"></a></h2>
+<p>In continuous theory, the CWT preserves the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the signal (up to a constant):</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{0}^{\infty} \int_{-\infty}^{\infty} |\mathcal{W}_f(a, b)|^2 \, \frac{db\, da}{a^2} = C_\psi \cdot \|f\|^2
+\]</div>
+<p>with admissibility constant:</p>
+<div class="math notranslate nohighlight">
+\[
+C_\psi = \int_0^{\infty} \frac{|\hat{\psi}(\omega)|^2}{\omega} \, d\omega &lt; \infty
+\]</div>
+<p>This implies the <strong>energy of <span class="math notranslate nohighlight">\(f\)</span> is spread across scales</strong>, but only under proper scale integration. In discrete settings (as in <code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code>), <strong>scale-wise recombination must be adjusted</strong>.</p>
+</section>
+<hr class="docutils" />
+<section id="pseudo-inverse-via-svd-moorepenrose">
+<h2>🧮 Pseudo-Inverse via SVD (Moore–Penrose)<a class="headerlink" href="#pseudo-inverse-via-svd-moorepenrose" title="Link to this heading"></a></h2>
+<p>Given a matrix <span class="math notranslate nohighlight">\(W \in \mathbb{R}^{m \times n}\)</span> stacking the CWT of <span class="math notranslate nohighlight">\(f\)</span> across <span class="math notranslate nohighlight">\(m\)</span> scales:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+W = \begin{bmatrix}
+w_1 \\
+w_2 \\
+\vdots \\
+w_m
+\end{bmatrix}
+\end{split}\]</div>
+<p>We perform an SVD:</p>
+<div class="math notranslate nohighlight">
+\[
+W = U \Sigma V^T
+\]</div>
+<p>and reconstruct <span class="math notranslate nohighlight">\(f\)</span> via:</p>
+<div class="math notranslate nohighlight">
+\[
+f \approx V \Sigma^{-1} U^T W
+\]</div>
+<p>This removes scale redundancy and yields a stable approximation. <strong>Truncating</strong> singular values (rank <span class="math notranslate nohighlight">\(r\)</span>) denoises the result:</p>
+<div class="math notranslate nohighlight">
+\[
+f_r \approx V_r \Sigma_r^{-1} U_r^T W
+\]</div>
+</section>
+<hr class="docutils" />
+<section id="weighted-reconstruction-strategy">
+<h2>⚖️ Weighted Reconstruction Strategy<a class="headerlink" href="#weighted-reconstruction-strategy" title="Link to this heading"></a></h2>
+<p>Alternatively, we define a <strong>weight <span class="math notranslate nohighlight">\(w_i\)</span> for each scale</strong> and compute a weighted inverse:</p>
+<ul class="simple">
+<li><p>Define <span class="math notranslate nohighlight">\(W_i = f * \psi_{a_i}\)</span> as the transformed signal at scale <span class="math notranslate nohighlight">\(a_i\)</span></p></li>
+<li><p>Normalize by energy or apply a regularization</p></li>
+</ul>
+<section id="weighted-matrix">
+<h3>Weighted matrix:<a class="headerlink" href="#weighted-matrix" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\tilde{W} = \begin{bmatrix}
+w_1 W_1 \\
+w_2 W_2 \\
+\vdots \\
+w_m W_m
+\end{bmatrix}
+\end{split}\]</div>
+<p>Then apply SVD or least-squares inversion to solve for <span class="math notranslate nohighlight">\(f\)</span>.</p>
+<p>Solve for inverse with:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{S} = W^\dagger \cdot W
+\]</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="python-example-using-pywt">
+<h2>🧪 Python Example Using <code class="docutils literal notranslate"><span class="pre">pywt</span></code><a class="headerlink" href="#python-example-using-pywt" title="Link to this heading"></a></h2>
+<p>This implementation is naïve, but illustrate the principles.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pywt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">svd</span>
+
+<span class="c1"># Create a synthetic Gaussian signal</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+<span class="n">signal_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.0025</span><span class="p">))</span>
+
+<span class="c1"># Choose a compatible continuous wavelet</span>
+<span class="n">wavelet</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">ContinuousWavelet</span><span class="p">(</span><span class="s2">&quot;mexh&quot;</span><span class="p">)</span>  <span class="c1"># Mexican Hat = Ricker</span>
+
+<span class="c1"># Scales for the transform</span>
+<span class="n">scales</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+<span class="n">wavelet_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">:</span>
+    <span class="n">cwt_result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span><span class="n">signal_data</span><span class="p">,</span> <span class="p">[</span><span class="n">scale</span><span class="p">],</span> <span class="n">wavelet</span><span class="p">)</span>
+    <span class="n">wavelet_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cwt_result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Stack transforms into matrix W</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">wavelet_matrix</span><span class="p">)</span>  <span class="c1"># Shape: (n_scales, len(signal))</span>
+
+<span class="c1"># SVD-based pseudoinverse</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">svd</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">rank</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Truncate if desired</span>
+<span class="n">S_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rank</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))])</span>
+<span class="n">recon_signal</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span> <span class="o">@</span> <span class="n">S_inv</span> <span class="o">@</span> <span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">W</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">signal_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">recon_signal</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reconstructed (pseudo-inv)&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Pseudo-Inverse Reconstruction from Ricker CWT&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="Naive PseudoInverse" src="_images/Naive_PseudoInversion.svg" /></p>
+</section>
+<hr class="docutils" />
+<section id="implemented-methods">
+<h2>🧮 Implemented methods<a class="headerlink" href="#implemented-methods" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">DNAsignal.pseudoinverse</span></code> offers several methods of inversion.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;svd&quot;</span></code></p></td>
+<td><p>Pseudo-inverse via SVD, optionally truncated (good for denoising).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;energy&quot;</span></code></p></td>
+<td><p>Directly weighted sum using scale energy $</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;inv_energy&quot;</span></code></p></td>
+<td><p>Regularized inverse sum, weights $\propto 1/</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;custom&quot;</span></code></p></td>
+<td><p>User-defined weights, must match the number of selected scales.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="improved-inversion-advanced-example">
+<h2>🌟 Improved inversion | Advanced example<a class="headerlink" href="#improved-inversion-advanced-example" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p>The scaled Ricker (Mexican hat) wavelet is defined as <span class="math notranslate nohighlight">\(\psi(t) = \left(1 - \frac{t^2}{\sigma^2}\right) \exp\left(-\frac{t^2}{2\sigma^2}\right)\)</span>. Its energy (squared integral) scales with <span class="math notranslate nohighlight">\(\sigma\)</span> as <span class="math notranslate nohighlight">\(\|\psi\|^2 \propto \frac{1}{\sigma}\)</span>. Therefore, the energy of the wavelet decreases as scale increases. When using multiple scales in a continuous wavelet transform (CWT), this creates <strong>non-uniform energy contributions</strong>, making naive reconstruction by summing contributions unstable.</p>
+</div></blockquote>
+<p>The reconstruction is improved by using a <strong>weighted pseudo-inverse</strong> approach. Each wavelet-transformed scale is normalized by its wavelet energy (L2 norm), which corrects for the inherent energy amplification across scales due to the redundancy of the CWT.</p>
+<p>Here an example with  3 Gaussian peaks—2 of which are partially overlapping.</p>
+<hr class="docutils" />
+<section id="weighted-pseudoinverse-strategy">
+<h3>🧮 Weighted Pseudoinverse Strategy<a class="headerlink" href="#weighted-pseudoinverse-strategy" title="Link to this heading"></a></h3>
+<p>Let:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(W_i\)</span>: CWT at scale <span class="math notranslate nohighlight">\(s_i\)</span> (1D array)</p></li>
+<li><p><span class="math notranslate nohighlight">\(w_i\)</span>: weight inversely proportional to the energy of the wavelet at scale <span class="math notranslate nohighlight">\(s_i\)</span></p></li>
+</ul>
+<p>Then:</p>
+<ol class="arabic simple">
+<li><p>Form matrix <span class="math notranslate nohighlight">\(W = [w_1 W_1, w_2 W_2, \dots, w_n W_n]^\top\)</span></p></li>
+<li><p>Solve for inverse with:</p></li>
+</ol>
+<p><span class="math notranslate nohighlight">\(\hat{S} = W^\dagger \cdot W\)</span></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pywt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">svd</span>
+
+<span class="c1"># Create a synthetic Gaussian signal</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+<span class="n">signal_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.0025</span><span class="p">))</span>
+
+<span class="c1"># Choose a compatible continuous wavelet</span>
+<span class="n">wavelet</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">ContinuousWavelet</span><span class="p">(</span><span class="s2">&quot;mexh&quot;</span><span class="p">)</span>  <span class="c1"># Mexican Hat = Ricker</span>
+
+<span class="c1"># Scales for the transform</span>
+<span class="n">scales</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+<span class="n">wavelet_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">:</span>
+    <span class="n">cwt_result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span><span class="n">signal_data</span><span class="p">,</span> <span class="p">[</span><span class="n">scale</span><span class="p">],</span> <span class="n">wavelet</span><span class="p">)</span>
+    <span class="n">wavelet_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cwt_result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Stack transforms into matrix W</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">wavelet_matrix</span><span class="p">)</span>  <span class="c1"># Shape: (n_scales, len(signal))</span>
+
+<span class="c1"># SVD-based pseudoinverse</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">svd</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">rank</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Truncate if desired</span>
+<span class="n">S_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rank</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))])</span>
+<span class="n">recon_signal</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span> <span class="o">@</span> <span class="n">S_inv</span> <span class="o">@</span> <span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">W</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">signal_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">recon_signal</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reconstructed (pseudo-inv)&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Pseudo-Inverse Reconstruction from Ricker CWT&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+
+<span class="c1"># %% Advanced example</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">svd</span><span class="p">,</span> <span class="n">pinv</span>
+
+<span class="c1"># Synthetic signal with three Gaussians (including overlapping)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+<span class="n">gauss1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.002</span><span class="p">))</span>
+<span class="n">gauss2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.002</span><span class="p">))</span>
+<span class="n">gauss3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.52</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># Overlaps with gauss2</span>
+<span class="n">signal_data</span> <span class="o">=</span> <span class="n">gauss1</span> <span class="o">+</span> <span class="n">gauss2</span> <span class="o">+</span> <span class="n">gauss3</span>
+
+<span class="c1"># Define scales and initialize</span>
+<span class="n">scales</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+<span class="n">wavelet_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">energies</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Use PyWavelets for energy normalization</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pywt</span>
+
+<span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">:</span>
+    <span class="n">coef</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span><span class="n">signal_data</span><span class="p">,</span> <span class="p">[</span><span class="n">scale</span><span class="p">],</span> <span class="s1">&#39;mexh&#39;</span><span class="p">)</span>
+    <span class="n">wavelet_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="c1"># Compute the wavelet kernel and its energy</span>
+    <span class="n">wavelet_kernel</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">ContinuousWavelet</span><span class="p">(</span><span class="s1">&#39;mexh&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">wavefun</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">wavelet_kernel</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># L2 norm</span>
+    <span class="n">energies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+
+<span class="c1"># Normalize each transformed scale by its wavelet energy</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">w</span> <span class="o">/</span> <span class="n">e</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wavelet_matrix</span><span class="p">,</span> <span class="n">energies</span><span class="p">)])</span>
+
+<span class="c1"># Perform SVD and pseudo-inverse reconstruction</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">svd</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">S_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">s</span><span class="p">)</span>
+<span class="n">recon_signal</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">W</span>
+<span class="n">recon_signal</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">S_inv</span> <span class="o">@</span> <span class="n">recon_signal</span>
+<span class="n">recon_signal</span> <span class="o">=</span> <span class="n">recon_signal</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Plot original and reconstructed signal</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">signal_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original Signal&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">recon_signal</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reconstructed (Weighted SVD)&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Weighted Pseudoinverse Reconstruction from CWT&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+</pre></div>
+</div>
+<p><img alt="Weighted PseudoInverse" src="_images/Weighted_PseudoInversion.svg" /></p>
+<blockquote>
+<div><p>Note that the reconstruction remains rough and not optimized (no scaling)</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="README.html" class="btn btn-neutral float-left" title="📡🧬 sig2dna" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Olivier Vitrac (Generative Simulation).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
