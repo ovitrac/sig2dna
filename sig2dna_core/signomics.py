@@ -115,8 +115,15 @@ Maintenance & forking
         $ # git push -u origin main   # Push and set upstream tracking
 
         $ tree -P '*.py' -P '*.md' -P 'LICENSE' -I '__pycache__|.*' --prune
-        $ pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
+        $ conda activate base
+        $ pdoc ./sig2dna_core/signomics.py -f --html -o ./docs
         $ doctoc --github  --maxlevel 2 README.md
+
+        $ conda activate sphinxdoc
+        $ cd docs_sphinx/
+        $ make clean
+        $ make html
+        $ cp -rp build/html/. ../docs
 
 
 Author: Olivier Vitrac — olivier.vitrac@gmail.com
@@ -5767,6 +5774,7 @@ if __name__ == "__main__":
     dna.encode_dna()
     dna.encode_dna_full()
     dna.plot_codes(4).print("synthetic_DNA_signal",outputfolder)
+    dna.plot_scalogram().print("synthetic_scalogram",outputfolder)
     A=dna.codesfull[4]
     B=dna.codesfull[2]
     # Alignement
