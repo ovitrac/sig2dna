@@ -127,7 +127,7 @@ Maintenance & forking
 
 
 Author: Olivier Vitrac — olivier.vitrac@gmail.com
-Revision: 2025-06-02
+Revision: 2025-06-13
 """
 
 # %% Indentication
@@ -138,7 +138,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@gmail.com"
-__version__ = "0.45"
+__version__ = "0.51"
 
 # %% Dependencies
 # note:
@@ -148,7 +148,7 @@ __version__ = "0.45"
 # conda install -c conda-forge tqdm numpy pandas scipy matplotlib ipython ipykernel pywavelets python-Levenshtein biopython scikit-learn, seaborn
 
 # Generic libs
-import os, sys, socket, getpass, datetime, uuid, operator, json, gzip, hashlib, re
+import os, sys, socket, getpass, datetime, uuid, operator, json, gzip, hashlib, re, math
 import inspect, importlib.util, warnings
 from pathlib import Path
 from collections import defaultdict, UserDict, OrderedDict, Counter
@@ -177,7 +177,8 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm # from matplotlib.cm import get_cmap
 import matplotlib.colors as mcolors
 from matplotlib.patches import Polygon, Rectangle
-from matplotlib.colors import Normalize
+from matplotlib.colors import Normalize, ListedColormap
+import matplotlib.patches as mpatches
 from mpl_toolkits.mplot3d import Axes3D
 from IPython.display import HTML, display
 
@@ -188,7 +189,8 @@ optional_dependencies = {
     "Levenshtein": {"package": "python-Levenshtein", "optional": False, "source":"-c conda-forge"},
     "Bio.Align": {"package": "biopython", "optional": True, "source": "-c conda-forge"},
     "seaborn": {"package": "seaborn", "optional": False, "source":""},
-    "sklearn": {"package": "scikit-learn", "optional":False, "source":""}
+    "sklearn": {"package": "scikit-learn", "optional":False, "source":""},
+    "umap":{"package": "umap-learn", "optional":True, "source":"-c conda-forge"}
 }
 dependency_status = []
 for module, meta in optional_dependencies.items():
@@ -220,9 +222,9 @@ from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.spatial.distance import squareform
 import seaborn as sns
+#from umap import UMAP
 
-
-__all__ = ['DNACodes', 'DNAFullCodes', 'DNApairwiseAnalysis', 'DNAsignal', 'DNAstr', 'SinusoidalEncoder', 'generator', 'import_local_module', 'peaks', 'signal', 'signal_collection']
+__all__ = ['DNACodes', 'DNAFullCodes', 'DNApairwiseAnalysis', 'DNAsignal', 'DNAsignal_collection', 'DNAstr', 'SinusoidalEncoder', 'generator', 'import_local_module', 'peaks', 'signal', 'signal_collection']
 
 # %% load dynamically figprint without pythonpath modification or installation
 def import_local_module(name: str, relative_path: str):
@@ -1266,24 +1268,53 @@ class DNAFullCodes(dict):
     """
     🧬 DNAFullCodes(dict)
     ----------------------
-    Container for symbolic full-resolution DNA-like strings per scale.
+    A container for symbolic full-resolution DNA-like strings or their sinusoidal embeddings,
+    organized per scale.
 
-    Each entry in the dictionary maps a scale (int) to a DNAstr object or str sequence.
-    This class supports future extensions such as sinusoidal encoding or pattern-based decoding.
+    This structure maps each `scale` (typically corresponding to a wavelet or resolution level)
+    to either:
+      - a DNA-like string (`str` or `DNAstr`) representing symbolic patterns over time, or
+      - a compressed embedding (dict of vectors) after sinusoidal encoding.
+
+    It supports signal discretization, symbolic transformation, sinusoidal encoding,
+    dimensionally-reduced analysis, and visual comparison of encoded motifs.
 
     Attributes
     ----------
     meta : dict
-        Optional metadata about sampling, units, labels, etc.
+        Optional metadata (e.g. sampling rate, units, scale definitions, etc.).
     encoded : bool
-        True if this structure has been encoded via a sinusoidal encoder.
+        Whether this instance contains sinusoidally encoded data.
+    unwrapped_matrix : dict, optional
+        When applicable, stores a matrix {scale: ndarray (n_letters, d_model)} from compressed
+        representations via `unwrap_letters_to_matrix()`.
+
+    Methods
+    -------
+    sinencode(d_model=96, N=10000, operation=None)
+        Encodes symbolic data with sinusoidal positional encoding. Supports per-letter reduction via
+        'sum' or 'mean'. Returns a new encoded instance.
+
+    sindecode()
+        Attempts to reconstruct the symbolic string by repeating letters. Only works if the original
+        operation did not compress to a single vector per letter.
+
+    unwrap_letters_to_matrix()
+        Converts compressed encodings (after 'sum' or 'mean') into (n_letters × d_model) matrices
+        per scale. Required for d-space plotting.
+
     plot(figsize=(12, 4))
-        Plot method for DNAFullCodes
+        Plots the letter-wise composition (symbolic form) or encoded means (if encoded=True).
+
+    plot_unwrapped_matrix(figsize=(12, 4))
+        Visualizes each letter’s embedding vector in d-space, with one subplot per scale.
 
     Example
     -------
     >>> codes = DNAFullCodes({4: 'YAABZZ'}, meta={"sampling_dt": 0.5})
-    >>> print(codes.summary())
+    >>> encoded = codes.sinencode(operation="mean")
+    >>> encoded.unwrap_letters_to_matrix()
+    >>> encoded.plot_unwrapped_matrix()
     """
 
     def __init__(self, *args, meta=None, encoded=False, **kwargs):
@@ -1302,16 +1333,51 @@ class DNAFullCodes(dict):
         """
         return {scale: f"{len(seq)} letters" for scale, seq in self.items()}
 
-    def sinencode(self, d_model=96, N=10000):
-        """Sinencode method"""
-        encoded = DNAFullCodes(meta=self.meta.copy(), encoded=True)
+    def sinencode(self, d_model=96, N=10000, operation="sum"):
+        """
+        Sinencode method — encodes each letter in the DNAFullCodes as a set of sinusoidal embeddings.
+
+        Parameters
+        ----------
+        d_model : int, optional
+            Dimensionality of the sinusoidal embedding (default is 96).
+        N : int, optional
+            Maximum number of positions for the encoding (default is 10000).
+        operation : str or None, optional
+            If "sum", sums all encodings per letter.
+            If "mean", averages all encodings per letter.
+            If None, keeps the full (n_occurrences, d_model) matrix per letter.
+            Raises a ValueError if the operation is not one of the above.
+
+        Returns
+        -------
+        DNAFullCodes (without aggregation)
+            A new DNAFullCodes instance with encoded representations and metadata.
+        DNAFullCodes (with aggregation)
+            A new DNAFullCodes instance with encoded and aggregated (based operation) representations and metadata.
+        """
+        encoded = DNAFullCodes(meta=self.meta.copy(), encoded=True)            # encoded signal
+        encoded_aggregated = DNAFullCodes(meta=self.meta.copy(), encoded=True) # encoded and aggregated
         for scale, seq in self.items():
             encoder = SinusoidalEncoder(d_model=d_model, N=N)
             grouped = {ch: encoder.encode([i for i, c in enumerate(seq) if c == ch])
                        for ch in set(seq)}
+            aggregated = {}
+            if operation is not None:
+                for ch, array in grouped.items():
+                    if operation == "sum":
+                        aggregated[ch] = array.sum(axis=0)
+                    elif operation == "mean":
+                        aggregated[ch] = array.mean(axis=0)
+                    else:
+                        raise ValueError(f"Unsupported operation: {operation}")
             encoded[scale] = grouped
-        encoded.meta.update({"d_model": d_model, "N": N})
-        return encoded
+            encoded_aggregated[scale] = aggregated
+        encoded.meta.update({"d_model": d_model, "N": N, "operation": None})
+        if operation:
+            encoded_aggregated.meta.update({"d_model": d_model, "N": N, "operation": operation})
+            encoded_aggregated.unwrap_letters_to_matrix() # we unwrap all data
+        return encoded, encoded_aggregated
 
     def sindecode(self):
         """Sindecode method"""
@@ -1324,6 +1390,46 @@ class DNAFullCodes(dict):
                 letters.extend([letter] * len(array))
             decoded[scale] = DNAstr("".join(letters))
         return decoded
+
+    def unwrap_letters_to_matrix(self):
+        """
+        Assemble all encoded letter vectors into a matrix of shape (n_letters, d_model)
+        for each scale.
+
+        Applies only when the encoding was performed with an operation ("sum" or "mean").
+        Stores the result in self.unwrapped_matrix as a dict {scale: matrix}.
+        Returns the dictionary for chaining or inspection.
+
+        Raises
+        ------
+        ValueError if the encoding is not compressed (i.e., operation is None or missing),
+        or if encoded entries are inconsistent in shape.
+        """
+        if not self.encoded:
+            raise ValueError("unwrap_letters_to_matrix() can only be used on encoded instances.")
+
+        op = self.meta.get("operation", None)
+        if op not in {"sum", "mean"}:
+            raise ValueError(f"Cannot unwrap: incompatible operation mode '{op}'. Must be 'sum' or 'mean'.")
+
+        result = {}
+        for scale, grouped in self.items():
+            vectors = list(grouped.values())
+            letters = list(grouped.keys())
+
+            # Ensure all vectors are 1D and same length
+            if not all(isinstance(v, np.ndarray) and v.ndim == 1 for v in vectors):
+                raise ValueError(f"Scale {scale}: not all vectors are compressed 1D arrays.")
+            d_set = {v.shape[0] for v in vectors}
+            if len(d_set) > 1:
+                raise ValueError(f"Scale {scale}: inconsistent vector dimensions found: {d_set}")
+
+            mat = np.stack(vectors, axis=0)  # shape (n_letters, d)
+            result[scale] = mat
+
+        self.unwrapped_matrix = result
+        return result
+
 
     def __repr__(self):
         return f"<DNAFullCodes(scales={list(self.keys())}, encoded={self.encoded})>"
@@ -1383,6 +1489,45 @@ class DNAFullCodes(dict):
             fig.suptitle("Raw DNAFullCodes frequency per letter")
         plt.tight_layout()
         plt.show()
+        return fig
+
+    def plot_unwrapped_matrix(self, figsize=(12, 4)):
+        """
+        Plot each letter's encoded vector in the abstract embedding space (d-space).
+        One curve per letter, one subplot per scale.
+
+        Requires `unwrap_letters_to_matrix()` to have been called.
+
+        Parameters
+        ----------
+        figsize : tuple
+            Base figure size. Height will be scaled based on number of scales.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            The generated matplotlib figure.
+        """
+        if not hasattr(self, "unwrapped_matrix"):
+            raise AttributeError("unwrapped_matrix not found. Run unwrap_letters_to_matrix() first.")
+        scales = sorted(self.unwrapped_matrix.keys())
+        n_scales = len(scales)
+        fig, axs = plt.subplots(n_scales, 1, figsize=(figsize[0], figsize[1]*n_scales), squeeze=False)
+        axs = axs[:, 0]
+
+        for i, scale in enumerate(scales):
+            matrix = self.unwrapped_matrix[scale]
+            letters = list(self[scale].keys())
+            for j, vec in enumerate(matrix):
+                axs[i].plot(vec, label=f"'{letters[j]}'")
+            axs[i].set_title(f"Scale {scale}")
+            axs[i].set_xlabel("Encoding Dimension")
+            axs[i].set_ylabel("Value")
+            axs[i].legend()
+            axs[i].grid(True)
+
+        fig.suptitle("Encoded letter vectors per scale in d-space")
+        plt.tight_layout()
         return fig
 
 
@@ -1457,6 +1602,10 @@ class DNAsignal:
         the symbolic sequence at that scale.
     codesfull : dict[int, DNAstr]
         Same as `codes`, but uses full resolution symbolic representation.
+    sincodesfull : dict[int, DNAFullCodes]
+        Sinusoidal position encoded DNAstr (without aggregation)
+    sincodesfull_aggregated
+        Sinusoidal position encoded DNAstr (with aggregation)
     peaks : peaks
         Optional `peaks` object used to index real peak positions from the signal.
     codebook : dict
@@ -1988,8 +2137,6 @@ class DNAsignal:
         DNACodes
             Decoded symbolic structure
         """
-        from sig2dna3.signomics import SinusoidalEncoder
-
         decoded = DNACodes(meta={"sampling_dt": reference_dx}, encoded=False)
         for scale, grouped in grouped_embeddings.items():
             decoded[scale] = SinusoidalEncoder.sindecode_dna_grouped(
@@ -2079,16 +2226,21 @@ class DNAsignal:
         self.codesfull = result
         return self.codesfull # for chaining
 
-    def sinencode_dna_full(self, d_model=96, N=10000):
+    def sinencode_dna_full(self, d_model=96, N=10000, operation=None):
         """
         🌀 Encode full-resolution DNA-like strings into sinusoidal embeddings grouped by letter.
 
         Parameters
-        ----------
-        d_model : int
-            Dimensionality of the sinusoidal embedding (must be even).
-        N : int
-            Frequency base used for sinusoidal encoding.
+            ----------
+        d_model : int, optional
+            Dimensionality of the sinusoidal embedding (default is 96).
+        N : int, optional
+            Maximum number of positions for the encoding (default is 10000).
+        operation : str or None, optional
+            If "sum", sums all encodings per letter.
+            If "mean", averages all encodings per letter.
+            If None, keeps the full (n_occurrences, d_model) matrix per letter.
+            Raises a ValueError if the operation is not one of the above.
 
         Sets
         ----
@@ -2096,6 +2248,7 @@ class DNAsignal:
             Full-resolution symbolic strings at each scale.
         self.codesfull_encoded : DNAFullCodes
             Sinusoidally encoded version of the full DNA strings.
+
         """
         if not hasattr(self, 'codesfull') or not self.codesfull:
             self.encode_dna_full()  # generate codesfull from codes
@@ -2107,7 +2260,8 @@ class DNAsignal:
             "d_model": d_model,
             "N": N
         })
-        self.sincodesfull = self.codesfull.sinencode(d_model=d_model, N=N)
+        self.sincodesfull,self.sincodesfull_aggregated = \
+            self.codesfull.sinencode(d_model=d_model, N=N, operation=operation)
         return self.sincodesfull # for chaining
 
 
@@ -2132,8 +2286,6 @@ class DNAsignal:
         DNACodes
             Decoded symbolic structure
         """
-        from sig2dna3.signomics import SinusoidalEncoder
-
         decoded = DNACodes(meta={"sampling_dt": reference_dx}, encoded=False)
         for scale, grouped in grouped_embeddings.items():
             decoded[scale] = SinusoidalEncoder.sindecode_dna_grouped(
@@ -2837,6 +2989,18 @@ class DNAsignal:
         print(f"Levenshtein distance matrix completed in {elapsed:.2f} seconds.")
         return DNApairwiseAnalysis(D, names, list_DNAsignals)
 
+
+    @property
+    def letters(self):
+        """Return used letters"""
+        if hasattr(self,"sincodesfull") and isinstance(self.sincodesfull,DNAFullCodes) and len(self.scales)>0:
+            return list(self.sincodesfull[self.scales[0]].keys())
+        elif hasattr(self,"codesfull") and isinstance(self.codesfull,DNAFullCodes) and len(self.scales)>0:
+            return list(set(str(self.codesfull[self.scales[0]])))
+        elif hasattr(self,"codes") and isinstance(self.codes,DNACodes) and len(self.scales)>0:
+            return list(set(self.codes[self.scales[0]]["letters"]))
+        else:
+            return None
 
 # ------------------------
 # DNAstr class
@@ -4038,7 +4202,993 @@ class DNApairwiseAnalysis:
         return dhalf, fig
 
 
+# --------------------------------------------
+# DNAsignal_collection class
+# This class is intended for 2D intepretation
+# --------------------------------------------
+class DNAsignal_collection(list):
+    """
+    A collection of DNAsignal objects (e.g., from a GC-MS chromatogram) supporting symbolic sinusoidal encoding,
+    full tensor construction, and blind deconvolution using latent component analysis.
 
+    Purpose
+    -------
+    DNAsignal_collection is designed to enable symbolic and positional encoding of multiple 1D analytical signals
+    (e.g., ion channels from GC-MS data) using lettered segments and sinusoidal encodings. It allows combining
+    multiple encoded signals into a single tensor for processing with machine learning methods, including dimensionality
+    reduction and blind source separation.
+
+    Theory
+    ------
+    Each signal is decomposed into symbolic segments based on their local morphology (encoded as letters like A, B, Y, Z, _).
+    Each segment is represented in an embedding space of dimension `d` via sinusoidal encoding. The 3D tensor
+    $v_{t,m,d}$ is composed of:
+
+    - $E_{t,m,d}$: symbolic encoding across segments.
+    - $PE_t$: positional encoding along the time/segment axis (t).
+    - $PE_m$: positional encoding along the mass channel/ion axis (m).
+
+    Combining these yields:
+
+    $$
+    v_{t,m,d} = E_{t,m,d} + PE_t(t,d) + PE_m(m,d)
+    $$
+
+    Methods
+    -------
+    - `.sinencode_dna_full(scale=4)`: performs symbolic encoding at a given scale.
+    - `.E_symbol`: property returning symbolic component E for each letter and scale.
+    - `.PE_t`: positional encoding per letter along t for each scale.
+    - `.PE_m`: positional encoding along m (mass channels).
+    - `.vtm`: dictionary of $v_{t,m,d}$ matrices per letter.
+    - `.vtm_full`: complete tensor (sum of all letters) used for machine learning.
+    - `.deconvolve_latent_sources(...)`: uses PCA to decompose full tensor into component chromatograms.
+    - `.plot_v_symbol_components(...)`: visualizes the construction of $v_{t,m}$ for each letter.
+    - `.plot_vtm_full(...)`: visualizes the components of the full $v_{t,m}$ tensor.
+
+    Parameters
+    ----------
+    signals : list of DNAsignal
+        List of DNAsignal instances (e.g., one per ion channel).
+    vtmscale : int
+        Scale to calculate vtm_full
+    rasterscan : bool (default=True)
+        True if one point is read at a time by the detector
+        In practice, flatten the 2D signal (T × m) into a single 1D time axis by appending
+        all temporal channels one after another:
+    dtype : type or np.dtype, optional
+        Numeric dtype used for storing encoding arrays (E_symbol, PE_t, PE_m, vtm, vtm_full).
+        Defaults to np.float32 for reduced memory usage.
+
+    Attributes
+    ----------
+    m : int
+        Number of signals (ion channels).
+    d : int
+        Embedding dimension.
+    letters : list of str
+        List of symbolic segment labels used in the encodings.
+    scales : list of int
+        Available scales for the symbolic encoding.
+    _E_symbol : dict
+        Cached symbolic encoding tensors for each letter and scale.
+    _PE_t : dict
+        Cached positional encoding along t for each letter and scale.
+    _PE_m : dict
+        Cached positional encoding along m for each scale.
+    _vtm : dict
+        Cached symbolic+positional tensors per letter.
+    _vtm_full : np.ndarray
+        Cached full encoding tensor combining all letters.
+    """
+
+    def __init__(self, *signals, vtmscale=None, rasterscan=True, dtype=np.float32):
+        """
+        Initialize a DNAsignal_collection from DNAsignal instances.
+
+        Parameters
+        ----------
+        *signals : DNAsignal
+            One or more DNAsignal objects.
+        vtmscale : int (default self.scales[0])
+            Scale to calculate vtm_full
+        dtype : type or np.dtype, optional
+            Numeric dtype used for storing encoding arrays (E_symbol, PE_t, PE_m, vtm, vtm_full).
+            Defaults to np.float32 for reduced memory usage.
+        """
+        if not signals:
+            raise ValueError("At least one DNAsignal must be provided.")
+        if not all(isinstance(sig, DNAsignal) for sig in signals):
+            raise TypeError("All elements must be DNAsignal instances.")
+        super().__init__(signals)
+        self.issinencoded = False
+        if not all(hasattr(sig,"codesfull") for sig in signals):
+            raise ValueError("All elements must be fully DNA encoded.")
+
+        self.dtype = dtype
+        self.d = getattr(signals[0], "d", 128)
+        self._PE_t = {}
+        self._PE_m = {}
+        self._E_symbol = {}
+        self._vtm = {}
+        self._vtm_full = None
+        self.rasterscan = rasterscan
+
+        self.letters = sorted({l for sig in signals for l in getattr(sig, "letters", [])})
+        self.scales = sorted({s for sig in signals for s in getattr(sig, "codesfull", {}).keys()})
+        if vtmscale is None:
+            vtmscale = self.scales[0]
+        if not isinstance(vtmscale,int):
+            raise TypeError(f"vtmscale must be int not a {type(vtmscale).__name__}")
+        if vtmscale not in self.scales:
+            raise ValueError(f"vtmscale must be chosen among {[self.scales]}")
+        self.vtmscale = vtmscale
+
+    @property
+    def m(self):
+        """Return the number of signals in the collection."""
+        return len(self)
+
+    def sinencode_dna_full(self, d_model=128, N=10000, operation="sum"):
+        """
+        🌀 Encode all DNAsignal instances using full-resolution sinusoidal embeddings,
+        grouped by letter and organized per scale.
+
+        Parameters
+        ----------
+        d_model : int, optional
+            Dimensionality of the sinusoidal embedding (default is 128).
+        N : int, optional
+            Maximum number of positions for the encoding (default is 10000).
+        operation : str or None
+            If "sum", sum all position encodings per letter.
+            If "mean", average encodings.
+            If None, retain full (n_occurrences × d_model) arrays.
+        """
+        for j in range(self.m):
+            self[j].sinencode_dna_full(d_model=d_model, N=N, operation=operation)
+        for j in range(self.m):
+            self[j].sincodesfull_aggregated.unwrap_letters_to_matrix()
+        self.d = d_model
+        self.issinencoded = True
+
+    def combine_embeddings(self, selected_letters=None):
+        """
+        Combine unwrapped embeddings across all signals for each scale.
+
+        Parameters
+        ----------
+        selected_letters : list of str, optional
+            If provided, restrict to these letters.
+
+        Returns
+        -------
+        dict
+            Dictionary {scale: {letter: (m, d)}} for each selected scale and letter.
+        """
+        results = {}
+        for scale in self.scales:
+            letters = selected_letters or self.letters
+            combined = {letter: np.zeros((self.m, self.d),dtype=self.dtype) for letter in letters}
+            for i, sig in enumerate(self):
+                if not isinstance(sig,DNAsignal):
+                    raise TypeError(f'signal must be a DNAsignal not a {type(sig).__name__}')
+                if not hasattr(sig,"sincodesfull_aggregated"):
+                    raise ValueError("nothing to combine, call sinencode_dna_full(...) before combining")
+                matrix = sig.sincodesfull_aggregated.unwrapped_matrix[scale]
+                signal_letters = list(sig.sincodesfull[scale].keys())
+                for j, letter in enumerate(signal_letters):
+                    if letter in letters:
+                        combined[letter][i, :] = matrix[j]
+            results[scale] = combined
+        return results
+
+    def scale_alignment(self, method="zscore"):
+        """
+        Normalize embeddings across all signals and all scales.
+
+        Parameters
+        ----------
+        method : str
+            One of {"zscore", "minmax"}.
+        """
+        for sig in self:
+            for scale in self.scales:
+                if not isinstance(sig,DNAsignal):
+                    raise TypeError(f'signal must be a DNAsignal not a {type(sig).__name__}')
+                if not hasattr(sig,"sincodesfull_aggregated"):
+                    raise ValueError("nothing to scale, call sinencode_dna_full(...) before scaling")
+                mat = sig.sincodesfull_aggregated.unwrapped_matrix[scale]
+                if method == "zscore":
+                    sig.sincodesfull.unwrapped_matrix[scale] = StandardScaler().fit_transform(mat)
+                elif method == "minmax":
+                    min_val = mat.min(axis=0)
+                    max_val = mat.max(axis=0)
+                    sig.sincodesfull.unwrapped_matrix[scale] = (mat - min_val) / (max_val - min_val)
+                else:
+                    raise ValueError("Unsupported scaling method. Choose 'zscore' or 'minmax'.")
+
+    def reduce_dimensions(self, method="pca", selected_letters=None, n_components=2):
+        """
+        Apply dimensionality reduction (PCA or UMAP) across signals for each scale.
+
+        Parameters
+        ----------
+        method : str
+            "pca" or "umap".
+        selected_letters : list of str, optional
+            Restrict to a subset of letters.
+        n_components : int
+            Number of projection dimensions.
+
+        Returns
+        -------
+        dict
+            Dictionary {scale: ndarray} with shape (m, n_components), one per scale.
+        """
+        combined_by_scale = self.combine_embeddings(selected_letters)
+        projections = {}
+        for scale, embeddings in combined_by_scale.items():
+            if len(embeddings) == 1:
+                # Single letter
+                letter = list(embeddings.keys())[0]
+                X = embeddings[letter]
+            else:
+                # Concatenate across letters
+                X = np.concatenate([embeddings[letter] for letter in embeddings], axis=1)
+
+            if method == "pca":
+                reducer = PCA(n_components=n_components)
+            elif method == "umap":
+                reducer = UMAP(n_components=n_components)
+            else:
+                raise ValueError("Method must be 'pca' or 'umap'.")
+
+            projections[scale] = reducer.fit_transform(X)
+
+        return projections
+
+    def __str__(self):
+        return f"<DNAsignal_collection: {self.m} signals, {len(self.letters)} letters, {len(self.scales)} scales, d={self.d}>"
+
+    def __repr__(self):
+        """
+        Return a readable summary of the DNAsignal_collection contents.
+        Shows the number of signals, available letters, scales, and embedding dimension.
+        Flags whether sinusoidal encoding has been performed.
+        """
+        flag = "✔️" if self.issinencoded else "⚠️ not encoded"
+        print(f"<DNAsignal_collection: {self.m} signals>",
+              f"\tletters={self.letters}",
+              f"\tscales={self.scales}",
+              f"\td={self.d}",
+              f"\t{'sin-encoded' if flag else 'sin-encoding pending'}",sep="\n"
+            )
+        return self.__str__()
+
+    def to_dataframe(self, selected_letters=None):
+        """
+        Export combined embeddings for all scales as a tidy pandas DataFrame,
+        suitable for machine learning tasks.
+
+        Parameters
+        ----------
+        selected_letters : list of str, optional
+            Subset of letters to include. If None, include all letters.
+
+        Returns
+        -------
+        pd.DataFrame
+            A long-form DataFrame with columns:
+            ['signal_index', 'scale', 'letter', 'dim_0', ..., 'dim_{d-1}']
+        """
+        import pandas as pd
+
+        all_records = []
+        combined_all = self.combine_embeddings(selected_letters)
+
+        for scale, embeddings in combined_all.items():
+            for letter, mat in embeddings.items():
+                for i, vec in enumerate(mat):
+                    record = {"signal_index": i, "scale": scale, "letter": letter}
+                    record.update({f"dim_{j}": v for j, v in enumerate(vec)})
+                    all_records.append(record)
+
+        return pd.DataFrame(all_records)
+
+    # Generic plot
+    def plot(self, letters = None, scales = None, figsize=(18, 10), max_legend=25):
+        """
+        Plot the encoded signals in subplots.
+        Rows represent letters, columns represent scales.
+        Each subplot contains overlaid colored curves from all signals.
+
+        Parameters
+        ----------
+        letters : list or None
+            Letters to be plotted. If None, all available letters are plotted.
+        scales : list or None
+            Scales to be plotted. If None, all available scales are plotted.
+        figsize : tuple
+            Size of the full figure.
+        max_legend : int
+            Maximum number of signals to label in the legend.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            The figure containing the plots.
+        """
+        if not self.issinencoded:
+            raise ValueError("Signals must be sinencoded first (call sinencode_dna_full).")
+
+        letters = letters or sorted(self.letters)
+        scales = scales or sorted(self.scales)
+        m = self.m
+        d = self.d
+
+        fig, axs = plt.subplots(len(letters), len(scales), figsize=figsize, squeeze=False)
+        cmap = cm.get_cmap("plasma", m)
+
+        for i, letter in enumerate(letters):
+            for j, scale in enumerate(scales):
+                ax = axs[i, j]
+                for idx, sig in enumerate(self):
+                    if not isinstance(sig,DNAsignal):
+                        raise TypeError(f'signal for letter "{letter}" must be a DNAsignal not a {type(sig).__name__}')
+                    if not hasattr(sig,"sincodesfull_aggregated"):
+                        raise ValueError("nothing to plot, call sinencode_dna_full(...) before plotting")
+                    try:
+                        vec = sig.sincodesfull_aggregated[scale][letter]
+                        if isinstance(vec, np.ndarray) and vec.ndim == 2:
+                            vec = vec.mean(axis=0)
+                        ax.plot(vec, label=f"sig {idx}", color=cmap(idx / max(1, m-1)))
+                    except KeyError:
+                        continue
+                ax.set_title(f"Letter '{letter}' — Scale {scale}", fontsize=10)
+                ax.set_xticks([])
+                ax.set_yticks([])
+                if i == len(letters) - 1:
+                    ax.set_xlabel("Embedding dim")
+                if j == 0:
+                    ax.set_ylabel("Amplitude")
+
+        # Legend outside of the plot
+        handles, labels = axs[0, 0].get_legend_handles_labels()
+        if handles:
+            fig.legend(handles[:max_legend], labels[:max_legend],
+                       loc='upper center', bbox_to_anchor=(0.5, 1.03),
+                       ncol=min(max_legend, 5), fontsize="small", title="Signal Index")
+
+        plt.tight_layout()
+        return fig
+
+    def plot_letters(self, scale=None, figsize=(12, 6), cmap="viridis"):
+        """
+        Plot a heatmap of the letter codes (symbolic DNA) across all signals.
+
+        Parameters
+        ----------
+        scale : int, optional
+            Scale to use (default: self.vtmscale).
+        figsize : tuple
+            Size of the figure.
+        cmap : str
+            Matplotlib colormap name (default: "viridis").
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """
+        scale = scale or self.vtmscale
+        m = self.m
+        T = len(self[0].codesfull[scale])
+        letters = self.letters
+        letter_to_int = {l: i for i, l in enumerate(letters)}
+        int_to_letter = {i: l for l, i in letter_to_int.items()}
+
+        # Build numeric matrix
+        mat = np.zeros((m, T), dtype=int)
+        counts = {l: 0 for l in letters}
+        for i, sig in enumerate(self):
+            seq = sig.codesfull[scale]
+            for t, c in enumerate(seq):
+                mat[i, t] = letter_to_int.get(c, 0)
+                counts[c] = counts.get(c, 0) + 1
+
+        # Plot
+        fig, ax = plt.subplots(figsize=figsize)
+        im = ax.imshow(mat, aspect='auto', cmap=plt.get_cmap(cmap, len(letters)))
+
+        # Legend
+        patches = [mpatches.Patch(color=im.cmap(i), label=f"{l} ({counts[l]})") for i, l in enumerate(letters)]
+        ax.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left', title="Letters")
+
+        ax.set_xlabel("Time index")
+        ax.set_ylabel("Signal index")
+        ax.set_title(f"Letter Code Heatmap (T×m = {T}×{m}) – Occurrences: " +
+                     ", ".join(f"{l}:{counts[l]}" for l in letters))
+
+        plt.tight_layout()
+        return fig
+
+
+    def plot_embedding_projection(self, letters=None, scales=None, method='pca', max_points=25, figsize=(14, 10)):
+        """
+        Plot embedding projections of the encoded signals using PCA (default) or other DR methods.
+
+        Parameters
+        ----------
+        collection : DNAsignal_collection
+            The collection of encoded signals.
+        scales : list or None
+            Scales to include in the projection. If None, all available scales are used.
+        method : str
+            Dimensionality reduction method ('pca' only supported for now).
+        max_points : int
+            Maximum number of signal points to label explicitly.
+        figsize : tuple
+            Size of the figure.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+        """
+        # Determine scales
+        if scales is None:
+            scales = self.scales
+
+        letters = letters or sorted(self.letters)
+        n_rows = len(letters) + 1  # +1 for the full embedding
+        n_cols = len(scales)
+
+        fig, axs = plt.subplots(n_rows, n_cols, figsize=(figsize[0], figsize[1]))
+        axs = np.array(axs).reshape((n_rows, n_cols))
+
+        norm = mcolors.Normalize(vmin=0, vmax=self.m)
+        cmap = cm.get_cmap("plasma", self.m)
+
+        for j, scale in enumerate(scales):
+            combined = self.combine_embeddings()[scale]
+            for i, letter in enumerate(letters):
+                embeddings = combined[letter]
+                reducer = PCA(n_components=2)
+                proj = reducer.fit_transform(embeddings)
+
+                ax = axs[i, j]
+                for idx, point in enumerate(proj):
+                    color = cmap(norm(idx))
+                    ax.scatter(*point, color=color)
+                    if idx < max_points:
+                        ax.text(point[0], point[1], str(idx), fontsize=8)
+                ax.set_title(f"Letter '{letter}', Scale {scale}")
+                ax.set_xticks([])
+                ax.set_yticks([])
+                ax.grid(True)
+
+            # Last row: combined embeddings for all letters
+            all_embeddings = [combined[letter] for letter in letters]
+            all_embeddings = np.concatenate(all_embeddings, axis=1)
+            reducer = PCA(n_components=2)
+            proj = reducer.fit_transform(all_embeddings)
+            ax = axs[-1, j]
+            for idx, point in enumerate(proj):
+                color = cmap(norm(idx))
+                ax.scatter(*point, color=color)
+                if idx < max_points:
+                    ax.text(point[0], point[1], str(idx), fontsize=8)
+            ax.set_title(f"All Letters, Scale {scale}")
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.grid(True)
+
+        fig.suptitle("Embedding Projections by Letter and Scale", fontsize=16)
+        plt.tight_layout()
+        return fig
+
+    # @property: def E_symbol(self) -> Dict[int, Dict[str, np.ndarray]]:
+    @property
+    def E_symbol(self):
+        """
+        E_symbol(t, m): Symbolic component of the 2D encoding for each scale and letter.
+
+        For each letter, builds a tensor (T_letter, M, D) where:
+        - T_letter is the total number of segments of that letter across all M signals,
+        - D is the embedding dimension,
+        - M is the number of ion channels.
+
+        Returns
+        -------
+        dict of dict
+            Mapping {scale: {letter: ndarray of shape (T_letter, m, d)}}
+        """
+        if not self.issinencoded:
+            raise ValueError("Call sinencode_dna_full() first.")
+        if not all(isinstance(sig, DNAsignal) for sig in self):
+            raise TypeError("E_symbol is only defined for DNAsignal_collection containing DNAsignal instances.")
+        if not all(hasattr(sig, "sincodesfull") for sig in self):
+            raise ValueError("Missing `sincodesfull` on at least one DNAsignal. Run `.sinencode_dna_full()` first.")
+        if self._E_symbol:
+            return self._E_symbol
+
+        self._E_symbol = {}
+        for scale in self.scales:
+            E_scale = {}
+            for letter in self.letters:
+                # First pass: compute total segments
+                segment_counts = [
+                    sig.sincodesfull[scale][letter].shape[0]
+                    if letter in sig.sincodesfull[scale] else 0
+                    for sig in self
+                ]
+                total_segments = sum(segment_counts)
+
+                if total_segments == 0:
+                    continue  # Skip completely missing letter at this scale
+
+                # Allocate the global array
+                E_mat = np.zeros((total_segments, self.m, self.d),dtype=self.dtype)
+                offset = 0
+                for i, sig in enumerate(self):
+                    segments = sig.sincodesfull[scale].get(letter)
+                    if segments is None or segments.size == 0:
+                        continue
+                    n_segments = segments.shape[0]
+                    E_mat[offset:offset + n_segments, i, :] = segments
+                    offset += n_segments
+                E_scale[letter] = E_mat
+            self._E_symbol[scale] = E_scale
+        return self._E_symbol
+
+    # @property: def PE_t(self) -> Dict[int, Dict[str, np.ndarray]]:
+    @property
+    def PE_t(self):
+        """
+        PE_t(t): Positional encoding along t (segment axis) per scale and letter.
+
+        For each scale and letter, this provides a matrix of shape (n_segments, d),
+        where n_segments is the total number of segments of that letter across the m signals,
+        and d is the embedding dimension.
+
+        Returns
+        -------
+        dict of dict
+            Mapping {scale: {letter: ndarray of shape (n_segments, d)}}
+        """
+        if not self.issinencoded:
+            raise ValueError("Call sinencode_dna_full() first.")
+        if not all(isinstance(sig, DNAsignal) for sig in self):
+            raise TypeError("PE_t is only defined for DNAsignal_collection containing DNAsignal instances.")
+        if not all(hasattr(sig, "sincodesfull") for sig in self):
+            raise ValueError("Missing `sincodesfull` on at least one DNAsignal. Run `.sinencode_dna_full()` first.")
+        if self._PE_t:
+            return self._PE_t
+
+        self._PE_t = {}
+        for scale in self.scales:
+            PE_t_scale = {}
+            for letter in self.letters:
+                # First pass: compute total segments
+                total_segments = sum(
+                    sig.sincodesfull[scale][letter].shape[0]
+                    if letter in sig.sincodesfull[scale] else 0
+                    for sig in self
+                )
+
+                if total_segments == 0:
+                    continue  # Skip completely missing letter at this scale
+
+                # Generate sinusoidal encoding
+                position = np.arange(total_segments)[:, np.newaxis]  # (T_letter, 1)
+                div_term = np.linspace(0, 1, self.d)[np.newaxis, :]  # (1, d)
+                PE_t_scale[letter] = np.sin(position * div_term)     # (T_letter, d)
+
+            self._PE_t[scale] = PE_t_scale
+        return self._PE_t
+
+
+    # @property: def PE_m(self) -> Dict[int, np.ndarray]:
+    @property
+    def PE_m(self):
+        """
+        PE_m(m): Positional encoding along m (IC index axis) per scale.
+
+        Returns
+        -------
+        dict
+            Mapping: {scale: array of shape (m, d)}
+        """
+        if not self.issinencoded:
+            raise ValueError("Call sinencode_dna_full() first.")
+        if not all(isinstance(sig, DNAsignal) for sig in self):
+            raise TypeError("PE_m is only defined for DNAsignal_collection containing DNAsignal instances.")
+        if not all(hasattr(sig, "sincodesfull") for sig in self):
+            raise ValueError("Missing `sincodesfull` on at least one DNAsignal. Run `.sinencode_dna_full()` first.")
+        if self._PE_m:
+            return self._PE_m
+        for scale in self.scales:
+            PE_m_scale = np.zeros((self.m, self.d),dtype=self.dtype)
+            count = 0
+            for i in range(self.m):
+                for letter in self.letters:
+                    if letter in self[i].sincodesfull[scale]:
+                        PE_m_scale[i] += self[i].sincodesfull_aggregated[scale][letter]
+                        count += 1
+            self._PE_m[scale] = PE_m_scale / len(self.letters)
+        return self._PE_m
+
+    @property
+    def vtm(self):
+        """
+        Compute the full encoded matrix v_{t,m} for each letter at each scale.
+
+        This property combines three orthogonal components:
+        - E_symbol(t, m): the original per-segment encoding for each letter
+        - PE_t(t): a sinusoidal encoding applied along the segment (time) axis
+        - PE_m(m): a sinusoidal encoding applied along the signal (IC) axis
+
+        The resulting tensor for each scale and letter is of shape (n_segments, m, d), where:
+            - n_segments: number of segments (time positions) per letter
+            - m: number of DNAsignal instances in the collection
+            - d: dimensionality of the encoding space (d_model)
+
+        Returns
+        -------
+        dict
+            A nested dictionary {scale: {letter: array of shape (n_segments, m, d)}}.
+        """
+        if self._vtm:
+            return self._vtm
+        if not self.issinencoded:
+            raise ValueError("Call sinencode_dna_full() first.")
+        vtm_result = {}
+        for scale in self.scales:
+            result = {}
+            PE_m_seg = self.PE_m[scale]
+            for letter in self.letters:
+                E_seg = self.E_symbol[scale][letter]
+                PE_t_seg = self.PE_t[scale][letter]
+                PE_t_broadcast = PE_t_seg[:, np.newaxis, :]  # (n_segments, 1, d)
+                PE_m_broadcast = PE_m_seg[np.newaxis, :, :]  # (1, m, d)
+
+                if E_seg.shape[0] != PE_t_broadcast.shape[0]:
+                    raise ValueError(f"Mismatch: E_symbol[{scale}][{letter}].shape[0]={E_seg.shape[0]} "
+                                     f"but PE_t[{scale}][{letter}].shape[0]={PE_t_broadcast.shape[0]}")
+                v_tm = E_seg + PE_t_broadcast + PE_m_broadcast
+                result[letter] = v_tm
+            vtm_result[scale] = result
+        self._vtm = vtm_result
+        return self._vtm
+
+    def plot_v_symbol_components(self, scale=None, dims="all"):
+        """
+        Plot the components E_symbol, PE_t, PE_m and their sum v_{t,m}
+        as image matrices for each letter at a given scale.
+
+        Parameters
+        ----------
+        scale : int, optional
+            The scale to use. Defaults to the first available scale.
+        dims : "all", list or slice
+            Which dimensions to include in the sum over `d`. Default is all.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """
+        if not self.issinencoded:
+            raise ValueError("Call sinencode_dna_full() first.")
+
+        if scale is None:
+            scale = self.scales[0]
+        if scale not in self.scales:
+            raise ValueError(f"Scale {scale} not found in collection.")
+
+        fig, axes = plt.subplots(len(self.letters), 4, figsize=(16, 4 * len(self.letters)))
+        fig.suptitle(f"Scale {scale}: Components of $v_{{t,m}} = E + PE_t + PE_m$", fontsize=14)
+
+        PE_m = self.PE_m[scale]
+        for i, letter in enumerate(self.letters):
+            E = self.E_symbol[scale][letter]
+            PE_t = self.PE_t[scale][letter][:, np.newaxis, :]
+            PE_m_broad = PE_m[np.newaxis, :, :]
+            V = self.vtm[scale][letter]
+
+            # Validate dims
+            d = E.shape[-1]
+            if dims == "all":
+                dims_to_use = np.arange(d)
+            elif isinstance(dims, (list, slice, np.ndarray)):
+                dims_to_use = np.arange(d)[dims]
+            else:
+                raise TypeError("`dims` must be 'all', a list, or a slice.")
+
+            # Subset and sum
+            E_2D = E[:, :, dims_to_use].sum(axis=-1)
+            PE_t_2D = PE_t[:, :, dims_to_use].sum(axis=-1)
+            PE_m_2D = PE_m_broad[:, :, dims_to_use].sum(axis=-1)
+            V_2D = V[:, :, dims_to_use].sum(axis=-1)
+
+            for ax, mat, title in zip(axes[i], [E_2D, PE_t_2D, PE_m_2D, V_2D],
+                                      [f"E_symbol[{letter}]", f"PE_t[{letter}]", f"PE_m[{letter}]", f"v_t,m[{letter}]"]):
+                im = ax.imshow(mat, aspect='auto', cmap='viridis')
+                ax.set_title(title)
+                fig.colorbar(im, ax=ax)
+
+        return fig
+
+    # -- full interpretation for 2D signals ---
+    @property
+    def vtm_full(self):
+        """
+        Compute and store the full encoded tensor for the GC-MS signal:
+            - If self.rasterscan is False:
+                shape = (T, m, d)
+            - If self.rasterscan is True:
+                shape = (T * m, d)
+
+        This combines:
+        - Symbolic embedding per character (one-hot or learned)
+        - Positional encoding along time axis
+        - PE_m (mass/IC identity) is used only if rasterscan is False
+
+        Returns
+        -------
+        np.ndarray
+            Encoded array (T, m, d) or (T*m, d)
+        """
+        if hasattr(self, "_vtm_full") and self._vtm_full is not None:
+            return self._vtm_full
+
+        if not self.issinencoded:
+            raise ValueError("Call .sinencode_dna_full() first.")
+
+        if not all(isinstance(sig, DNAsignal) for sig in self):
+            raise TypeError("vtm_full is only defined for DNAsignal_collection containing DNAsignal instances.")
+
+        scale = self.vtmscale
+        m = self.m
+        d = self.d
+        T = len(self[0].codesfull[scale])  # All signals assumed same length
+
+        # -- Build symbolic embedding per letter (1-hot or learned) --
+        letters = self.letters
+        letter_indices = {c: i for i, c in enumerate(letters)}
+        rng = np.random.default_rng(42)
+        embedding_matrix = rng.standard_normal((len(letters), d)).astype(self.dtype)
+        embedding_dict = {c: embedding_matrix[i] for i, c in enumerate(letters)}
+
+        # -- Build encoded E_list --
+        E_list = []
+        for sig in self:
+            code_str = sig.codesfull[scale]
+            segments = np.stack([embedding_dict[c] for c in code_str], axis=0)  # (T, d)
+            E_list.append(segments)
+
+        # -- Positional encoding along time --
+        PE_t = SinusoidalEncoder(d_model=d, N=T).encode(np.arange(T))  # (T, d)
+
+        if self.rasterscan:
+            # -- Flatten all signals: shape = (T * m, d)
+            E_flat = np.concatenate(E_list, axis=0)  # (T * m, d)
+            PE_t_flat = np.tile(PE_t, (m, 1))  # repeat time encoding m times
+            self._vtm_full = E_flat + PE_t_flat
+        else:
+            # -- Stack signals into (T, m, d)
+            E_tensor = np.stack(E_list, axis=1)  # (T, m, d)
+            PE_t_tensor = PE_t[:, np.newaxis, :]  # (T, 1, d)
+            PE_m_tensor = self.PE_m[scale][np.newaxis, :, :]  # (1, m, d)
+            self._vtm_full = E_tensor + PE_t_tensor + PE_m_tensor  # full positional tensor
+
+        return self._vtm_full
+
+
+    def plot_vtm_full(self, scale=None, dims="all"):
+        """
+        Visualize the components and sum of the full encoded GC-MS signal at a given scale.
+
+        Parameters
+        ----------
+        scale : int, optional
+            Scale to visualize. Defaults to the first scale.
+        dims : "all", list or slice
+            Dimensions of the embedding `d` to include (default: all).
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """
+        if not self.issinencoded:
+            raise ValueError("Call sinencode_dna_full() first.")
+
+        scale = scale or self.vtmscale
+        if scale not in self.scales:
+            raise ValueError(f"Scale {scale} is not valid. Available scales: {self.scales}")
+
+        v_tm = self.vtm_full
+        if self.rasterscan:
+            Tm, d = v_tm.shape
+            T = len(self[0].codesfull[scale])
+            m = len(self)
+            v_tm = v_tm.reshape(T, m, d)
+
+        T, m, d = v_tm.shape
+
+        if dims == "all":
+            dims_to_use = np.arange(d)
+        elif isinstance(dims, (list, slice, np.ndarray)):
+            dims_to_use = np.arange(d)[dims]
+        else:
+            raise TypeError("`dims` must be 'all', a list, or a slice.")
+
+        PE_t = SinusoidalEncoder(d_model=d, N=T).encode(np.arange(T))[:, dims_to_use]
+        E_partial = v_tm[:, :, dims_to_use] - PE_t[:, None, :]
+
+        if self.rasterscan:
+            PE_m_2D = np.zeros_like(E_partial.sum(axis=2))  # dummy for display
+        else:
+            PE_m = self.PE_m[scale][:, dims_to_use]
+            E_partial -= PE_m[None, :, :]
+            PE_m_2D = PE_m.sum(axis=1)[None, :].repeat(T, axis=0)
+
+        E_2D = E_partial.sum(axis=2)
+        PE_t_2D = PE_t.sum(axis=1)[:, None].repeat(m, axis=1)
+        V_2D = v_tm[:, :, dims_to_use].sum(axis=2)
+
+        fig, axs = plt.subplots(1, 4, figsize=(20, 5))
+        titles = ["E_symbol total", "PE_t", "PE_m" if not self.rasterscan else "PE_m (omitted)", "v_{t,m} total"]
+        matrices = [E_2D, PE_t_2D, PE_m_2D, V_2D]
+
+        for ax, mat, title in zip(axs, matrices, titles):
+            im = ax.imshow(mat, aspect='auto', cmap='viridis')
+            ax.set_title(title)
+            ax.set_xlabel("m")
+            ax.set_ylabel("t")
+            fig.colorbar(im, ax=ax)
+
+        fig.suptitle(f"Full GC-MS Representation (sum over dims={dims}) at scale={scale}", fontsize=14)
+        plt.tight_layout()
+        return fig
+
+
+    def deconvolve_latent_sources(self, n_components=64, inertia_loss_threshold=0.25, plot=True, nmax_plot=8):
+        """
+        Perform dimensionality reduction on the 3D tensor v_{t,m,d} to extract non-coeluted
+        compound chromatograms using PCA, with optional plotting.
+
+        Parameters
+        ----------
+        n_components : int, optional
+            Maximum number of latent components (e.g., pure compounds) to extract.
+            Default is 64.
+        inertia_loss_threshold : float, optional
+            The maximum allowed proportion of total variance to lose in the projection.
+            Default is 0.25 (i.e., at least 75% of the variance should be preserved).
+        plot : bool, optional
+            Whether to display diagnostic plots.
+        nmax_plot : int, optional
+            Maximum number of components to visualize in plots.
+
+        Returns
+        -------
+        components : np.ndarray
+            Component matrix of shape (n_selected_components, D), representing
+            the spectral basis vectors (latent features).
+        chromatograms : np.ndarray
+            Projected chromatograms for each component, shape (T, M, n_selected_components).
+        explained_variance_ratio : np.ndarray
+            Variance explained by each selected component.
+        """
+
+        def find_pca_corner(cumulative_variance, min_index=0):
+            """
+            Identify the 'corner' in a monotonic increasing curve using the max
+            deviation from the straight line between cumulative_variance[min_index]
+            and the last point.
+            Returns: corner_index or None
+            """
+            x = np.arange(len(cumulative_variance))
+            x0, x1 = x[min_index], x[-1]
+            y0, y1 = cumulative_variance[min_index], cumulative_variance[-1]
+            # Linear baseline from (x0, y0) to (x1, y1)
+            baseline = y0 + (x - x0) * (y1 - y0) / (x1 - x0)
+            # Deviation from baseline
+            delta = cumulative_variance - baseline
+            corner_index = np.argmax(delta)-1 # -1 since 0 has been added
+            # Diagnostic check: is the corner meaningful?
+            post_corner_trend = np.mean(np.diff(cumulative_variance[corner_index:]))
+            if corner_index>0 and delta[corner_index] < 2 * post_corner_trend:
+                return None  # not significant enough
+            return corner_index
+
+
+        vtm_full = self.vtm_full
+        if self.rasterscan:
+            T = len(self[0].codesfull[self.vtmscale])
+            m = len(self)
+            Tm, D = vtm_full.shape
+            vtm_full = vtm_full.reshape(T, m, D)
+
+        T, M, D = vtm_full.shape
+        X = vtm_full.reshape(-1, D)
+
+        pca = PCA(n_components=min(n_components, D))
+        X_transformed = pca.fit_transform(X)
+        explained_variance_ratio = pca.explained_variance_ratio_
+        cumulative_variance = np.insert(np.cumsum(explained_variance_ratio), 0, 0.0)
+
+        # select PCA components based on inertia_loss_threshold
+        n_selected = np.searchsorted(cumulative_variance, 1 - inertia_loss_threshold)
+        # refinement based on corners
+        n_corner = find_pca_corner(cumulative_variance)
+        n_selected = n_corner if n_corner is not None else n_selected
+
+        # optimization for plotting
+        n_selected = min(n_selected, n_components) # requested
+        n_plot = min(nmax_plot, n_selected) # required for plotting
+        nrow = math.ceil(math.sqrt(n_plot))
+        ncol = math.ceil(n_plot / nrow)  # needed for filling the tiles
+        n_plot = min(n_components,max(n_selected,nrow*ncol))
+        n_selected = max(n_selected,n_plot) if plot else n_selected
+
+        selected_scores = X_transformed[:, :n_selected]
+        chromatograms = selected_scores.reshape(T, M, n_selected)
+        components = pca.components_[:n_selected]
+
+        if plot:
+            fig1, ax = plt.subplots(figsize=(8, 4))
+            ax.plot(np.arange(0, len(cumulative_variance)), cumulative_variance, marker='o')
+            if n_corner:
+                ax.axvline(n_corner, color='DeepSkyBlue', linestyle='--', label=f'Corner: {n_corner}')
+            ax.axvline(n_selected, color='Tomato', linestyle='--', label=f'Selected: {n_selected}')
+            ax.set_title("Cumulative Explained Variance")
+            ax.set_xlabel("Number of Components")
+            ax.set_ylabel("Cumulative Variance")
+            ax.legend()
+            plt.tight_layout()
+            plt.show()
+
+            nrow = math.ceil(math.sqrt(n_plot)) # updated
+            ncol = math.ceil(n_plot / nrow)
+            fig2, axs = plt.subplots(nrow, ncol, figsize=(4 * ncol, 4 * nrow))
+            axs = axs.flatten()
+            for i in range(min(n_plot,nrow*ncol)):
+                data = chromatograms[:, :, i]
+                im = axs[i].imshow(data, aspect='auto', cmap='plasma')
+                axs[i].set_title(f"[{i + 1}/{n_components}] 2D signal: ({explained_variance_ratio[i]*100:.3g} %)")
+                axs[i].set_xlabel("dim2: e.g. Mass (m or m/z)")
+                axs[i].set_ylabel("dim1: e.g. Time (t)")
+                fig2.colorbar(im, ax=axs[i])
+            plt.tight_layout()
+            plt.show()
+
+            fig3, axs = plt.subplots(n_plot, 2, figsize=(10, 3 * n_plot))
+            for i in range(n_plot):
+                data = chromatograms[:, :, i]
+                axs[i][0].plot(data.sum(axis=1))
+                axs[i][0].invert_yaxis()
+                axs[i][0].set_title(f"[{i + 1}/{n_components}] dim1 projection: e.g. TIC ({explained_variance_ratio[i]*100:.3g} %)")
+                axs[i][1].plot(data.sum(axis=0))
+                axs[i][1].set_title(f"[{i + 1}/{n_components}] dim2 projection: e.g. m/z spectrum ({explained_variance_ratio[i]*100:.3g} %)")
+            plt.tight_layout()
+            plt.show()
+
+            fig4, axs = plt.subplots(nrows=n_plot, figsize=(12, 2.5 * n_plot), sharex=True)
+            if n_plot == 1:
+                axs = [axs]
+            for i in range(n_plot):
+                axs[i].plot(components[i])
+                axs[i].set_title(f"PCA Component #{i + 1} ({explained_variance_ratio[i]*100:.3g} %)")
+            plt.tight_layout()
+            plt.show()
+
+            figs = {"variance":fig1,"chromatograms":fig2,
+                    "projections":fig3,"PCAcomponents":fig4}
+
+        else:
+            figs = None
+
+        return components, chromatograms, explained_variance_ratio[:n_selected], figs
 
 # %% Signal and signal_collection classes
 
@@ -4860,6 +6010,21 @@ class signal_collection(list):
     - sc["name"]        → return a copy of signal with that name
     - sc["A", "B"]      → return a subcollection with those names
 
+    Supports arithmetic operations for aligned signal mixtures.
+
+    Arithmetic operations on aligned signal collections
+    ----------------------------------------------------
+    - Scalar multiplication: `a * sc` scales each signal by a constant `a`.
+    - Collection addition: `sc1 + sc2` adds two collections element-wise.
+    - Linear combinations: `a * A + b * B + c * C` constructs mixtures of compatible collections.
+    - Compatible with `sum([a*A, b*B, ...])` for aggregating multiple weighted collections.
+
+    Requirements
+        - All signal_collections must share the same number of signals.
+        - Signals are aligned on a common x-grid (same `n`, `mode`, and domain).
+        - Element-wise operations preserve signal names and metadata when possible.
+
+
     Examples:
     ---------
     >>> sc = signal_collection(s1, s2, s3)
@@ -4906,7 +6071,7 @@ class signal_collection(list):
 
     def append(self, new_signal):
         """Append and align the new signal to the existing collection."""
-        aligned = self._align_all(self + [new_signal.copy()])
+        aligned = self._align_all(list.__add__(self, [new_signal.copy()]))
         self.clear()
         self.extend(aligned)
 
@@ -5134,8 +6299,8 @@ class signal_collection(list):
         ----------
         n_signals : int
             Number of synthetic signals to generate.
-        n_peaks : int
-            Number of peaks per signal.
+        n_peaks : int or tuple[int,int]
+            Number of peaks per signal or its range.
         kind_distribution : str
             'uniform' → use all peak kinds equally; 'random' → random draw from kinds.
         kinds : tuple[str]
@@ -5209,11 +6374,15 @@ class signal_collection(list):
         all_peak_centers = []
         all_peak_widths = []
         signals = []
+        #cover n_peaks into range
+        if isinstance(n_peaks,int):
+            n_peaks = (n_peaks,n_peaks)
 
         for i in range(n_signals):
             p = peaks()
             attempts = 0
-            while len(p) < n_peaks and attempts < 100 * n_peaks:
+            current_npeaks = rng.integers(*n_peaks,endpoint=True)
+            while len(p) < current_npeaks and attempts < 100 * current_npeaks:
                 w = rng.uniform(*width_range)
                 h = rng.uniform(*height_range)
                 x0 = rng.uniform(xmin + 3 * w, xmax - 3 * w)
@@ -5235,8 +6404,8 @@ class signal_collection(list):
                 attempts += 1
 
             # warning if the number of peaks is lower than expected
-            if len(p) < n_peaks:
-                warnings.warn(f"Signal {i+1}: only placed {len(p)} of {n_peaks} peaks due to overlap constraints.")
+            if len(p) < current_npeaks:
+                warnings.warn(f"Signal {i+1}: only placed {len(p)} of {current_npeaks} peaks due to overlap constraints.")
 
             # Generate signal
             generator_map = {k: generator(k) for k in kinds}
@@ -5388,13 +6557,48 @@ class signal_collection(list):
 
     def _toDNA(self,encode=True,scales=[1,3,4,8,16,32]):
         """
-        Return a DNA encoded signal
+        Return a collection of DNA encoded signals  (class DNAsignal_collection)
 
         Parameters
             encode : bool (default=True)
             scales : list (default=[1,3,4,8,16,32])
         """
-        return [DNAsignal(s,scales=scales,encode=encode) for s in self]
+        return DNAsignal_collection(*[DNAsignal(s,scales=scales,encode=encode) for s in self])
+
+    def __mul__(self, scalar):
+        """override *"""
+        if not isinstance(scalar, (int, float)):
+            raise TypeError("Only scalar multiplication is supported.")
+        new_signals = [signal(s.x, s.y * scalar, name=s.name, source=s.source) for s in self]
+        return signal_collection(*new_signals, n=self.n, mode=self.mode, name=f"{scalar}*{self.name}")
+
+    __rmul__ = __mul__  # allow scalar multiplication from left
+
+    def __add__(self, other):
+        """overrride +"""
+        if not isinstance(other, signal_collection):
+            raise TypeError("Can only add another signal_collection.")
+        if len(self) != len(other):
+            raise ValueError("Signal collections must have the same number of signals.")
+        new_signals = []
+        for s1, s2 in zip(self, other):
+            if not np.allclose(s1.x, s2.x):
+                raise ValueError(f"Signals '{s1.name}' and '{s2.name}' have incompatible x-grids.")
+            new_y = s1.y + s2.y
+            new_name = f"{s1.name}+{s2.name}"
+            new_signals.append(signal(s1.x.copy(), new_y, name=new_name, source="add"))
+        return signal_collection(*new_signals, n=self.n, mode=self.mode, name=f"({self.name})+({other.name})")
+
+    def __radd__(self, other):
+        """override +"""
+        if other == 0:  # allow sum([...]) to work
+            return self
+        return self.__add__(other)
+
+    def __iadd__(self, other):
+        """override +="""
+        return self.__add__(other)
+
 # %% Peaks class
 # ------------------------
 class peaks:

@@ -1,2 +1,3 @@
 sig2dna_core/figprint.py
+sig2dna_core/__init__.py
 sig2dna_core/signomics.py

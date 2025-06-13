@@ -7,4 +7,5 @@ Welcome to 📡🧬 sig2dna_core's documentation
 
    README
    Pseudo-Inverse_Reconstruction
+   tutorial_blind_deconvolution_dna
    api

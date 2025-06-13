@@ -301,7 +301,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </header>
 <div id='content'>
 <div id='nav'>
-<p><strong>Version:</strong> sig2dna v.0.36</p>
+<p><strong>Version:</strong> sig2dna v.0.51</p>
 <p><strong>Maintained by:</strong> INRAE\olivier.vitrac@agroparistech.fr</p>
 <hr>
 <ul>
@@ -323,7 +323,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <p>Select a module in the left menu to view usage examples. These examples are not for production and are automatically extracted from the main section of each module.</p>
 <p>Back to the <a href='index.html'>Python'sig2dna documentation</a>.</p>
 <p>When no module is selected, you see this welcome page. They are used to test classes with typical codes. The main section often serves as a testing script, example usage block, or self-contained test block. It's a way to demonstrate how the module's functionality works or to run simple unit tests and examples inline.</p>
-<p>Generated on: 2025-05-27 21:48:25</p>
+<p>Generated on: 2025-06-13 17:38:00</p>
 
 </div>
 
@@ -404,22 +404,18 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <div class="content">
     <pre class="code"><span class="n">dna</span> <span class="o">=</span> <span class="n">DNAsignal</span><span class="p">(</span><span class="n">Sfull</span><span class="p">)</span>
     <span class="n">dna</span><span class="o">.</span><span class="n">compute_cwt</span><span class="p">()</span>
-</pre>
-    </div>
-    <p>dna.transforms.plot()</p>
-
-    <button type="button" class="collapsible">Show Code Example 8</button>
-    <div class="content">
-    <pre class="code"><span class="n">dna</span><span class="o">.</span><span class="n">encode_dna</span><span class="p">()</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_transformed_signal&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">encode_dna</span><span class="p">()</span>
     <span class="n">dna</span><span class="o">.</span><span class="n">encode_dna_full</span><span class="p">()</span>
-    <span class="n">dna</span><span class="o">.</span><span class="n">plot_codes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">plot_codes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_DNA_signal&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">plot_scalogram</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_scalogram&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
     <span class="n">A</span><span class="o">=</span><span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">B</span><span class="o">=</span><span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 </pre>
     </div>
     <p>Alignement</p>
 
-    <button type="button" class="collapsible">Show Code Example 9</button>
+    <button type="button" class="collapsible">Show Code Example 8</button>
     <div class="content">
     <pre class="code"><span class="n">A</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
     <span class="n">A</span><span class="o">.</span><span class="n">html_alignment</span><span class="p">()</span>
@@ -434,12 +430,24 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     <p>substring (peaks) extraction</p>
 
-    <button type="button" class="collapsible">Show Code Example 10</button>
+    <button type="button" class="collapsible">Show Code Example 9</button>
     <div class="content">
     <pre class="code"><span class="n">pA_list</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;YAZB&quot;</span><span class="p">)</span>
     <span class="n">pA</span> <span class="o">=</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pA_list</span><span class="p">]</span>
     <span class="n">pAs</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">to_signal</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pA_list</span><span class="p">])</span>
     <span class="n">pAs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>Sinusoidal enoding</p>
+
+    <button type="button" class="collapsible">Show Code Example 10</button>
+    <div class="content">
+    <pre class="code"><span class="n">dna</span><span class="o">.</span><span class="n">sinencode_dna</span><span class="p">()</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">sinencode_dna_full</span><span class="p">()</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_DNA_raw&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">sincodes</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_DNA_raw_sinencoded&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">codesfull</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_DNA_letters&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+    <span class="n">dna</span><span class="o">.</span><span class="n">sincodesfull</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;synthetic_DNA_letters_sinencoded&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
 </pre>
     </div>
     <p>Signal mixtures and their classification</p>
@@ -539,7 +547,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="nb">print</span><span class="p">(</span><span class="n">s1code</span><span class="o">.</span><span class="n">wrapped_alignment</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">1024</span><span class="p">))</span>
 </pre>
     </div>
-    <p>--------------------- [SinEnCoder/DeCoder] --------------------------<br>1. Construct a test input signal with smooth and jump segments</p>
+    <p>--------------------- [SinEnCoder/DeCoder demo] --------------------------<br>1. Construct a test input signal with smooth and jump segments</p>
 
     <button type="button" class="collapsible">Show Code Example 14</button>
     <div class="content">
@@ -608,6 +616,136 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Sinusoidal-Encoder-Decoder&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Create a synthetic Gaussian signal</p>
+
+    <button type="button" class="collapsible">Show Code Example 20</button>
+    <div class="content">
+    <pre class="code"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+    <span class="n">signal_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.0025</span><span class="p">))</span>
+</pre>
+    </div>
+    <p>Choose a compatible continuous wavelet</p>
+
+    <button type="button" class="collapsible">Show Code Example 21</button>
+    <div class="content">
+    <pre class="code"><span class="n">wavelet</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">ContinuousWavelet</span><span class="p">(</span><span class="s2">&quot;mexh&quot;</span><span class="p">)</span>  <span class="c1"># Mexican Hat = Ricker</span>
+</pre>
+    </div>
+    <p>Scales for the transform</p>
+
+    <button type="button" class="collapsible">Show Code Example 22</button>
+    <div class="content">
+    <pre class="code"><span class="n">scales</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+    <span class="n">wavelet_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">:</span>
+        <span class="n">cwt_result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span><span class="n">signal_data</span><span class="p">,</span> <span class="p">[</span><span class="n">scale</span><span class="p">],</span> <span class="n">wavelet</span><span class="p">)</span>
+        <span class="n">wavelet_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cwt_result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre>
+    </div>
+    <p>Stack transforms into matrix W</p>
+
+    <button type="button" class="collapsible">Show Code Example 23</button>
+    <div class="content">
+    <pre class="code"><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">wavelet_matrix</span><span class="p">)</span>  <span class="c1"># Shape: (n_scales, len(signal))</span>
+</pre>
+    </div>
+    <p>SVD-based pseudoinverse</p>
+
+    <button type="button" class="collapsible">Show Code Example 24</button>
+    <div class="content">
+    <pre class="code"><span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">svd</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Truncate if desired</span>
+    <span class="n">S_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rank</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))])</span>
+    <span class="n">recon_signal</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span> <span class="o">@</span> <span class="n">S_inv</span> <span class="o">@</span> <span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">W</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Plot</p>
+
+    <button type="button" class="collapsible">Show Code Example 25</button>
+    <div class="content">
+    <pre class="code"><span class="n">figNaive</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">signal_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">recon_signal</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reconstructed (pseudo-inv)&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Pseudo-Inverse Reconstruction from Ricker CWT&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">figNaive</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Naive_PseudoInversion&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Synthetic signal with three Gaussians (including overlapping)</p>
+
+    <button type="button" class="collapsible">Show Code Example 26</button>
+    <div class="content">
+    <pre class="code"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+    <span class="n">gauss1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.002</span><span class="p">))</span>
+    <span class="n">gauss2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.002</span><span class="p">))</span>
+    <span class="n">gauss3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.52</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># Overlaps with gauss2</span>
+    <span class="n">signal_data</span> <span class="o">=</span> <span class="n">gauss1</span> <span class="o">+</span> <span class="n">gauss2</span> <span class="o">+</span> <span class="n">gauss3</span>
+</pre>
+    </div>
+    <p>Define scales and initialize</p>
+
+    <button type="button" class="collapsible">Show Code Example 27</button>
+    <div class="content">
+    <pre class="code"><span class="n">scales</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+    <span class="n">wavelet_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">energies</span> <span class="o">=</span> <span class="p">[]</span>
+</pre>
+    </div>
+    <p>Use PyWavelets for energy normalization</p>
+
+    <button type="button" class="collapsible">Show Code Example 28</button>
+    <div class="content">
+    <pre class="code"><span class="kn">import</span><span class="w"> </span><span class="nn">pywt</span>
+    <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">:</span>
+        <span class="n">coef</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span><span class="n">signal_data</span><span class="p">,</span> <span class="p">[</span><span class="n">scale</span><span class="p">],</span> <span class="s1">&#39;mexh&#39;</span><span class="p">)</span>
+        <span class="n">wavelet_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre>
+    </div>
+    <p>Compute the wavelet kernel and its energy</p>
+
+    <button type="button" class="collapsible">Show Code Example 29</button>
+    <div class="content">
+    <pre class="code"><span class="n">wavelet_kernel</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">ContinuousWavelet</span><span class="p">(</span><span class="s1">&#39;mexh&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">wavefun</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">wavelet_kernel</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># L2 norm</span>
+        <span class="n">energies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Normalize each transformed scale by its wavelet energy</p>
+
+    <button type="button" class="collapsible">Show Code Example 30</button>
+    <div class="content">
+    <pre class="code"><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">w</span> <span class="o">/</span> <span class="n">e</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wavelet_matrix</span><span class="p">,</span> <span class="n">energies</span><span class="p">)])</span>
+</pre>
+    </div>
+    <p>Perform SVD and pseudo-inverse reconstruction</p>
+
+    <button type="button" class="collapsible">Show Code Example 31</button>
+    <div class="content">
+    <pre class="code"><span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">svd</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">S_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">recon_signal</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">W</span>
+    <span class="n">recon_signal</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">S_inv</span> <span class="o">@</span> <span class="n">recon_signal</span>
+    <span class="n">recon_signal</span> <span class="o">=</span> <span class="n">recon_signal</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Plot original and reconstructed signal</p>
+
+    <button type="button" class="collapsible">Show Code Example 32</button>
+    <div class="content">
+    <pre class="code"><span class="n">figAdv</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">signal_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original Signal&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">recon_signal</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reconstructed (Weighted SVD)&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Weighted Pseudoinverse Reconstruction from CWT&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">figAdv</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Weighted_PseudoInversion&quot;</span><span class="p">,</span><span class="n">outputfolder</span><span class="p">)</span>
 </pre>
     </div>
     </div>

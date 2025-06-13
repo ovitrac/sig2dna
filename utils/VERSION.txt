@@ -22,9 +22,10 @@
 #   - 0.36: sin encoder/decoder and its doc
 #   - 0.43: major release
 #   - 0.45: DNAsignal.pseudoinverse with its documentation
+#   - 0.51: 2D signals, DNAsignal.pseudoinverse with its documentation, gcms_principles.py
 #
 #
 # Author: Generative Simulation\olivier.vitrac@gmail.fr
-# Revision: 2025-06-02
+# Revision: 2025-06-13
 #
-version="0.45"
+version="0.51"

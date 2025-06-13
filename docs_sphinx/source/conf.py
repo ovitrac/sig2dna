@@ -29,7 +29,7 @@ copyright = '2025, Olivier Vitrac (Generative Simulation)'
 author = 'Olivier Vitrac (Generative Simulation)'
 
 # The full version, including alpha/beta/rc tags
-release = '0.45'
+release = '0.51'
 
 # -- General configuration ---------------------------------------------------
 
