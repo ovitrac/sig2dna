@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📡🧬 sig2dna &mdash; 📡🧬sig2dna_core 0.43 documentation</title>
+  <title>📡🧬 sig2dna &mdash; 📡🧬sig2dna_core 0.51 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="_static/documentation_options.js?v=40225006"></script>
       <script src="_static/doctools.js?v=888ff710"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true, "tags": "ams"}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
@@ -116,9 +116,14 @@ window.addEventListener("load", () => mermaid.run());
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#license">📄 | License</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#contact">📧 | Contact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#appendices">📎 |Appendices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methods-table-module-sig2dna-signomics">🧩 | Methods Table (module: <code class="docutils literal notranslate"><span class="pre">sig2dna.signomics</span></code>)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
 
@@ -151,7 +156,7 @@ window.addEventListener("load", () => mermaid.run());
 <p><strong>Symbolic Signal Transformation for Fingerprinting, Alignment, and AI-Based Classification</strong></p>
 <p>﹏ ﮩ٨ـﮩﮩ٨ـﮩ٨ـﮩﮩ٨ـ﹏﹏</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> is a Python module that transforms <strong>complex 1D analytical signals</strong> into <strong>DNA-like symbolic sequences</strong> via morphological encoding. These symbolic fingerprints enable fast alignment, motif recognition, classification, and high-throughput comparison of signals originating from:</p>
+<div><p><code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> is a Python module that transforms <strong>complex 1D, 2D… analytical signals</strong> into <strong>DNA-like symbolic sequences</strong> via morphological encoding. These symbolic fingerprints enable fast alignment, motif recognition, classification, and high-throughput comparison of signals originating from:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">GC-MS</span></code> / <code class="docutils literal notranslate"><span class="pre">GC-FID</span></code> - 🔍low and🔬high resolution</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">HPLC-MS</span></code>  - 🔍low and🔬high resolution</p></li>
@@ -178,23 +183,24 @@ https://theses.hal.science/tel-04194172</p>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 <ul class="simple">
-<li><p><a class="reference internal" href="#main-components"><span class="xref myst">🧩 1| <strong>Main Components</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#applications"><span class="xref myst">🧠 2| <strong>Applications</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#core-concepts-overview"><span class="xref myst">🧬 3| <strong>Core Concepts</strong> - Overview</span></a></p></li>
-<li><p><a class="reference internal" href="#entropy-and-distance-metrics"><span class="xref myst">🧠 4| <strong>Entropy and Distance Metrics</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#sinusoidal-encoding-of-symbolic-segments"><span class="xref myst">🌀 5 | <strong>Sinusoidal Encoding of Symbolic Segments</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#baseline-filtering-and-poisson-noise-rejection"><span class="xref myst">🔍 6| <strong>Baseline Filtering and Poisson Noise Rejection</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#synthetic-signal-generation"><span class="xref myst">🧪 7| <strong>Synthetic Signal Generation</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#available-classes"><span class="xref myst">📦 8| <strong>Available Classes</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#example-workflow"><span class="xref myst">📏  9| <strong>Example Workflow</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#visualization"><span class="xref myst">📊 10| <strong>Visualization</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#motif-detection"><span class="xref myst">🔎 11| <strong>Motif Detection</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#alignment"><span class="xref myst">🤝 12| <strong>Alignment</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#examples-unsorted"><span class="xref myst">🧪 13| <strong>Examples</strong> (unsorted)</span></a></p></li>
-<li><p><a class="reference internal" href="#installation"><span class="xref myst">📦 14| <strong>Installation</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#recommendations"><span class="xref myst">💡15| <strong>Recommendations</strong></span></a></p></li>
-<li><p><a class="reference internal" href="#license"><span class="xref myst">📄 | License</span></a></p></li>
-<li><p><a class="reference internal" href="#contact"><span class="xref myst">📧 | Contact</span></a></p></li>
+<li><p><a class="reference internal" href="#-1-main-components"><span class="xref myst">🧩 1| <strong>Main Components</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-2-applications"><span class="xref myst">🧠 2| <strong>Applications</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-3-core-concepts---overview"><span class="xref myst">🧬 3| <strong>Core Concepts</strong> - Overview</span></a></p></li>
+<li><p><a class="reference internal" href="#-4-entropy-and-distance-metrics"><span class="xref myst">🧠 4| <strong>Entropy and Distance Metrics</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-5--sinusoidal-encoding-of-symbolic-segments"><span class="xref myst">🌀 5 | <strong>Sinusoidal Encoding of Symbolic Segments</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-6-baseline-filtering-and-poisson-noise-rejection"><span class="xref myst">🔍 6| <strong>Baseline Filtering and Poisson Noise Rejection</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-7-synthetic-signal-generation"><span class="xref myst">🧪 7| <strong>Synthetic Signal Generation</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-8-available-classes"><span class="xref myst">📦 8| <strong>Available Classes</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#--9-example-workflow"><span class="xref myst">📏  9| <strong>Example Workflow</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-10-visualization"><span class="xref myst">📊 10| <strong>Visualization</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-11-motif-detection"><span class="xref myst">🔎 11| <strong>Motif Detection</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-12-alignment"><span class="xref myst">🤝 12| <strong>Alignment</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#-13-examples-unsorted"><span class="xref myst">🧪 13| <strong>Examples</strong> (unsorted)</span></a></p></li>
+<li><p><a class="reference internal" href="#-14-installation"><span class="xref myst">📦 14| <strong>Installation</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#15-recommendations"><span class="xref myst">💡15| <strong>Recommendations</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#--license"><span class="xref myst">📄 | License</span></a></p></li>
+<li><p><a class="reference internal" href="#--contact"><span class="xref myst">📧 | Contact</span></a></p></li>
+<li><p><a class="reference internal" href="#-appendices"><span class="xref myst">📎 |Appendices</span></a></p></li>
 </ul>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 </section>
@@ -868,13 +874,16 @@ x\_b(t) &amp; \text{if } x\_b(t) &gt; T(t) \\
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
 <td><p>Tools for clustering, dimensionality reduction, dendrograms, visual metrics</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p>Wrapper for 2D, nD DNAsignals</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
 <td><p>Encoder/decoder for symbolic and numeric data using sinusoidal projections</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
 <td><p>Dictionary-like symbolic representation of triplet codes (letter, width, height)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
 <td><p>Dictionary-based encoder for resolution-based symbolic repetition</p></td>
 </tr>
 </tbody>
@@ -886,15 +895,17 @@ DNACodes
 DNAFullCodes
 DNApairwiseAnalysis
 DNAsignal
+DNAsignal_collection
 DNAstr
 SinusoidalEncoder
 generator
 peaks
 signal
-signal\_collection
+signal_collection
 UserDict --&gt; DNACodes
 dict --&gt; DNAFullCodes
-list --&gt; signal\_collection
+list --&gt; DNAsignal_collection
+list --&gt; signal_collection
 object --&gt; DNApairwiseAnalysis
 object --&gt; DNAsignal
 object --&gt; SinusoidalEncoder
@@ -1032,7 +1043,7 @@ str --&gt; DNAstr
 </thead>
 <tbody>
 <tr class="row-even"><td><p>🧬 <code class="docutils literal notranslate"><span class="pre">sig2dna_core.signomics</span></code></p></td>
-<td><p>Core module implementing symbolic transformation, wavelet coding, and signal comparison (compact code, &gt;4 Klines)</p></td>
+<td><p>Core module implementing symbolic transformation, wavelet coding, and signal comparison (compact code, &gt;7 Klines)</p></td>
 </tr>
 <tr class="row-odd"><td><p>🖨️ <code class="docutils literal notranslate"><span class="pre">sig2dna_core.figprint</span></code></p></td>
 <td><p>Utility module for saving and exporting Matplotlib figures (PDF, PNG, SVG)</p></td>
@@ -1095,6 +1106,9 @@ conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> <
 <li><p><strong>Along the <span class="math notranslate nohighlight">\(m/z\)</span> axis</strong>: use time-averaged spectra to encode <strong>mass distribution patterns</strong>, capturing molecular-level information.</p></li>
 </ul>
 <p>🔄 This combined coding captures both <strong>substance separation</strong> and <strong>substance identity</strong>, improving both <strong>detection</strong> (peak finding) and <strong>quantification</strong>.</p>
+<blockquote>
+<div><p>🎯 Starting from version <span class="math notranslate nohighlight">\(0.45\)</span>, 2D signals are handled natively with the class <code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code>.  Look at the detailed tutorial ``</p>
+</div></blockquote>
 </section>
 <section id="substance-identification-and-library-matching">
 <h3>Substance Identification and Library Matching 🔍<a class="headerlink" href="#substance-identification-and-library-matching" title="Link to this heading"></a></h3>
@@ -1115,11 +1129,1310 @@ conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> <
 <h2>📧 | Contact<a class="headerlink" href="#contact" title="Link to this heading"></a></h2>
 <p>Author: Olivier Vitrac
 Contact: <a class="reference external" href="mailto:olivier&#46;vitrac&#37;&#52;&#48;gmail&#46;com">olivier<span>&#46;</span>vitrac<span>&#64;</span>gmail<span>&#46;</span>com</a>
-Version: 0.43 (2025-05-28)</p>
+Version: 0.43 (2025-06-13)</p>
 <hr class="docutils" />
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">Sig2dna</span></code> is part of the <strong>Generative Simulation</strong> initiative 🌱: building modular, interpretable <strong>AI-ready</strong> tools for scientific modeling.</p>
 </div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="appendices">
+<h2>📎 |Appendices<a class="headerlink" href="#appendices" title="Link to this heading"></a></h2>
+<section id="methods-table-module-sig2dna-signomics">
+<h3>🧩 | Methods Table (module: <code class="docutils literal notranslate"><span class="pre">sig2dna.signomics</span></code>)<a class="headerlink" href="#methods-table-module-sig2dna-signomics" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Method</p></th>
+<th class="head"><p>Docstring First Paragraph</p></th>
+<th class="head"><p># Lines</p></th>
+<th class="head"><p><strong>version</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">import_local_module</span></code></p></td>
+<td><p>Import a module by name from a file path relative to the calling module.</p></td>
+<td><p>37</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize self.  See help(type(self)) for accurate signature.</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>Plot method for DNACodes: visualizes encoded vectors or symbolic segment distribution.</p></td>
+<td><p>57</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sindecode</span></code></p></td>
+<td><p>Decode sinusoidally embedded codes grouped by letter into symbolic segment structure.</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sinencode</span></code></p></td>
+<td><p>Encode symbolic segments at each scale using sinusoidal encoding grouped by letter.</p></td>
+<td><p>22</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">summary</span></code></p></td>
+<td><p>Print the number of encoded vectors or symbolic segments per scale.</p></td>
+<td><p>12</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize self.  See help(type(self)) for accurate signature.</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return repr(self).</p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>Return str(self).</p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>Plot method for DNAFullCodes: visualizes encoded vectors or DNA string composition.</p></td>
+<td><p>53</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_unwrapped_matrix</span></code></p></td>
+<td><p>Plot each letter’s encoded vector in the abstract embedding space (d-space). One curve per letter, one subplot per scale.</p></td>
+<td><p>38</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sindecode</span></code></p></td>
+<td><p>Sindecode method</p></td>
+<td><p>11</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sinencode</span></code></p></td>
+<td><p>Sinencode method — encodes each letter in the DNAFullCodes as a set of sinusoidal embeddings.</p></td>
+<td><p>45</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">summary</span></code></p></td>
+<td><p>Return a brief summary of the full codes per scale.</p></td>
+<td><p>10</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unwrap_letters_to_matrix</span></code></p></td>
+<td><p>Assemble all encoded letter vectors into a matrix of shape (n_letters, d_model) for each scale.</p></td>
+<td><p>38</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize self.  See help(type(self)) for accurate signature.</p></td>
+<td><p>10</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return repr(self).</p></td>
+<td><p>7</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>Return str(self).</p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">best_dimension</span></code></p></td>
+<td><p>Determine optimal dimension by maximizing silhouette score.</p></td>
+<td><p>16</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cluster</span></code></p></td>
+<td><p>Assign cluster labels from linkage matrix.</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">compute_linkage</span></code></p></td>
+<td><p>Compute hierarchical clustering.</p></td>
+<td><p>6</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dimension_variance_curve</span></code></p></td>
+<td><p>Computes the cumulative explained variance (based on pairwise distances) as a function of the number of dimensions used (from 1 to n-1). Optionally plots the curve and the point where the threshold (default 0.5) is reached.</p></td>
+<td><p>46</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">get_cluster_labels</span></code></p></td>
+<td><p>Returns cluster labels from hierarchical clustering. If not computed yet, computes linkage.</p></td>
+<td><p>20</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">heatmap</span></code></p></td>
+<td><p>Plot heatmap of pairwise distances.</p></td>
+<td><p>9</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">load</span></code></p></td>
+<td><p>Load analysis from file.</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pcoa</span></code></p></td>
+<td><p>Perform Principal Coordinate Analysis (PCoA).</p></td>
+<td><p>7</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_dendrogram</span></code></p></td>
+<td><p>Plot dendrogram from linkage matrix.</p></td>
+<td><p>14</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reduced_distances</span></code></p></td>
+<td><p>Recompute distances on selected subspace.</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">save</span></code></p></td>
+<td><p>Save current analysis to file.</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scatter</span></code></p></td>
+<td><p>2D scatter plot in selected dimensions with optional cluster-based coloring.</p></td>
+<td><p>40</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scatter3d</span></code></p></td>
+<td><p>3D scatter plot in selected dimensions with optional cluster-based coloring.</p></td>
+<td><p>38</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">select_dimensions</span></code></p></td>
+<td><p>Update active dimensions.</p></td>
+<td><p>8</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize DNAsignal with a signal object or 1D array.</p></td>
+<td><p>58</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return repr(self).</p></td>
+<td><p>6</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>Return str(self).</p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_get_letter</span></code></p></td>
+<td><p>Determine letter based on monotonicity and signal range.</p></td>
+<td><p>31</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_get_triangle_from_letter</span></code></p></td>
+<td><p>returns the triangle (counter-clockwise, x are incr)</p></td>
+<td><p>27</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_pairwiseEntropyDistance</span></code></p></td>
+<td><p>Calculate excess-entropy pairwise distances.</p></td>
+<td><p>52</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_pairwiseJaccardMotifDistance</span></code></p></td>
+<td><p>Compute pairwise Jaccard distances based on motif presence across symbolic DNAstr sequences.</p></td>
+<td><p>102</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_pairwiseJensenShannonDistance</span></code></p></td>
+<td><p>Calculate pairwise Jensen-Shannon distances between DNAstr codes at a given scale.</p></td>
+<td><p>45</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_pairwiseLevenshteinDistance</span></code></p></td>
+<td><p>Compute pairwise Levenshtein distances between codes at a given scale.</p></td>
+<td><p>61</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">align_with</span></code></p></td>
+<td><p>Align symbolic sequences and compute mutual entropy.</p></td>
+<td><p>27</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">apply_baseline_filter</span></code></p></td>
+<td><p>Apply baseline filtering using moving median and local Poisson-based thresholding.</p></td>
+<td><p>58</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">compute_cwt</span></code></p></td>
+<td><p>Compute Continuous Wavelet Transform (CWT) using the Mexican Hat wavelet.</p></td>
+<td><p>46</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">encode_dna</span></code></p></td>
+<td><p>Encode each transformed signal into a symbolic DNA-like sequence of monotonic segments.</p></td>
+<td><p>67</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">encode_dna_full</span></code></p></td>
+<td><p>Convert symbolic codes into DNA-like strings by repeating letters proportionally to their span.</p></td>
+<td><p>78</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">entropy_from_string</span></code></p></td>
+<td><p>return the entropy of a string</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">find_sequence</span></code></p></td>
+<td><p>Find occurrences of a specific letter pattern in encoded sequence.</p></td>
+<td><p>9</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">get_code</span></code></p></td>
+<td><p>Retrieve encoded data for a specific scale.</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">get_entropy</span></code></p></td>
+<td><p>Calculate Shannon entropy for encoded signal.</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">has</span></code></p></td>
+<td><p>Check if a DNA encoding exists for the specified scale.</p></td>
+<td><p>22</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">normalize_signal</span></code></p></td>
+<td><p>Normalize the internal signal using one of several strategies that ensure positivity.</p></td>
+<td><p>18</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_codes</span></code></p></td>
+<td><p>Plot the symbolic DNA-like encoding as colored triangle segments.</p></td>
+<td><p>77</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_scalogram</span></code></p></td>
+<td><p>Plot a scalogram with two subplots: - Top: colored image of CWT coefficient amplitudes - Bottom: line curves of selected scales</p></td>
+<td><p>34</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_signals</span></code></p></td>
+<td><p>Plot signals.</p></td>
+<td><p>13</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_transforms</span></code></p></td>
+<td><p>Plot the stored CWT-transformed signals as a signal collection.</p></td>
+<td><p>13</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_alignment</span></code></p></td>
+<td><p>print aligned sequences</p></td>
+<td><p>11</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pseudoinverse</span></code></p></td>
+<td><p>Approximate signal reconstruction via pseudo-inverse using stored CWT coefficients.</p></td>
+<td><p>64</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reconstruct_aligned_string</span></code></p></td>
+<td><p>Fast reconstruction of aligned signals</p></td>
+<td><p>9</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reconstruct_signal</span></code></p></td>
+<td><p>Reconstruct the signal from symbolic features (e.g., YAZB).</p></td>
+<td><p>31</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sindecode_dna</span></code></p></td>
+<td><p>Decode sinusoidal grouped embeddings into a DNACodes structure.</p></td>
+<td><p>27</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sinencode_dna</span></code></p></td>
+<td><p>Encode <code class="docutils literal notranslate"><span class="pre">self.codes</span></code> into sinusoidal embeddings (grouped by letter).</p></td>
+<td><p>15</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sinencode_dna_full</span></code></p></td>
+<td><p>🌀 Encode full-resolution DNA-like strings into sinusoidal embeddings grouped by letter.</p></td>
+<td><p>37</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sparsify_cwt</span></code></p></td>
+<td><p>Sparsify CWT coefficients by zeroing values below a threshold.</p></td>
+<td><p>58</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">synthetic_signal</span></code></p></td>
+<td><p>Generate flexible synthetic signals. (obsolete)</p></td>
+<td><p>9</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tosignal</span></code></p></td>
+<td><p>Reconstruct an approximate signal from symbolic encodings.</p></td>
+<td><p>46</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize a DNAsignal_collection from DNAsignal instances.</p></td>
+<td><p>41</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return a readable summary of the DNAsignal_collection contents. Shows the number of signals, available letters, scales, and embedding dimension. Flags whether sinusoidal encoding has been performed.</p></td>
+<td><p>14</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>Return str(self).</p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">combine_embeddings</span></code></p></td>
+<td><p>Combine unwrapped embeddings across all signals for each scale.</p></td>
+<td><p>30</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">deconvolve_latent_sources</span></code></p></td>
+<td><p>Perform dimensionality reduction on the 3D tensor v_{t,m,d} to extract non-coeluted compound chromatograms using PCA, with optional plotting.</p></td>
+<td><p>138</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>Plot the encoded signals in subplots. Rows represent letters, columns represent scales. Each subplot contains overlaid colored curves from all signals.</p></td>
+<td><p>65</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_embedding_projection</span></code></p></td>
+<td><p>Plot embedding projections of the encoded signals using PCA (default) or other DR methods.</p></td>
+<td><p>72</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_letters</span></code></p></td>
+<td><p>Plot a heatmap of the letter codes (symbolic DNA) across all signals.</p></td>
+<td><p>48</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_v_symbol_components</span></code></p></td>
+<td><p>Plot the components E_symbol, PE_t, PE_m and their sum v_{t,m} as image matrices for each letter at a given scale.</p></td>
+<td><p>56</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_vtm_full</span></code></p></td>
+<td><p>Visualize the components and sum of the full encoded GC-MS signal at a given scale.</p></td>
+<td><p>66</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reduce_dimensions</span></code></p></td>
+<td><p>Apply dimensionality reduction (PCA or UMAP) across signals for each scale.</p></td>
+<td><p>39</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scale_alignment</span></code></p></td>
+<td><p>Normalize embeddings across all signals and all scales.</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sinencode_dna_full</span></code></p></td>
+<td><p>🌀 Encode all DNAsignal instances using full-resolution sinusoidal embeddings, grouped by letter and organized per scale.</p></td>
+<td><p>22</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">to_dataframe</span></code></p></td>
+<td><p>Export combined embeddings for all scales as a tidy pandas DataFrame, suitable for machine learning tasks.</p></td>
+<td><p>29</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__add__</span></code></p></td>
+<td><p>Concatenate two DNAstr instances with identical dx values.</p></td>
+<td><p>27</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__eq__</span></code></p></td>
+<td><p>Check equality based on symbolic content and dx resolution.</p></td>
+<td><p>15</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__hash__</span></code></p></td>
+<td><p>Return hash combining the string content and dx.</p></td>
+<td><p>10</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__new__</span></code></p></td>
+<td><p>Construct a new DNAstr object.</p></td>
+<td><p>42</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return a short technical representation of the DNAstr instance.</p></td>
+<td><p>15</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>String representation.</p></td>
+<td><p>11</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__sub__</span></code></p></td>
+<td><p>Subtract two DNAstr sequences by aligning and removing matched regions.</p></td>
+<td><p>20</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_supports_color</span></code></p></td>
+<td><p>Returns True if ther terminal supports colors</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">align</span></code></p></td>
+<td><p>Align this DNAstr sequence to another, allowing insertions/deletions to maximize matches.</p></td>
+<td><p>158</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">excess_entropy</span></code></p></td>
+<td><p>Compute the excess Shannon entropy of two DNAstr sequences H(A)+H(B)-2*H(AB)</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">extract_motifs</span></code></p></td>
+<td><p>Extract and analyze YAZB motifs (canonical and distorted) from the symbolic sequence.</p></td>
+<td><p>68</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">find</span></code></p></td>
+<td><p>Finds all fuzzy (or regex-based) occurrences of a DNA-like sequence pattern.</p></td>
+<td><p>42</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">html_alignment</span></code></p></td>
+<td><p>Render the alignment using HTML with color coding: - green: match - blue: gap - red: substitution</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">jaccard</span></code></p></td>
+<td><p>Compute the Jaccard distance between two DNAstr sequences.</p></td>
+<td><p>19</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">jensen_shannon</span></code></p></td>
+<td><p>Compute the Jensen-Shannon distance between self and another DNAstr.</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">levenshtein</span></code></p></td>
+<td><p>Compute the Levenshtein distance between this DNAstr and another one.</p></td>
+<td><p>38</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mutual_entropy</span></code></p></td>
+<td><p>Compute the Shannon mutual entropy of two DNAstr sequences from their aligned segments</p></td>
+<td><p>12</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_alignment</span></code></p></td>
+<td><p>Plot a block alignment view of two DNAstr sequences with color-coded segments.</p></td>
+<td><p>62</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_mask</span></code></p></td>
+<td><p>Plot a color-coded mask of the alignment between sequences.</p></td>
+<td><p>20</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">score</span></code></p></td>
+<td><p>Return an alignment score, optionally normalized.</p></td>
+<td><p>17</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">summary</span></code></p></td>
+<td><p>Summarize the DNAstr with key stats: length, unique letters, entropy, etc.</p></td>
+<td><p>19</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">to_signal</span></code></p></td>
+<td><p>Converts the symbolic DNA sequence into a synthetic NumPy array mimicking the original wavelet-transformed signal.</p></td>
+<td><p>54</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vectorized</span></code></p></td>
+<td><p>Map the DNAstr content to an integer array using a codebook.</p></td>
+<td><p>21</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wrapped_alignment</span></code></p></td>
+<td><p>Return a line-wrapped alignment view (multi-line), optionally color-coded for terminal/IPython usage (Spyder, Jupyter).</p></td>
+<td><p>48</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>SinuosidalEncoder Constructor</p></td>
+<td><p>22</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_decode_lsq</span></code></p></td>
+<td><p>Least-squares phase unwrapping decoder (robust fast decoder).</p></td>
+<td><p>29</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_decode_naive</span></code></p></td>
+<td><p>Simple decoder based on mean projection (coarse and periodic).</p></td>
+<td><p>19</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_decode_optimize</span></code></p></td>
+<td><p>Decode each embedding vector via scalar minimization.</p></td>
+<td><p>35</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_decode_svd</span></code></p></td>
+<td><p>SVD-based phase unwrapping decoder with regularized least-squares.</p></td>
+<td><p>33</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_inverse_sin_embed</span></code></p></td>
+<td><p>Inverse sinusoidal encoding (approximate).</p></td>
+<td><p>23</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_parse</span></code></p></td>
+<td><p>Parse values</p></td>
+<td><p>10</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_reconstruct_type</span></code></p></td>
+<td><p>Reconstruct types</p></td>
+<td><p>12</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_sin_embed</span></code></p></td>
+<td><p>Project scalar values into sinusoidal embedding space.</p></td>
+<td><p>20</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">angle_difference</span></code></p></td>
+<td><p>Compute angular differences (∆θ) between consecutive embeddings.</p></td>
+<td><p>17</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">complex_distance</span></code></p></td>
+<td><p>Compute distance between two encoded arrays using complex projection.</p></td>
+<td><p>28</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">decode</span></code></p></td>
+<td><p>Decode sinusoidal embeddings back to original values using selected method.</p></td>
+<td><p>42</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">encode</span></code></p></td>
+<td><p>Encode input values into sinusoidal embeddings.</p></td>
+<td><p>31</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fit_encoder</span></code></p></td>
+<td><p>Fit a scaling factor to normalize values into a target sinusoidal-safe range.</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">group_centroid</span></code></p></td>
+<td><p>Compute the centroid (average embedding) of each group in complex sinusoidal space.</p></td>
+<td><p>43</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pairwise_similarity</span></code></p></td>
+<td><p>Compute a pairwise similarity (or distance) matrix in sinusoidal embedding space.</p></td>
+<td><p>27</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">phase_alignment</span></code></p></td>
+<td><p>Align embedding <code class="docutils literal notranslate"><span class="pre">emb</span></code> to reference <code class="docutils literal notranslate"><span class="pre">ref</span></code> using complex phase.</p></td>
+<td><p>23</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">phase_unwrap</span></code></p></td>
+<td><p>Perform Fourier-like phase unwrapping on sinusoidal embedding.</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">set_decode_tolerance</span></code></p></td>
+<td><p>Set maximum acceptable residual error for decoding.</p></td>
+<td><p>10</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sindecode_dna_grouped</span></code></p></td>
+<td><p>Decode sinusoidal embeddings grouped by letter into symbolic segments.</p></td>
+<td><p>41</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sinencode_dna_grouped</span></code></p></td>
+<td><p>Encode symbolic code segments grouped by letter into sinusoidal embeddings.</p></td>
+<td><p>36</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">to_complex</span></code></p></td>
+<td><p>Convert sinusoidal embedding into a complex array using Euler’s identity.</p></td>
+<td><p>18</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">verify_roundtrip</span></code></p></td>
+<td><p>Perform an encode → decode → compare roundtrip and report accuracy.</p></td>
+<td><p>56</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__call__</span></code></p></td>
+<td><p>Call self as a function.</p></td>
+<td><p>12</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>define a peak generator gauss/lorentz/triangle</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return repr(self).</p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__add__</span></code></p></td>
+<td><p></p></td>
+<td><p>8</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__delitem__</span></code></p></td>
+<td><p></p></td>
+<td><p>14</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__getitem__</span></code></p></td>
+<td><p></p></td>
+<td><p>11</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize a peak collection.</p></td>
+<td><p>51</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__len__</span></code></p></td>
+<td><p></p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__mul__</span></code></p></td>
+<td><p></p></td>
+<td><p>14</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return repr(self).</p></td>
+<td><p>20</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>Return str(self).</p></td>
+<td><p>6</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__truediv__</span></code></p></td>
+<td><p></p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">add</span></code></p></td>
+<td><p>Add one or multiple peaks to the collection.</p></td>
+<td><p>40</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">as_dict</span></code></p></td>
+<td><p>Return the list of peaks as dict</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">copy</span></code></p></td>
+<td><p>Return a deep-copy of the peaks</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">names</span></code></p></td>
+<td><p>Return the list of names</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">remove_duplicates</span></code></p></td>
+<td><p></p></td>
+<td><p>10</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rename</span></code></p></td>
+<td><p></p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sort</span></code></p></td>
+<td><p>Sort peaks in-place based on their center positions (x values).</p></td>
+<td><p>17</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">to_signal</span></code></p></td>
+<td><p>Generate a signal from a peaks object. Optionally restrict to a subset.</p></td>
+<td><p>8</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">update</span></code></p></td>
+<td><p>Update or insert peaks from a list of dictionaries.</p></td>
+<td><p>33</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__add__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__iadd__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__imul__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize a signal instance.</p></td>
+<td><p>76</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__isub__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__itruediv__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__mul__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return repr(self).</p></td>
+<td><p>21</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>Return str(self).</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__sub__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__truediv__</span></code></p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_binary_op</span></code></p></td>
+<td><p>Binary operation on signals</p></td>
+<td><p>10</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_copystatic</span></code></p></td>
+<td><p>Static copy of a signal (x and y only)</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_current_stamp</span></code></p></td>
+<td><p></p></td>
+<td><p>6</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_events</span></code></p></td>
+<td><p>Register a traceable action in the signal’s history.</p></td>
+<td><p>23</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_from_serializable</span></code></p></td>
+<td><p>Convert a serialized dict to a signal</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_toDNA</span></code></p></td>
+<td><p>Return a DNA encoded signal</p></td>
+<td><p>9</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_to_serializable</span></code></p></td>
+<td><p>Convert the signal into a dictionary suitable for JSON export.</p></td>
+<td><p>19</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">add_noise</span></code></p></td>
+<td><p>Return a new signal with noise and/or bias added.</p></td>
+<td><p>33</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">align_with</span></code></p></td>
+<td><p>Align two signals to a common x grid with interpolation and padding.</p></td>
+<td><p>35</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">apply_poisson_baseline_filter</span></code></p></td>
+<td><p>Apply a baseline filter assuming Poisson-dominated statistics with adjustable gain and a rejection threshold based on the Bienaymé-Tchebychev inequality.</p></td>
+<td><p>69</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">backup</span></code></p></td>
+<td><p>Backup current state in _previous</p></td>
+<td><p>8</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">copy</span></code></p></td>
+<td><p>Deep copy of the signal, excluding full history control flag</p></td>
+<td><p>24</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">disable_fullhistory</span></code></p></td>
+<td><p>Disable full history tracking</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">enable_fullhistory</span></code></p></td>
+<td><p>Enable full history tracking</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">load</span></code></p></td>
+<td><p>Load a signal from a JSON or gzipped JSON file, including recursive _previous.</p></td>
+<td><p>23</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">normalize</span></code></p></td>
+<td><p>Normalize the signal to positive values using different normalization strategies.</p></td>
+<td><p>76</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>Plot the signal using matplotlib, applying either internal style settings or overrides provided at call time.</p></td>
+<td><p>72</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">restore</span></code></p></td>
+<td><p>Restore the previous signal version if available</p></td>
+<td><p>11</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sample</span></code></p></td>
+<td><p>Interpolate values from x</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">save</span></code></p></td>
+<td><p>Save signal to JSON (optionally compressed) and optionally CSV.</p></td>
+<td><p>36</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__add__</span></code></p></td>
+<td><p>overrride +</p></td>
+<td><p>14</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__delitem__</span></code></p></td>
+<td><p>Delete self[key].</p></td>
+<td><p>7</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__getitem__</span></code></p></td>
+<td><p>sc[“my_signal”]                  # returns a copy of the signal named “my_signal” sc[“A”, “B”, “C”]                # returns a sub-collection with those names sc[0:2] or sc[[0, 2]]            # still works for index-based access</p></td>
+<td><p>19</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__iadd__</span></code></p></td>
+<td><p>override +=</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p>Initialize collection with aligned signals of the same type.</p></td>
+<td><p>30</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__mul__</span></code></p></td>
+<td><p>override *</p></td>
+<td><p>6</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__radd__</span></code></p></td>
+<td><p>override +</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<td><p>Return repr(self).</p></td>
+<td><p>4</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__mul__</span></code></p></td>
+<td><p>override *</p></td>
+<td><p>6</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__setitem__</span></code></p></td>
+<td><p>Set self[key] to value.</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<td><p>Return str(self).</p></td>
+<td><p>2</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_align_all</span></code></p></td>
+<td><p></p></td>
+<td><p>11</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_toDNA</span></code></p></td>
+<td><p>Return a collection of DNA encoded signals  (class DNAsignal_collection)</p></td>
+<td><p>9</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">append</span></code></p></td>
+<td><p>Append and align the new signal to the existing collection.</p></td>
+<td><p>5</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
+<td><p>Mean of selected signals, optionally weighted.</p></td>
+<td><p>23</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>Plot selected signals with style attributes and optional overlays.</p></td>
+<td><p>75</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
+<td><p>Sum selected signals, optionally weighted by coeffs.</p></td>
+<td><p>41</p></td>
+<td><p>0.51</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">signal_collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">to_matrix</span></code></p></td>
+<td><p>Return a 2D array (n_signals x n_points) of aligned signal values.</p></td>
+<td><p>3</p></td>
+<td><p>0.51</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<p>🧩 | Methods Table (module: <code class="docutils literal notranslate"><span class="pre">sig2dna.PrintableFigure</span></code>)</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Method</p></th>
+<th class="head"><p>Docstring First Paragraph</p></th>
+<th class="head"><p># Lines</p></th>
+<th class="head"><p><strong>version</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_generate_figname</span></code></p></td>
+<td><p>Generate a cleaned filename using figure metadata or the current datetime.</p></td>
+<td><p>19</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_print_generic</span></code></p></td>
+<td><p>Generic saving logic for figure files.</p></td>
+<td><p>27</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">custom_plt_figure</span></code></p></td>
+<td><p>Override <code class="docutils literal notranslate"><span class="pre">plt.figure()</span></code> to return PrintableFigure by default.</p></td>
+<td><p>9</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">custom_plt_subplots</span></code></p></td>
+<td><p>Override <code class="docutils literal notranslate"><span class="pre">plt.subplots()</span></code> to return PrintableFigure.</p></td>
+<td><p>10</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_valid_figure</span></code></p></td>
+<td><p>Check if <code class="docutils literal notranslate"><span class="pre">fig</span></code> is a valid and open Matplotlib figure. Parameters: fig (object): Any object to check.</p></td>
+<td><p>10</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_figure</span></code></p></td>
+<td><p>Save a figure as PDF, PNG, and SVG.</p></td>
+<td><p>25</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_pdf</span></code></p></td>
+<td><p>Save a figure as a PDF. Example: ——– &gt;&gt;&gt; fig, ax = plt.subplots() &gt;&gt;&gt; ax.plot([0, 1], [0, 1]) &gt;&gt;&gt; print_pdf(fig, “myplot”, overwrite=True)</p></td>
+<td><p>10</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_png</span></code></p></td>
+<td><p>Save a figure as a PNG.</p></td>
+<td><p>9</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>(module-level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_svg</span></code></p></td>
+<td><p>Save a figure as an SVG (vector format, dpi-independent).</p></td>
+<td><p>9</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PrintableFigure</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print</span></code></p></td>
+<td><p>Save figure in PDF, PNG, and SVG formats.</p></td>
+<td><p>10</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PrintableFigure</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_pdf</span></code></p></td>
+<td><p></p></td>
+<td><p>2</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PrintableFigure</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_png</span></code></p></td>
+<td><p></p></td>
+<td><p>2</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PrintableFigure</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print_svg</span></code></p></td>
+<td><p></p></td>
+<td><p>2</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PrintableFigure</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">show</span></code></p></td>
+<td><p>Display figure intelligently based on context (Jupyter/script).</p></td>
+<td><p>15</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 </section>
 

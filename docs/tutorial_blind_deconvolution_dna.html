@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📡🧬 Blind Deconvolution of 2D Signals using DNA Representations &mdash; 📡🧬sig2dna_core 0.51 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=40225006"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true, "tags": "ams"}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets" href="Pseudo-Inverse_Reconstruction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            📡🧬sig2dna_core
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">📡🧬 sig2dna</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generalizing-from-1d-to-2d-symbolic-encodings">1 | 📖 Generalizing from 1D to 2D Symbolic Encodings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pipeline-demonstration">2 | 🧪 Pipeline Demonstration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#synthetic-signal-generation-gcms">2.1 | 🔬 Synthetic Signal Generation: <code class="docutils literal notranslate"><span class="pre">gcms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbolic-encoding-into-a-dna-alphabet">2.2 | 🧬 Symbolic Encoding into a DNA Alphabet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sinusoidal-encoding-in-latent-space">2.3 | 📡 Sinusoidal Encoding in Latent Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-vs-raster-encoding-modes">2.4 | 🗺️ Full vs Raster Encoding Modes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#blind-deconvolution-in-latent-space">3 | 🧊 Blind Deconvolution in Latent Space</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#number-of-sources">3.1 | 📏 Number of sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chromatographic-features-per-component">3.2 | 🔍 🔬 Chromatographic Features per Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#projection-of-latent-components">3.3 | 📽️ Projection of Latent Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#loadings-the-basis-in-d">3.4 | 🏋 Loadings: the Basis in ℝᵈ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#notes-iliiliiliiliiliili-0">🧾 Notes ▶• ılıılıılıılıılıılı. 0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">🧭 Next Steps ﮩ٨ـﮩﮩ٨ـ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#letter-sequence-reconstruction-from-latent-components">🔤 <strong>Letter Sequence Reconstruction</strong> from Latent Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mass-spectrum-reconstruction-dim-2">💥 <strong>Mass Spectrum Reconstruction (dim 2)</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fingerprinting-traceability-and-classification">🧷 <strong>Fingerprinting, Traceability, and Classification</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">📡🧬sig2dna_core</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial_blind_deconvolution_dna.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="blind-deconvolution-of-2d-signals-using-dna-representations">
+<h1>📡🧬 Blind Deconvolution of 2D Signals using DNA Representations<a class="headerlink" href="#blind-deconvolution-of-2d-signals-using-dna-representations" title="Link to this heading"></a></h1>
+<p>This tutorial demonstrates how to transform, encode, and blindly decompose <strong>2D analytical signals</strong> (e.g., GC-MS spectra) into <strong>latent symbolic representations</strong> using sinusoidal encodings and projection techniques. The approach is part of the **Generative Simulation Initiative **🌱, and targets applications such as:</p>
+<blockquote>
+<div><p>📦 <strong>Applications</strong></p>
+<ul class="simple">
+<li><p><strong>Polymer fingerprinting</strong> 🫆</p></li>
+<li><p><strong>Formulation demixing</strong> 🔢</p></li>
+<li><p><strong>NIAS identification in recycled materials</strong> 🪪</p></li>
+<li><p><strong>Non-targeted screening</strong> 🔬</p></li>
+<li><p><strong>Chromatogram simplification and annotation</strong> 📊</p></li>
+<li><p>Separation of <strong>latent signals</strong> in multiplexed detectors 📈</p></li>
+<li><p>General <strong>symbolic representation</strong> of continuous 1D/2D data streams 🔡</p></li>
+</ul>
+</div></blockquote>
+<p>We illustrate the methodology using the Python-based 📡🧬 <code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> framework.</p>
+<hr class="docutils" />
+<section id="generalizing-from-1d-to-2d-symbolic-encodings">
+<h2>1 | 📖 Generalizing from 1D to 2D Symbolic Encodings<a class="headerlink" href="#generalizing-from-1d-to-2d-symbolic-encodings" title="Link to this heading"></a></h2>
+<p>In one-dimensional (1D) signals (e.g., 1D chromatograms, spectrograms, etc.), we can identify meaningful structures via local curvature analysis (e.g., inflection points, peaks). This can be symbolically encoded into a discrete alphabet.</p>
+<p>But in <strong>2D signals</strong>, such as time × mass GC-MS maps, we face new challenges:</p>
+<ul class="simple">
+<li><p><strong>Multiple overlapping sources</strong></p></li>
+<li><p><strong>Lack of predefined time-m/z semantics</strong></p></li>
+<li><p><strong>Unclear spatial symmetries</strong></p></li>
+</ul>
+<p>To overcome these, we adopt a <strong>double-layered coding</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Symbolic Layer</strong>: numeric signal → letter codes (‘A’, ‘B’, ‘C’, ‘X’, ‘Y’, ‘Z’, ‘_’)</p></li>
+<li><p><strong>Geometric Layer</strong>: letter codes → latent sinusoidal embedding (<span class="math notranslate nohighlight">\(d\)</span>-dimensional)</p></li>
+</ol>
+<p>The final representation becomes a <strong>tensor</strong> in 2D signal × latent space.</p>
+<p>We write:</p>
+<div class="math notranslate nohighlight">
+\[
+v_{t, m, d} = E_{t, m, d} + PE_t(t, d) + PE_m(m, d)
+\]</div>
+<p>Or, under the multiplexed acquisition assumption:</p>
+<div class="math notranslate nohighlight">
+\[
+v_{u, d} = E_{u, d} + PE_t(u, d)
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(E\)</span> embedding of the symbolic sequence (<em>i.e.</em>, encodes letter identity per segment),</p></li>
+<li><p><span class="math notranslate nohighlight">\(PE_t\)</span> is sinusoidal positional encoding in time (or raster position),</p></li>
+<li><p><span class="math notranslate nohighlight">\(PE_m\)</span> (optionally) encodes identity along mass/ion channels.</p></li>
+</ul>
+<blockquote>
+<div><p>⚠️ GC-MS signals are time-multiplexed. m/z channels are not parallel but scanned sequentially through the detector.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="pipeline-demonstration">
+<h2>2 | 🧪 Pipeline Demonstration<a class="headerlink" href="#pipeline-demonstration" title="Link to this heading"></a></h2>
+<section id="synthetic-signal-generation-gcms">
+<h3>2.1 | 🔬 Synthetic Signal Generation: <code class="docutils literal notranslate"><span class="pre">gcms</span></code><a class="headerlink" href="#synthetic-signal-generation-gcms" title="Link to this heading"></a></h3>
+<p>We simulate 5 source signals, each a sparse collection of Gaussian peaks in a 2D (time × ion channel) matrix. Signals are then mixed by linear addition, simulating the co-elution of compounds.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># Number of time samples (dim1)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">32</span>    <span class="c1"># Number of ion channels or m/z values (dim2)</span>
+<span class="n">n_peaks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">n2Dsignals</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Number of source signals (e.g., hypothetical pure substances)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n2Dsignals</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">signal_collection</span><span class="o">.</span><span class="n">generate_synthetic</span><span class="p">(</span>
+        <span class="n">n_signals</span><span class="o">=</span><span class="n">m</span><span class="p">,</span>           <span class="c1"># Each signal is a row of the (t, m) 2D matrix</span>
+        <span class="n">n_peaks</span><span class="o">=</span><span class="n">n_peaks</span><span class="p">,</span>       <span class="c1"># Random number of peaks</span>
+        <span class="n">kinds</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;gauss&quot;</span><span class="p">,),</span>      <span class="c1"># Shape of the peaks</span>
+        <span class="n">width_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>  <span class="c1"># Peak widths</span>
+        <span class="n">height_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>  <span class="c1"># Peak heights</span>
+        <span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">n_points</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="mi">40</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">name_prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;G</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">gcms</span> <span class="o">=</span> <span class="n">sig</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">gcms</span> <span class="o">+</span> <span class="n">sig</span>  <span class="c1"># Create overlapping signals</span>
+
+</pre></div>
+</div>
+<blockquote>
+<div><p>💡 This example mimics <strong>5 pure substances</strong> overlapping in a GC-MS acquisition.</p>
+</div></blockquote>
+<p><img alt="Simulated overlapping 2D signals" src="_images/gcms1_Flattened_2Dsignals.svg" /></p>
+</section>
+<hr class="docutils" />
+<section id="symbolic-encoding-into-a-dna-alphabet">
+<h3>2.2 | 🧬 Symbolic Encoding into a DNA Alphabet<a class="headerlink" href="#symbolic-encoding-into-a-dna-alphabet" title="Link to this heading"></a></h3>
+<p>Each 1D signal (ion channel) is symbolically encoded into a string using 7 discrete letters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dna_gcms</span> <span class="o">=</span> <span class="n">gcms</span><span class="o">.</span><span class="n">_toDNA</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>💡 A 2D signal is converted into a plain text. An isolated peak corresponds to the sequence <kbd>Y</kbd>+<kbd>A</kbd>+<kbd>Z</kbd>+<kbd>B</kbd>+ , where <code class="docutils literal notranslate"><span class="pre">+</span></code> indicates at least one occurrence.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Y</span></code>, <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>: characterize peak shapes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">C</span></code>, <code class="docutils literal notranslate"><span class="pre">X</span></code>: represent broader curvature regions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_</span></code>: represents silence or gaps</p></li>
+</ul>
+</div></blockquote>
+<p><img alt="Symbolic encoding (7-letter alphabet)" src="_images/gcms2_Letters_heatmap.svg" /></p>
+<blockquote>
+<div><p>🖋 This step compresses local curvature into text — enabling symbolic analysis and reconstruction.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="sinusoidal-encoding-in-latent-space">
+<h3>2.3 | 📡 Sinusoidal Encoding in Latent Space<a class="headerlink" href="#sinusoidal-encoding-in-latent-space" title="Link to this heading"></a></h3>
+<p>The symbolic strings are embedded into a high-dimensional space using sinusoidal encoding (akin to transformers’ positional encoding).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dna_gcms</span><span class="o">.</span><span class="n">sinencode_dna_full</span><span class="p">(</span><span class="n">d_model</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Embedding matrix: maps each letter to a basis in ℝᵈ</p></li>
+<li><p>Positional encoding: uses cosine/sine frequencies to encode position</p></li>
+<li><p>The final tensor has shape (T, m, d) or (T⋅m, d)</p></li>
+</ul>
+<p><img alt="Latent projections of each letter" src="_images/gcms3_Letters_sinencoded.svg" /></p>
+<blockquote>
+<div><p>📌 This step preserves spatial order while lifting symbolic structure into a latent space.</p>
+</div></blockquote>
+<p><img alt="2D embedding of symbol space" src="_images/gcms4_Letters_projections.svg" /></p>
+<blockquote>
+<div><p>🎯 Peak-associated letters (YAZB) form separable clusters — useful for blind deconvolution.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="full-vs-raster-encoding-modes">
+<h3>2.4 | 🗺️ Full vs Raster Encoding Modes<a class="headerlink" href="#full-vs-raster-encoding-modes" title="Link to this heading"></a></h3>
+<p>In <strong>full encoding</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+v[t, m, d] = E[t, m, d] + PE_t[t, d] + PE_m[m, d]
+\]</div>
+<blockquote>
+<div><p>💡The full mode has an important memory footprint as it requires a positional encoding also along <code class="docutils literal notranslate"><span class="pre">dim2</span></code>.</p>
+</div></blockquote>
+<p><img alt="Full 2D tensor encoding" src="_images/gcms5_Letters_full2D.svg" /></p>
+<p>In <strong>raster scan</strong> (flattened space):
+$<span class="math notranslate nohighlight">\(
+v[u, d] = E[u, d] + PE_t[u, d]
+\)</span>$</p>
+<blockquote>
+<div><p>💡 Raster encoding is memory-efficient and models the real acquisition order of a GC-MS detector.</p>
+</div></blockquote>
+<p><img alt="Rasterized positional encoding (no PE_m)" src="_images/gcms6_Letters_raster2D.svg" /></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="blind-deconvolution-in-latent-space">
+<h2>3 | 🧊 Blind Deconvolution in Latent Space<a class="headerlink" href="#blind-deconvolution-in-latent-space" title="Link to this heading"></a></h2>
+<p>We use <strong>PCA</strong> to project the latent tensor and identify linearly independent components.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">components</span><span class="p">,</span> <span class="n">chroma</span><span class="p">,</span> <span class="n">variance</span><span class="p">,</span> <span class="n">figs</span> <span class="o">=</span> <span class="n">dna_gcms</span><span class="o">.</span><span class="n">deconvolve_latent_sources</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>🤔💭 Think of it as recovering two overlapping texts printed on the same sheet — we don’t understand the language, but we can separate writing styles.</p>
+</div></blockquote>
+<p>This is a <strong>blind decomposition</strong>: no label or training is used. It is particularly useful for identifying:</p>
+<ul class="simple">
+<li><p>Polymer backbone signals</p></li>
+<li><p>Additive/formulation fingerprints</p></li>
+<li><p>Contamination profiles</p></li>
+</ul>
+<section id="number-of-sources">
+<h3>3.1 | 📏 Number of sources<a class="headerlink" href="#number-of-sources" title="Link to this heading"></a></h3>
+<p>We use a <strong>corner detection algorithm</strong> on the cumulative explained variance to identify how many components are meaningful:</p>
+<p><img alt="Variance Analysis" src="_images/gcms7a_deconvolution_variance.svg" /></p>
+<blockquote>
+<div><p>🧠 After 4–5 components, new ones mainly reconstruct sinusoidal background — not actual structures.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="chromatographic-features-per-component">
+<h3>3.2 | 🔍 🔬 Chromatographic Features per Component<a class="headerlink" href="#chromatographic-features-per-component" title="Link to this heading"></a></h3>
+<p>Each PCA component can be projected back into <code class="docutils literal notranslate"><span class="pre">(t,</span> <span class="pre">m)</span></code> space — recovering <strong>source signals</strong>.</p>
+<p><img alt="Latent Features" src="_images/gcms7b_deconvolution_chromatograms.svg" /></p>
+<blockquote>
+<div><p>🧬 The first 4 components match individual compounds with sparse, well-separated peaks. The 5th and 6th components exhibit a strong band structure.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="projection-of-latent-components">
+<h3>3.3 | 📽️ Projection of Latent Components<a class="headerlink" href="#projection-of-latent-components" title="Link to this heading"></a></h3>
+<p>Summing over mass or time (to get total ion chromatograms or total mass spectra) shows distinct chemical signals in early components, and periodic noise beyond.</p>
+<p>Previous trends are confirmed with projected sources either along <code class="docutils literal notranslate"><span class="pre">dim1</span></code> (TIC signal) or along <code class="docutils literal notranslate"><span class="pre">dim2</span></code> (total mass signal). Since positional encoding uses independent frequencies, each non-significant components is aligned on a specific frequency and exhibits a strong sinusoidal shape.</p>
+<p><img alt="Projection of Sources" src="_images/gcms7c_deconvolution_projections.svg" /></p>
+<blockquote>
+<div><p>🧩 Higher components capture encoding artifacts — not physical structure.</p>
+</div></blockquote>
+</section>
+<section id="loadings-the-basis-in-d">
+<h3>3.4 | 🏋 Loadings: the Basis in ℝᵈ<a class="headerlink" href="#loadings-the-basis-in-d" title="Link to this heading"></a></h3>
+<p>The loadings (PCA eigenvectors) represent latent directions in the sinusoidal embedding space.</p>
+<p><img alt="Loadings" src="_images/gcms7d_deconvolution_PCAcomponents.svg" /></p>
+<blockquote>
+<div><p>🖖 Interpretation of latent directions can help filter artifacts and reconstruct sources.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="notes-iliiliiliiliiliili-0">
+<h2>🧾 Notes ▶• ılıılıılıılıılıılı. 0<a class="headerlink" href="#notes-iliiliiliiliiliili-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Encoding dimension</strong> (<span class="math notranslate nohighlight">\(d\)</span>) should be overcomplete: <span class="math notranslate nohighlight">\(d \geq n_\text{sources}\)</span></p></li>
+<li><p><strong>Corner detection</strong> in PCA helps estimate signal count</p></li>
+<li><p><strong>Blind projection</strong> works without knowing signal semantics</p></li>
+<li><p><strong>Compression</strong> is extreme: signal → DNA → ℝᵈ → PCA → signal</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="next-steps">
+<h2>🧭 Next Steps ﮩ٨ـﮩﮩ٨ـ<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<p>The present tutorial stops at the latent space decomposition of complex signals. However, the full potential of the <code class="docutils literal notranslate"><span class="pre">sig2dna</span></code> framework lies in <strong>reconstruction</strong>, <strong>annotation</strong>, and <strong>semantic projection</strong>. Future steps include:</p>
+<ul class="simple">
+<li><p><strong>Letter Reconstruction</strong> from identified sources</p></li>
+<li><p><strong>Mass spectrum reconstruction</strong> (dim 2)</p></li>
+<li><p><strong>Robust Fingerprinting</strong> for authentication, traceability.</p></li>
+<li><p>Semantic clustering with UMAP (or T-SNE)</p></li>
+</ul>
+<hr class="docutils" />
+<section id="letter-sequence-reconstruction-from-latent-components">
+<h3>🔤 <strong>Letter Sequence Reconstruction</strong> from Latent Components<a class="headerlink" href="#letter-sequence-reconstruction-from-latent-components" title="Link to this heading"></a></h3>
+<p>After PCA separation, each component corresponds to a latent signal that can be <strong>mapped back to its symbolic representation</strong>. This backward transformation allows:</p>
+<ul class="simple">
+<li><p>Visualization of symbolic segments (<code class="docutils literal notranslate"><span class="pre">YAZB</span></code>) contributing to a source</p></li>
+<li><p>Identification of peak-rich zones and sparse regions</p></li>
+<li><p>Filtering of latent components by symbolic entropy or curvature density</p></li>
+</ul>
+<blockquote>
+<div><p>🧠 This symbolic back-projection helps <strong>understand</strong> and <strong>validate</strong> the chemical or physical nature of each latent signal — akin to recovering linguistic structure in unknown scripts.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="mass-spectrum-reconstruction-dim-2">
+<h3>💥 <strong>Mass Spectrum Reconstruction (dim 2)</strong><a class="headerlink" href="#mass-spectrum-reconstruction-dim-2" title="Link to this heading"></a></h3>
+<p>By integrating along the <strong>retention time</strong> dimension (<code class="docutils literal notranslate"><span class="pre">dim1</span></code>), each latent component yields a <strong>pseudo-mass spectrum</strong>:</p>
+<ul class="simple">
+<li><p>Projected TIC (Total Ion Chromatogram) ⇒ spectral profile</p></li>
+<li><p>Useful for identifying <strong>co-eluting compounds</strong> and <strong>additives</strong></p></li>
+<li><p>Can be used for <strong>non-targeted mass fingerprinting</strong></p></li>
+</ul>
+<p>Combined with external libraries (e.g., NIST, PubChem), this reconstructed mass spectrum can be submitted to match real-world compounds.</p>
+<blockquote>
+<div><p>🧬 Blind mass fingerprinting becomes possible even for overlapping or degraded signals — particularly relevant in <strong>recycled polymer matrices</strong>.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="fingerprinting-traceability-and-classification">
+<h3>🧷 <strong>Fingerprinting, Traceability, and Classification</strong><a class="headerlink" href="#fingerprinting-traceability-and-classification" title="Link to this heading"></a></h3>
+<p>The symbolic encoding and latent separation provide a robust basis for:</p>
+<ul class="simple">
+<li><p><strong>Batch traceability</strong> in recycled or multi-layered materials</p></li>
+<li><p><strong>Quality classification</strong> using symbolic entropy or PCA projections</p></li>
+<li><p><strong>Authentication</strong> via distance metrics in symbolic or latent space</p></li>
+</ul>
+<p>Because symbolic encodings compress structure without relying on amplitude or noise sensitivity, they are <strong>resistant to minor distortions</strong>, <strong>instrumental drift</strong>, and <strong>chemical degradation</strong>.</p>
+<blockquote>
+<div><p>🔐 This enables a <strong>new generation of chemical barcodes</strong> or <strong>symbolic fingerprints</strong> suitable for industrial monitoring and forensic chemistry.</p>
+</div></blockquote>
+<hr class="docutils" />
+<p>🌱Generative Simulation | olivier.vitrac&#64;gmail.com | June 2025</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Pseudo-Inverse_Reconstruction.html" class="btn btn-neutral float-left" title="🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Olivier Vitrac (Generative Simulation).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

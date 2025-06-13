@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to 📡🧬 sig2dna_core’s documentation &mdash; 📡🧬sig2dna_core 0.43 documentation</title>
+  <title>Welcome to 📡🧬 sig2dna_core’s documentation &mdash; 📡🧬sig2dna_core 0.51 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="_static/documentation_options.js?v=40225006"></script>
       <script src="_static/doctools.js?v=888ff710"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -45,6 +45,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="README.html">📡🧬 sig2dna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
 
@@ -96,6 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="README.html#recommendations">💡15| <strong>Recommendations</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#license">📄 | License</a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#contact">📧 | Contact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#appendices">📎 |Appendices</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a><ul>
@@ -111,12 +113,21 @@
 <li class="toctree-l2"><a class="reference internal" href="Pseudo-Inverse_Reconstruction.html#improved-inversion-advanced-example">🌟 Improved inversion | Advanced example</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html#generalizing-from-1d-to-2d-symbolic-encodings">1 | 📖 Generalizing from 1D to 2D Symbolic Encodings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html#pipeline-demonstration">2 | 🧪 Pipeline Demonstration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html#blind-deconvolution-in-latent-space">3 | 🧊 Blind Deconvolution in Latent Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html#notes-iliiliiliiliiliili-0">🧾 Notes ▶• ılıılıılıılıılıılı. 0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html#next-steps">🧭 Next Steps ﮩ٨ـﮩﮩ٨ـ</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-sig2dna-core-signomics-py-from-the-generative-simulation-initiative">Module: sig2dna_core.signomics.py (from the Generative Simulation Initiative)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.DNACodes"><code class="docutils literal notranslate"><span class="pre">DNACodes</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.DNAFullCodes"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis"><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.DNAsignal"><code class="docutils literal notranslate"><span class="pre">DNAsignal</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.DNAsignal_collection"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.DNAstr"><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.SinusoidalEncoder"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#sig2dna_core.signomics.generator"><code class="docutils literal notranslate"><span class="pre">generator</span></code></a></li>

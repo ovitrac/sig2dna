@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; 📡🧬sig2dna_core 0.43 documentation</title>
+  <title>Index &mdash; 📡🧬sig2dna_core 0.51 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="_static/documentation_options.js?v=40225006"></script>
       <script src="_static/doctools.js?v=888ff710"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
@@ -51,6 +51,7 @@ window.addEventListener("load", () => mermaid.run());
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="README.html">📡🧬 sig2dna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
 
@@ -116,25 +117,35 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder._decode_residual_tolerance">_decode_residual_tolerance (sig2dna_core.signomics.SinusoidalEncoder attribute)</a>
 </li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection._E_symbol">_E_symbol (sig2dna_core.signomics.DNAsignal_collection attribute)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.signal._history">_history (sig2dna_core.signomics.signal attribute)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder._last_input_length">_last_input_length (sig2dna_core.signomics.SinusoidalEncoder attribute)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder._last_input_type">_last_input_type (sig2dna_core.signomics.SinusoidalEncoder attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal._pairwiseEntropyDistance">_pairwiseEntropyDistance() (sig2dna_core.signomics.DNAsignal method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal._pairwiseJaccardMotifDistance">_pairwiseJaccardMotifDistance() (sig2dna_core.signomics.DNAsignal method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal._pairwiseJensenShannonDistance">_pairwiseJensenShannonDistance() (sig2dna_core.signomics.DNAsignal method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal._pairwiseLevenshteinDistance">_pairwiseLevenshteinDistance() (sig2dna_core.signomics.DNAsignal method)</a>
 </li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection._PE_m">_PE_m (sig2dna_core.signomics.DNAsignal_collection attribute)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection._PE_t">_PE_t (sig2dna_core.signomics.DNAsignal_collection attribute)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.signal._previous">_previous (sig2dna_core.signomics.signal attribute)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder._scale">_scale (sig2dna_core.signomics.SinusoidalEncoder attribute)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection._vtm">_vtm (sig2dna_core.signomics.DNAsignal_collection attribute)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection._vtm_full">_vtm_full (sig2dna_core.signomics.DNAsignal_collection attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -165,7 +176,7 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.angle_difference">angle_difference() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id24">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id29">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.signal_collection.append">append() (sig2dna_core.signomics.signal_collection method)</a>
@@ -198,21 +209,23 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.codebook">codebook (sig2dna_core.signomics.DNAsignal attribute)</a>
 </li>
-      <li><a href="api.html#id6">codes (sig2dna_core.signomics.DNAsignal attribute)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.codes">[1]</a>
+      <li><a href="api.html#id10">codes (sig2dna_core.signomics.DNAsignal attribute)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.codes">[1]</a>
 </li>
-      <li><a href="api.html#id7">codesfull (sig2dna_core.signomics.DNAsignal attribute)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.codesfull">[1]</a>
+      <li><a href="api.html#id11">codesfull (sig2dna_core.signomics.DNAsignal attribute)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.codesfull">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.signal.color">color (sig2dna_core.signomics.signal attribute)</a>
 </li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.combine_embeddings">combine_embeddings() (sig2dna_core.signomics.DNAsignal_collection method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.complex_distance">complex_distance() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id25">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id30">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#id10">compute_cwt() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.compute_cwt">[1]</a>
+      <li><a href="api.html#id14">compute_cwt() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.compute_cwt">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.compute_linkage">compute_linkage() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
 </li>
@@ -232,11 +245,15 @@ window.addEventListener("load", () => mermaid.run());
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.D">D (sig2dna_core.signomics.DNApairwiseAnalysis attribute)</a>
 </li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.d">d (sig2dna_core.signomics.DNAsignal_collection attribute)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.d_model">d_model (sig2dna_core.signomics.SinusoidalEncoder attribute)</a>
 </li>
-      <li><a href="api.html#id26">decode() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.decode">[1]</a>
+      <li><a href="api.html#id31">decode() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.decode">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.decode_dna">decode_dna() (sig2dna_core.signomics.DNAsignal method)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.deconvolve_latent_sources">deconvolve_latent_sources() (sig2dna_core.signomics.DNAsignal_collection method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.dimension_variance_curve">dimension_variance_curve() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
 </li>
@@ -253,6 +270,8 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis">DNApairwiseAnalysis (class in sig2dna_core.signomics)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal">DNAsignal (class in sig2dna_core.signomics)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection">DNAsignal_collection (class in sig2dna_core.signomics)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.DNAsignals">DNAsignals (sig2dna_core.signomics.DNApairwiseAnalysis attribute)</a>
 </li>
@@ -276,13 +295,15 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.E_symbol">E_symbol (sig2dna_core.signomics.DNAsignal_collection property)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.signal.enable_fullhistory">enable_fullhistory() (sig2dna_core.signomics.signal method)</a>
 </li>
-      <li><a href="api.html#id27">encode() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.encode">[1]</a>
+      <li><a href="api.html#id32">encode() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.encode">[1]</a>
 </li>
-      <li><a href="api.html#id11">encode_dna() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#id8">[1]</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.encode_dna">[2]</a>
+      <li><a href="api.html#id12">encode_dna() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#id15">[1]</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.encode_dna">[2]</a>
 </li>
-      <li><a href="api.html#id12">encode_dna_full() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#id9">[1]</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.encode_dna_full">[2]</a>
+      <li><a href="api.html#id13">encode_dna_full() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#id16">[1]</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.encode_dna_full">[2]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNACodes.encoded">encoded (sig2dna_core.signomics.DNACodes attribute)</a>
 
@@ -300,7 +321,7 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.entropy_from_string">entropy_from_string() (sig2dna_core.signomics.DNAsignal static method)</a>
 </li>
-      <li><a href="api.html#id23">Example() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.Example">[1]</a>
+      <li><a href="api.html#id28">Example() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.Example">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAstr.excess_entropy">excess_entropy() (sig2dna_core.signomics.DNAstr method)</a>
 </li>
@@ -318,7 +339,7 @@ window.addEventListener("load", () => mermaid.run());
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#id28">fit_encoder() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.fit_encoder">[1]</a>
+      <li><a href="api.html#id33">fit_encoder() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.fit_encoder">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.signal.from_peaks">from_peaks() (sig2dna_core.signomics.signal class method)</a>
 </li>
@@ -349,7 +370,7 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.group_centroid">group_centroid() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id29">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id34">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -358,7 +379,7 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#id13">has() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.has">[1]</a>
+      <li><a href="api.html#id17">has() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.has">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -396,12 +417,18 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#sig2dna_core.signomics.DNAstr.levenshtein">levenshtein() (sig2dna_core.signomics.DNAstr method)</a>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal.letters">letters (sig2dna_core.signomics.DNAsignal property)</a>
+
+      <ul>
+        <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.letters">(sig2dna_core.signomics.DNAsignal_collection attribute)</a>
 </li>
-      <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.linkage_matrix">linkage_matrix (sig2dna_core.signomics.DNApairwiseAnalysis attribute)</a>
+      </ul></li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAstr.levenshtein">levenshtein() (sig2dna_core.signomics.DNAstr method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.linkage_matrix">linkage_matrix (sig2dna_core.signomics.DNApairwiseAnalysis attribute)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.load">load() (sig2dna_core.signomics.DNApairwiseAnalysis static method)</a>
 
       <ul>
@@ -414,6 +441,12 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.m">m (sig2dna_core.signomics.DNAsignal_collection attribute)</a>
+
+      <ul>
+        <li><a href="api.html#id27">(sig2dna_core.signomics.DNAsignal_collection property)</a>
+</li>
+      </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.DNAstr.mask">mask (sig2dna_core.signomics.DNAstr attribute)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.signal_collection.mean">mean() (sig2dna_core.signomics.signal_collection method)</a>
@@ -467,7 +500,7 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api.html#sig2dna_core.signomics.signal.normalize">normalize() (sig2dna_core.signomics.signal method)</a>
 </li>
-      <li><a href="api.html#id14">normalize_signal() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.normalize_signal">[1]</a>
+      <li><a href="api.html#id18">normalize_signal() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.normalize_signal">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -486,10 +519,14 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.pairwise_similarity">pairwise_similarity() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id30">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id35">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.pcoa">pcoa() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.PE_m">PE_m (sig2dna_core.signomics.DNAsignal_collection property)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.PE_t">PE_t (sig2dna_core.signomics.DNAsignal_collection property)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.peaks">peaks (class in sig2dna_core.signomics)</a>
 
@@ -500,21 +537,21 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.phase_alignment">phase_alignment() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id31">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id36">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.phase_unwrap">phase_unwrap() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id32">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id37">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
-      <li><a href="api.html#sig2dna_core.signomics.DNAFullCodes.plot">plot (sig2dna_core.signomics.DNAFullCodes attribute)</a>
-</li>
       <li><a href="api.html#id0">plot() (sig2dna_core.signomics.DNACodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNACodes.plot">[1]</a>
 
       <ul>
-        <li><a href="api.html#id4">(sig2dna_core.signomics.DNAFullCodes method)</a>
+        <li><a href="api.html#id4">(sig2dna_core.signomics.DNAFullCodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNAFullCodes.plot">[1]</a>
+</li>
+        <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.plot">(sig2dna_core.signomics.DNAsignal_collection method)</a>
 </li>
         <li><a href="api.html#sig2dna_core.signomics.signal.plot">(sig2dna_core.signomics.signal method)</a>
 </li>
@@ -525,17 +562,27 @@ window.addEventListener("load", () => mermaid.run());
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sig2dna_core.signomics.DNAstr.plot_alignment">plot_alignment() (sig2dna_core.signomics.DNAstr method)</a>
 </li>
-      <li><a href="api.html#id15">plot_codes() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.plot_codes">[1]</a>
+      <li><a href="api.html#id19">plot_codes() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.plot_codes">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.plot_dendrogram">plot_dendrogram() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.plot_embedding_projection">plot_embedding_projection() (sig2dna_core.signomics.DNAsignal_collection method)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.plot_letters">plot_letters() (sig2dna_core.signomics.DNAsignal_collection method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAstr.plot_mask">plot_mask() (sig2dna_core.signomics.DNAstr method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.plot_scalogram">plot_scalogram() (sig2dna_core.signomics.DNAsignal method)</a>
 </li>
-      <li><a href="api.html#id16">plot_signals() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.plot_signals">[1]</a>
+      <li><a href="api.html#id20">plot_signals() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.plot_signals">[1]</a>
 </li>
-      <li><a href="api.html#id17">plot_transforms() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.plot_transforms">[1]</a>
+      <li><a href="api.html#id21">plot_transforms() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.plot_transforms">[1]</a>
+</li>
+      <li><a href="api.html#id5">plot_unwrapped_matrix() (sig2dna_core.signomics.DNAFullCodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNAFullCodes.plot_unwrapped_matrix">[1]</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.plot_v_symbol_components">plot_v_symbol_components() (sig2dna_core.signomics.DNAsignal_collection method)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.plot_vtm_full">plot_vtm_full() (sig2dna_core.signomics.DNAsignal_collection method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.print_alignment">print_alignment() (sig2dna_core.signomics.DNAsignal static method)</a>
 </li>
@@ -551,12 +598,14 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.reconstruct_signal">reconstruct_signal() (sig2dna_core.signomics.DNAsignal method)</a>
 </li>
-      <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.reduced_distances">reduced_distances() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.reduce_dimensions">reduce_dimensions() (sig2dna_core.signomics.DNAsignal_collection method)</a>
 </li>
-      <li><a href="api.html#sig2dna_core.signomics.DNAstr.ref_hash">ref_hash (sig2dna_core.signomics.DNAstr attribute)</a>
+      <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.reduced_distances">reduced_distances() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#sig2dna_core.signomics.DNAstr.ref_hash">ref_hash (sig2dna_core.signomics.DNAstr attribute)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.References">References() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.peaks.remove_duplicates">remove_duplicates() (sig2dna_core.signomics.peaks method)</a>
@@ -581,8 +630,14 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api.html#sig2dna_core.signomics.signal.save">(sig2dna_core.signomics.signal method)</a>
 </li>
       </ul></li>
-      <li><a href="api.html#id5">scales (sig2dna_core.signomics.DNAsignal attribute)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.scales">[1]</a>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.scale_alignment">scale_alignment() (sig2dna_core.signomics.DNAsignal_collection method)</a>
 </li>
+      <li><a href="api.html#id9">scales (sig2dna_core.signomics.DNAsignal attribute)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.scales">[1]</a>
+
+      <ul>
+        <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.scales">(sig2dna_core.signomics.DNAsignal_collection attribute)</a>
+</li>
+      </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.scatter">scatter() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.scatter3d">scatter3d() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
@@ -591,7 +646,7 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNApairwiseAnalysis.select_dimensions">select_dimensions() (sig2dna_core.signomics.DNApairwiseAnalysis method)</a>
 </li>
-      <li><a href="api.html#id33">set_decode_tolerance() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.set_decode_tolerance">[1]</a>
+      <li><a href="api.html#id38">set_decode_tolerance() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.set_decode_tolerance">[1]</a>
 </li>
       <li>
     sig2dna_core.signomics
@@ -608,26 +663,30 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.signal_collection">signal_collection (class in sig2dna_core.signomics)</a>
 </li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal.sincodesfull">sincodesfull (sig2dna_core.signomics.DNAsignal attribute)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal.sincodesfull_aggregated">sincodesfull_aggregated (sig2dna_core.signomics.DNAsignal attribute)</a>
+</li>
       <li><a href="api.html#id1">sindecode() (sig2dna_core.signomics.DNACodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNACodes.sindecode">[1]</a>
 
       <ul>
-        <li><a href="api.html#sig2dna_core.signomics.DNAFullCodes.sindecode">(sig2dna_core.signomics.DNAFullCodes method)</a>
+        <li><a href="api.html#id6">(sig2dna_core.signomics.DNAFullCodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNAFullCodes.sindecode">[1]</a>
 </li>
       </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.sindecode_dna">sindecode_dna() (sig2dna_core.signomics.DNAsignal method)</a>
 
       <ul>
-        <li><a href="api.html#id18">(sig2dna_core.signomics.DNAsignal static method)</a>
+        <li><a href="api.html#id22">(sig2dna_core.signomics.DNAsignal static method)</a>
 </li>
       </ul></li>
-      <li><a href="api.html#sig2dna_core.signomics.DNAsignal.sindecode_dna_full">sindecode_dna_full() (sig2dna_core.signomics.DNAsignal method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal.sindecode_dna_full">sindecode_dna_full() (sig2dna_core.signomics.DNAsignal method)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.sindecode_dna_grouped">sindecode_dna_grouped() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id34">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id39">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.sindecode_dnafull_grouped">sindecode_dnafull_grouped() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
@@ -635,17 +694,21 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="api.html#id2">sinencode() (sig2dna_core.signomics.DNACodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNACodes.sinencode">[1]</a>
 
       <ul>
-        <li><a href="api.html#sig2dna_core.signomics.DNAFullCodes.sinencode">(sig2dna_core.signomics.DNAFullCodes method)</a>
+        <li><a href="api.html#id7">(sig2dna_core.signomics.DNAFullCodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNAFullCodes.sinencode">[1]</a>
 </li>
       </ul></li>
-      <li><a href="api.html#id19">sinencode_dna() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.sinencode_dna">[1]</a>
+      <li><a href="api.html#id23">sinencode_dna() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.sinencode_dna">[1]</a>
 </li>
-      <li><a href="api.html#id20">sinencode_dna_full() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.sinencode_dna_full">[1]</a>
+      <li><a href="api.html#id24">sinencode_dna_full() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.sinencode_dna_full">[1]</a>
+
+      <ul>
+        <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.sinencode_dna_full">(sig2dna_core.signomics.DNAsignal_collection method)</a>
 </li>
+      </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.sinencode_dna_grouped">sinencode_dna_grouped() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id35">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id40">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.sinencode_dnafull_grouped">sinencode_dnafull_grouped() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
@@ -656,7 +719,7 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api.html#sig2dna_core.signomics.signal.source">source (sig2dna_core.signomics.signal attribute)</a>
 </li>
-      <li><a href="api.html#id21">sparsify_cwt() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.sparsify_cwt">[1]</a>
+      <li><a href="api.html#id25">sparsify_cwt() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.sparsify_cwt">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.signal_collection.sum">sum() (sig2dna_core.signomics.signal_collection method)</a>
 </li>
@@ -681,20 +744,22 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.to_complex">to_complex() (sig2dna_core.signomics.SinusoidalEncoder method)</a>
 
       <ul>
-        <li><a href="api.html#id36">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
+        <li><a href="api.html#id41">(sig2dna_core.signomics.SinusoidalEncoder static method)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.to_dataframe">to_dataframe() (sig2dna_core.signomics.DNAsignal_collection method)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.signal_collection.to_matrix">to_matrix() (sig2dna_core.signomics.signal_collection method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sig2dna_core.signomics.DNAstr.to_signal">to_signal() (sig2dna_core.signomics.DNAstr method)</a>
 
       <ul>
         <li><a href="api.html#sig2dna_core.signomics.peaks.to_signal">(sig2dna_core.signomics.peaks method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#id22">tosignal() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.tosignal">[1]</a>
+      <li><a href="api.html#id26">tosignal() (sig2dna_core.signomics.DNAsignal method)</a>, <a href="api.html#sig2dna_core.signomics.DNAsignal.tosignal">[1]</a>
 </li>
       <li><a href="api.html#sig2dna_core.signomics.DNAsignal.transforms">transforms (sig2dna_core.signomics.DNAsignal attribute)</a>
 </li>
@@ -706,6 +771,12 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#id8">unwrap_letters_to_matrix() (sig2dna_core.signomics.DNAFullCodes method)</a>, <a href="api.html#sig2dna_core.signomics.DNAFullCodes.unwrap_letters_to_matrix">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#sig2dna_core.signomics.DNAFullCodes.unwrapped_matrix">unwrapped_matrix (sig2dna_core.signomics.DNAFullCodes attribute)</a>
+</li>
       <li><a href="api.html#sig2dna_core.signomics.peaks.update">update() (sig2dna_core.signomics.peaks method)</a>
 </li>
   </ul></td>
@@ -716,9 +787,13 @@ window.addEventListener("load", () => mermaid.run());
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sig2dna_core.signomics.DNAstr.vectorized">vectorized() (sig2dna_core.signomics.DNAstr method)</a>
 </li>
+      <li><a href="api.html#id42">verify_roundtrip() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.verify_roundtrip">[1]</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#id37">verify_roundtrip() (sig2dna_core.signomics.SinusoidalEncoder method)</a>, <a href="api.html#sig2dna_core.signomics.SinusoidalEncoder.verify_roundtrip">[1]</a>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.vtm">vtm (sig2dna_core.signomics.DNAsignal_collection property)</a>
+</li>
+      <li><a href="api.html#sig2dna_core.signomics.DNAsignal_collection.vtm_full">vtm_full (sig2dna_core.signomics.DNAsignal_collection property)</a>
 </li>
   </ul></td>
 </tr></table>

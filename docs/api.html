@@ -6,20 +6,20 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Reference &mdash; 📡🧬sig2dna_core 0.43 documentation</title>
+  <title>API Reference &mdash; 📡🧬sig2dna_core 0.51 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="_static/documentation_options.js?v=40225006"></script>
       <script src="_static/doctools.js?v=888ff710"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets" href="Pseudo-Inverse_Reconstruction.html" /> 
+    <link rel="prev" title="📡🧬 Blind Deconvolution of 2D Signals using DNA Representations" href="tutorial_blind_deconvolution_dna.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,6 +45,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">📡🧬 sig2dna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_blind_deconvolution_dna.html">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-sig2dna-core-signomics-py-from-the-generative-simulation-initiative">Module: sig2dna_core.signomics.py (from the Generative Simulation Initiative)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#main-components">Main Components</a></li>
@@ -70,11 +71,18 @@
 <li class="toctree-l2"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.meta"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.meta</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.encoded"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.encoded</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.plot"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.plot</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.sindecode"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.sindecode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.unwrapped_matrix"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.unwrapped_matrix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.sinencode"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.sinencode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.sindecode"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.sindecode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.unwrap_letters_to_matrix"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.unwrap_letters_to_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.plot"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.plot_unwrapped_matrix"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.plot_unwrapped_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.plot_unwrapped_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.sindecode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.sinencode()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes.summary"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">DNAFullCodes.unwrap_letters_to_matrix()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#sig2dna_core.signomics.DNApairwiseAnalysis"><code class="docutils literal notranslate"><span class="pre">DNApairwiseAnalysis</span></code></a><ul>
@@ -114,10 +122,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.scales"><code class="docutils literal notranslate"><span class="pre">DNAsignal.scales</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.codes"><code class="docutils literal notranslate"><span class="pre">DNAsignal.codes</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.codesfull"><code class="docutils literal notranslate"><span class="pre">DNAsignal.codesfull</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">DNAsignal.scales</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">DNAsignal.scales</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.transforms"><code class="docutils literal notranslate"><span class="pre">DNAsignal.transforms</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">DNAsignal.codes</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">DNAsignal.codesfull</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">DNAsignal.codes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">DNAsignal.codesfull</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.sincodesfull"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sincodesfull</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.sincodesfull_aggregated"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sincodesfull_aggregated</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.peaks"><code class="docutils literal notranslate"><span class="pre">DNAsignal.peaks</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.codebook"><code class="docutils literal notranslate"><span class="pre">DNAsignal.codebook</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.generator"><code class="docutils literal notranslate"><span class="pre">DNAsignal.generator</span></code></a></li>
@@ -137,8 +147,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal._pairwiseJaccardMotifDistance"><code class="docutils literal notranslate"><span class="pre">DNAsignal._pairwiseJaccardMotifDistance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal._pairwiseJensenShannonDistance"><code class="docutils literal notranslate"><span class="pre">DNAsignal._pairwiseJensenShannonDistance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal._pairwiseLevenshteinDistance"><code class="docutils literal notranslate"><span class="pre">DNAsignal._pairwiseLevenshteinDistance()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna_full()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna_full()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.sinencode_dna"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sinencode_dna()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.sinencode_dna_full"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sinencode_dna_full()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.sindecode_dna"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sindecode_dna()</span></code></a></li>
@@ -146,29 +156,59 @@
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.tosignal"><code class="docutils literal notranslate"><span class="pre">DNAsignal.tosignal()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.align_with"><code class="docutils literal notranslate"><span class="pre">DNAsignal.align_with()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.apply_baseline_filter"><code class="docutils literal notranslate"><span class="pre">DNAsignal.apply_baseline_filter()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">DNAsignal.compute_cwt()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna_full()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">DNAsignal.compute_cwt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">DNAsignal.encode_dna_full()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.entropy_from_string"><code class="docutils literal notranslate"><span class="pre">DNAsignal.entropy_from_string()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.find_sequence"><code class="docutils literal notranslate"><span class="pre">DNAsignal.find_sequence()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.get_code"><code class="docutils literal notranslate"><span class="pre">DNAsignal.get_code()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.get_entropy"><code class="docutils literal notranslate"><span class="pre">DNAsignal.get_entropy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">DNAsignal.has()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">DNAsignal.normalize_signal()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_codes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">DNAsignal.has()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.letters"><code class="docutils literal notranslate"><span class="pre">DNAsignal.letters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">DNAsignal.normalize_signal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_codes()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.plot_scalogram"><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_scalogram()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_signals()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_transforms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_signals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">DNAsignal.plot_transforms()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.print_alignment"><code class="docutils literal notranslate"><span class="pre">DNAsignal.print_alignment()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.pseudoinverse"><code class="docutils literal notranslate"><span class="pre">DNAsignal.pseudoinverse()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.reconstruct_aligned_string"><code class="docutils literal notranslate"><span class="pre">DNAsignal.reconstruct_aligned_string()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.reconstruct_signal"><code class="docutils literal notranslate"><span class="pre">DNAsignal.reconstruct_signal()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sindecode_dna()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sinencode_dna()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sinencode_dna_full()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sparsify_cwt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sindecode_dna()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sinencode_dna()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sinencode_dna_full()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25"><code class="docutils literal notranslate"><span class="pre">DNAsignal.sparsify_cwt()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal.synthetic_signal"><code class="docutils literal notranslate"><span class="pre">DNAsignal.synthetic_signal()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">DNAsignal.tosignal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26"><code class="docutils literal notranslate"><span class="pre">DNAsignal.tosignal()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.m"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.m</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.d"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.d</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.letters"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.letters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.scales"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.scales</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection._E_symbol"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection._E_symbol</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection._PE_t"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection._PE_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection._PE_m"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection._PE_m</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection._vtm"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection._vtm</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection._vtm_full"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection._vtm_full</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.E_symbol"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.E_symbol</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.PE_m"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.PE_m</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.PE_t"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.PE_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.combine_embeddings"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.combine_embeddings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.deconvolve_latent_sources"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.deconvolve_latent_sources()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.m</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.plot"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.plot_embedding_projection"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.plot_embedding_projection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.plot_letters"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.plot_letters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.plot_v_symbol_components"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.plot_v_symbol_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.plot_vtm_full"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.plot_vtm_full()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.reduce_dimensions"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.reduce_dimensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.scale_alignment"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.scale_alignment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.sinencode_dna_full"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.sinencode_dna_full()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.to_dataframe"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.to_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.vtm"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.vtm</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection.vtm_full"><code class="docutils literal notranslate"><span class="pre">DNAsignal_collection.vtm_full</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#sig2dna_core.signomics.DNAstr"><code class="docutils literal notranslate"><span class="pre">DNAstr</span></code></a><ul>
@@ -229,22 +269,22 @@
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.SinusoidalEncoder.group_centroid"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.group_centroid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.SinusoidalEncoder.phase_unwrap"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.phase_unwrap()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.SinusoidalEncoder.Example"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.Example()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id23"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.Example()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.Example()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sig2dna_core.signomics.SinusoidalEncoder.References"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.References()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id24"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.angle_difference()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id25"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.complex_distance()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id26"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.decode()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id27"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.encode()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id28"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.fit_encoder()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id29"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.group_centroid()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id30"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.pairwise_similarity()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id31"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.phase_alignment()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id32"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.phase_unwrap()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id33"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.set_decode_tolerance()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id34"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.sindecode_dna_grouped()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id35"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.sinencode_dna_grouped()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id36"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.to_complex()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id37"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.verify_roundtrip()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.angle_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.complex_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.encode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.fit_encoder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.group_centroid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id35"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.pairwise_similarity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id36"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.phase_alignment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id37"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.phase_unwrap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id38"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.set_decode_tolerance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id39"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.sindecode_dna_grouped()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id40"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.sinencode_dna_grouped()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id41"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.to_complex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id42"><code class="docutils literal notranslate"><span class="pre">SinusoidalEncoder.verify_roundtrip()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#sig2dna_core.signomics.generator"><code class="docutils literal notranslate"><span class="pre">generator</span></code></a></li>
@@ -448,11 +488,17 @@ $ # git remote add origin <a class="reference external" href="mailto:git&#37;&#5
 $ # git branch -M main        # Ensure current branch is named ‘main’
 $ # git push -u origin main   # Push and set upstream tracking</p>
 <p>$ tree -P ‘<em>.py’ -P ‘</em>.md’ -P ‘LICENSE’ -I ‘__pycache__|.*’ –prune
-$ pdoc ./sig2dna-core/signomics.py -f –html -o ./docs
+$ conda activate base
+$ pdoc ./sig2dna_core/signomics.py -f –html -o ./docs
 $ doctoc –github  –maxlevel 2 README.md</p>
+<p>$ conda activate sphinxdoc
+$ cd docs_sphinx/
+$ make clean
+$ make html
+$ cp -rp build/html/. ../docs</p>
 </div></blockquote>
 <p>Author: Olivier Vitrac — <a class="reference external" href="mailto:olivier&#46;vitrac&#37;&#52;&#48;gmail&#46;com">olivier<span>&#46;</span>vitrac<span>&#64;</span>gmail<span>&#46;</span>com</a>
-Revision: 2025-06-02</p>
+Revision: 2025-06-13</p>
 </section>
 </section>
 <dl class="py class">
@@ -573,13 +619,22 @@ Dictionary-like container for symbolic signal encodings at multiple scales.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
 <section id="dnafullcodes-dict">
 <h2>🧬 DNAFullCodes(dict)<a class="headerlink" href="#dnafullcodes-dict" title="Link to this heading"></a></h2>
-<p>Container for symbolic full-resolution DNA-like strings per scale.</p>
-<p>Each entry in the dictionary maps a scale (int) to a DNAstr object or str sequence.
-This class supports future extensions such as sinusoidal encoding or pattern-based decoding.</p>
+<p>A container for symbolic full-resolution DNA-like strings or their sinusoidal embeddings,
+organized per scale.</p>
+<p>This structure maps each <cite>scale</cite> (typically corresponding to a wavelet or resolution level)
+to either:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>a DNA-like string (<cite>str</cite> or <cite>DNAstr</cite>) representing symbolic patterns over time, or</p></li>
+<li><p>a compressed embedding (dict of vectors) after sinusoidal encoding.</p></li>
+</ul>
+</div></blockquote>
+<p>It supports signal discretization, symbolic transformation, sinusoidal encoding,
+dimensionally-reduced analysis, and visual comparison of encoded motifs.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.meta">
 <span class="sig-name descname"><span class="pre">meta</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.meta" title="Link to this definition"></a></dt>
-<dd><p>Optional metadata about sampling, units, labels, etc.</p>
+<dd><p>Optional metadata (e.g. sampling rate, units, scale definitions, etc.).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
@@ -590,7 +645,7 @@ This class supports future extensions such as sinusoidal encoding or pattern-bas
 <dl class="py attribute">
 <dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.encoded">
 <span class="sig-name descname"><span class="pre">encoded</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.encoded" title="Link to this definition"></a></dt>
-<dd><p>True if this structure has been encoded via a sinusoidal encoder.</p>
+<dd><p>Whether this instance contains sinusoidally encoded data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -599,14 +654,55 @@ This class supports future extensions such as sinusoidal encoding or pattern-bas
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.unwrapped_matrix">
+<span class="sig-name descname"><span class="pre">unwrapped_matrix</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.unwrapped_matrix" title="Link to this definition"></a></dt>
+<dd><p>When applicable, stores a matrix {scale: ndarray (n_letters, d_model)} from compressed
+representations via <cite>unwrap_letters_to_matrix()</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.sinencode">
+<span class="sig-name descname"><span class="pre">sinencode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.sinencode" title="Link to this definition"></a></dt>
+<dd><p>Encodes symbolic data with sinusoidal positional encoding. Supports per-letter reduction via
+‘sum’ or ‘mean’. Returns a new encoded instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.sindecode">
+<span class="sig-name descname"><span class="pre">sindecode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.sindecode" title="Link to this definition"></a></dt>
+<dd><p>Attempts to reconstruct the symbolic string by repeating letters. Only works if the original
+operation did not compress to a single vector per letter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.unwrap_letters_to_matrix">
+<span class="sig-name descname"><span class="pre">unwrap_letters_to_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.unwrap_letters_to_matrix" title="Link to this definition"></a></dt>
+<dd><p>Converts compressed encodings (after ‘sum’ or ‘mean’) into (n_letters × d_model) matrices
+per scale. Required for d-space plotting.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.plot" title="Link to this definition"></a></dt>
-<dd><p>Plot method for DNAFullCodes</p>
+<dd><p>Plots the letter-wise composition (symbolic form) or encoded means (if encoded=True).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.plot_unwrapped_matrix">
+<span class="sig-name descname"><span class="pre">plot_unwrapped_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.plot_unwrapped_matrix" title="Link to this definition"></a></dt>
+<dd><p>Visualizes each letter’s embedding vector in d-space, with one subplot per scale.</p>
 </dd></dl>
 
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">codes</span> <span class="o">=</span> <span class="n">DNAFullCodes</span><span class="p">({</span><span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;YAABZZ&#39;</span><span class="p">},</span> <span class="n">meta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sampling_dt&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">codes</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span> <span class="o">=</span> <span class="n">codes</span><span class="o">.</span><span class="n">sinencode</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span><span class="o">.</span><span class="n">unwrap_letters_to_matrix</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span><span class="o">.</span><span class="n">plot_unwrapped_matrix</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -621,15 +717,53 @@ This class supports future extensions such as sinusoidal encoding or pattern-bas
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.sindecode">
-<span class="sig-name descname"><span class="pre">sindecode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.sindecode" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">plot_unwrapped_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd><p>Plot each letter’s encoded vector in the abstract embedding space (d-space).
+One curve per letter, one subplot per scale.</p>
+<p>Requires <cite>unwrap_letters_to_matrix()</cite> to have been called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>figsize</strong> (<em>tuple</em>) – Base figure size. Height will be scaled based on number of scales.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated matplotlib figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">sindecode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
 <dd><p>Sindecode method</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAFullCodes.sinencode">
-<span class="sig-name descname"><span class="pre">sinencode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAFullCodes.sinencode" title="Link to this definition"></a></dt>
-<dd><p>Sinencode method</p>
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">sinencode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd><p>Sinencode method — encodes each letter in the DNAFullCodes as a set of sinusoidal embeddings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d_model</strong> (<em>int</em><em>, </em><em>optional</em>) – Dimensionality of the sinusoidal embedding (default is 96).</p></li>
+<li><p><strong>N</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of positions for the encoding (default is 10000).</p></li>
+<li><p><strong>operation</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – If “sum”, sums all encodings per letter.
+If “mean”, averages all encodings per letter.
+If None, keeps the full (n_occurrences, d_model) matrix per letter.
+Raises a ValueError if the operation is not one of the above.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>DNAFullCodes (without aggregation)</em> – A new DNAFullCodes instance with encoded representations and metadata.</p></li>
+<li><p><em>DNAFullCodes (with aggregation)</em> – A new DNAFullCodes instance with encoded and aggregated (based operation) representations and metadata.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -642,6 +776,24 @@ This class supports future extensions such as sinusoidal encoding or pattern-bas
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">unwrap_letters_to_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd><p>Assemble all encoded letter vectors into a matrix of shape (n_letters, d_model)
+for each scale.</p>
+<p>Applies only when the encoding was performed with an operation (“sum” or “mean”).
+Stores the result in self.unwrapped_matrix as a dict {scale: matrix}.
+Returns the dictionary for chaining or inspection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError if the encoding is not compressed</strong><strong> (</strong><strong>i.e.</strong><strong>, </strong><strong>operation is None</strong><strong> or </strong><strong>missing</strong><strong>)</strong><strong>,</strong> – </p></li>
+<li><p><strong>or if encoded entries are inconsistent in shape.</strong> – </p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1053,8 +1205,8 @@ have <cite>x</cite>, <cite>y</cite>, and a valid name or identifier.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">scales</span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">scales</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
 <dd><p>Set of scales used in the Continuous Wavelet Transform (powers of 2 by default).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1075,8 +1227,8 @@ have <cite>x</cite>, <cite>y</cite>, and a valid name or identifier.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id6">
-<span class="sig-name descname"><span class="pre">codes</span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">codes</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
 <dd><p>Symbolic codes by scale level. Each is a <cite>DNAstr</cite> object representing
 the symbolic sequence at that scale.</p>
 <dl class="field-list simple">
@@ -1087,14 +1239,31 @@ the symbolic sequence at that scale.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id7">
-<span class="sig-name descname"><span class="pre">codesfull</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">codesfull</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
 <dd><p>Same as <cite>codes</cite>, but uses full resolution symbolic representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict[int, <a class="reference internal" href="#sig2dna_core.signomics.DNAstr" title="sig2dna_core.signomics.DNAstr">DNAstr</a>]</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal.sincodesfull">
+<span class="sig-name descname"><span class="pre">sincodesfull</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal.sincodesfull" title="Link to this definition"></a></dt>
+<dd><p>Sinusoidal position encoded DNAstr (without aggregation)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[int, <a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes" title="sig2dna_core.signomics.DNAFullCodes">DNAFullCodes</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal.sincodesfull_aggregated">
+<span class="sig-name descname"><span class="pre">sincodesfull_aggregated</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal.sincodesfull_aggregated" title="Link to this definition"></a></dt>
+<dd><p>Sinusoidal position encoded DNAstr (with aggregation)</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1263,14 +1432,14 @@ after DNA/code alignment.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id8">
-<span class="sig-name descname"><span class="pre">encode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">encode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
 <dd><p>Convert signal into triplet-based symbolic encoding (per scale).</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id9">
-<span class="sig-name descname"><span class="pre">encode_dna_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">encode_dna_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
 <dd><p>Generate full-resolution DNA strings by repeating letters (to <cite>codesfull</cite>).</p>
 </dd></dl>
 
@@ -1396,8 +1565,8 @@ Defaults to max(11, 2% of signal length).</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id10">
-<span class="sig-name descname"><span class="pre">compute_cwt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mexh'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">compute_cwt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mexh'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
 <dd><p>Compute Continuous Wavelet Transform (CWT) using the Mexican Hat wavelet.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1417,8 +1586,8 @@ Defaults to max(11, 2% of signal length).</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id11">
-<span class="sig-name descname"><span class="pre">encode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">encode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
 <dd><p>Encode each transformed signal into a symbolic DNA-like sequence of monotonic segments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1452,8 +1621,8 @@ Defaults to max(11, 2% of signal length).</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id12">
-<span class="sig-name descname"><span class="pre">encode_dna_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">encode_dna_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
 <dd><p>Convert symbolic codes into DNA-like strings by repeating letters proportionally to their span.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1510,8 +1679,8 @@ If None, defaults to ~10 points per x-unit.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id13">
-<span class="sig-name descname"><span class="pre">has</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">has</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
 <dd><p>Check if a DNA encoding exists for the specified scale.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1533,9 +1702,15 @@ If None, defaults to ~10 points per x-unit.</p></li>
 </div>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal.letters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">letters</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal.letters" title="Link to this definition"></a></dt>
+<dd><p>Return used letters</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="id14">
-<span class="sig-name descname"><span class="pre">normalize_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore+shift'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">normalize_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore+shift'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
 <dd><p>Normalize the internal signal using one of several strategies that ensure positivity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1549,8 +1724,8 @@ See <cite>signal.normalize()</cite> for available modes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id15">
-<span class="sig-name descname"><span class="pre">plot_codes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">plot_codes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
 <dd><p>Plot the symbolic DNA-like encoding as colored triangle segments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1581,14 +1756,14 @@ See <cite>signal.normalize()</cite> for available modes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id16">
-<span class="sig-name descname"><span class="pre">plot_signals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">plot_signals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
 <dd><p>Plot signals.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id17">
-<span class="sig-name descname"><span class="pre">plot_transforms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id21">
+<span class="sig-name descname"><span class="pre">plot_transforms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
 <dd><p>Plot the stored CWT-transformed signals as a signal collection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1659,8 +1834,8 @@ See <cite>signal.normalize()</cite> for available modes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id18">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sindecode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouped_embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id22">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sindecode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouped_embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
 <dd><p>Decode sinusoidal grouped embeddings into a DNACodes structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1681,8 +1856,8 @@ See <cite>signal.normalize()</cite> for available modes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id19">
-<span class="sig-name descname"><span class="pre">sinencode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id23">
+<span class="sig-name descname"><span class="pre">sinencode_dna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
 <dd><p>Encode <cite>self.codes</cite> into sinusoidal embeddings (grouped by letter).</p>
 <dl class="simple">
 <dt>Sets:</dt><dd><ul class="simple">
@@ -1693,26 +1868,35 @@ See <cite>signal.normalize()</cite> for available modes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id20">
-<span class="sig-name descname"><span class="pre">sinencode_dna_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id24">
+<span class="sig-name descname"><span class="pre">sinencode_dna_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
 <dd><p>🌀 Encode full-resolution DNA-like strings into sinusoidal embeddings grouped by letter.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>d_model</strong> (<em>int</em>) – Dimensionality of the sinusoidal embedding (must be even).</p></li>
-<li><p><strong>N</strong> (<em>int</em>) – Frequency base used for sinusoidal encoding.</p></li>
-<li><p><strong>Sets</strong> – </p></li>
-<li><p><strong>----</strong> – </p></li>
-<li><p><strong>self.codesfull</strong> (<a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes" title="sig2dna_core.signomics.DNAFullCodes"><em>DNAFullCodes</em></a><em> (</em><em>if not already set</em><em>)</em>) – Full-resolution symbolic strings at each scale.</p></li>
-<li><p><strong>self.codesfull_encoded</strong> (<a class="reference internal" href="#sig2dna_core.signomics.DNAFullCodes" title="sig2dna_core.signomics.DNAFullCodes"><em>DNAFullCodes</em></a>) – Sinusoidally encoded version of the full DNA strings.</p></li>
-</ul>
+<dl class="simple">
+<dt>Parameters</dt><dd></dd>
+<dt>d_model<span class="classifier">int, optional</span></dt><dd><p>Dimensionality of the sinusoidal embedding (default is 96).</p>
+</dd>
+<dt>N<span class="classifier">int, optional</span></dt><dd><p>Maximum number of positions for the encoding (default is 10000).</p>
+</dd>
+<dt>operation<span class="classifier">str or None, optional</span></dt><dd><p>If “sum”, sums all encodings per letter.
+If “mean”, averages all encodings per letter.
+If None, keeps the full (n_occurrences, d_model) matrix per letter.
+Raises a ValueError if the operation is not one of the above.</p>
 </dd>
 </dl>
+<section id="sets">
+<h3>Sets<a class="headerlink" href="#sets" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>self.codesfull<span class="classifier">DNAFullCodes (if not already set)</span></dt><dd><p>Full-resolution symbolic strings at each scale.</p>
+</dd>
+<dt>self.codesfull_encoded<span class="classifier">DNAFullCodes</span></dt><dd><p>Sinusoidally encoded version of the full DNA strings.</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id21">
-<span class="sig-name descname"><span class="pre">sparsify_cwt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id25">
+<span class="sig-name descname"><span class="pre">sparsify_cwt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
 <dd><p>Sparsify CWT coefficients by zeroing values below a threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1742,8 +1926,8 @@ If None, uses 1% of the maximum absolute value at each scale.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id22">
-<span class="sig-name descname"><span class="pre">tosignal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codes_attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'codes'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id26">
+<span class="sig-name descname"><span class="pre">tosignal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codes_attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'codes'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id26" title="Link to this definition"></a></dt>
 <dd><p>Reconstruct an approximate signal from symbolic encodings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1757,6 +1941,545 @@ If None, uses 1% of the maximum absolute value at each scale.</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#sig2dna_core.signomics.signal" title="sig2dna_core.signomics.signal">signal</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sig2dna_core.signomics.</span></span><span class="sig-name descname"><span class="pre">DNAsignal_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*signals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtmscale=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rasterscan=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float32'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>A collection of DNAsignal objects (e.g., from a GC-MS chromatogram) supporting symbolic sinusoidal encoding,
+full tensor construction, and blind deconvolution using latent component analysis.</p>
+<section id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Link to this heading"></a></h2>
+<p>DNAsignal_collection is designed to enable symbolic and positional encoding of multiple 1D analytical signals
+(e.g., ion channels from GC-MS data) using lettered segments and sinusoidal encodings. It allows combining
+multiple encoded signals into a single tensor for processing with machine learning methods, including dimensionality
+reduction and blind source separation.</p>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<p>Each signal is decomposed into symbolic segments based on their local morphology (encoded as letters like A, B, Y, Z, _).
+Each segment is represented in an embedding space of dimension <cite>d</cite> via sinusoidal encoding. The 3D tensor
+$v_{t,m,d}$ is composed of:</p>
+<ul class="simple">
+<li><p>$E_{t,m,d}$: symbolic encoding across segments.</p></li>
+<li><p>$PE_t$: positional encoding along the time/segment axis (t).</p></li>
+<li><p>$PE_m$: positional encoding along the mass channel/ion axis (m).</p></li>
+</ul>
+<p>Combining these yields:</p>
+<p>$$
+v_{t,m,d} = E_{t,m,d} + PE_t(t,d) + PE_m(m,d)
+$$</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.sinencode_dna_full(scale=4)`:</span> <span class="pre">performs</span> <span class="pre">symbolic</span> <span class="pre">encoding</span> <span class="pre">at</span> <span class="pre">a</span> <span class="pre">given</span> <span class="pre">scale.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.E_symbol`:</span> <span class="pre">property</span> <span class="pre">returning</span> <span class="pre">symbolic</span> <span class="pre">component</span> <span class="pre">E</span> <span class="pre">for</span> <span class="pre">each</span> <span class="pre">letter</span> <span class="pre">and</span> <span class="pre">scale.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.PE_t`:</span> <span class="pre">positional</span> <span class="pre">encoding</span> <span class="pre">per</span> <span class="pre">letter</span> <span class="pre">along</span> <span class="pre">t</span> <span class="pre">for</span> <span class="pre">each</span> <span class="pre">scale.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.PE_m`:</span> <span class="pre">positional</span> <span class="pre">encoding</span> <span class="pre">along</span> <span class="pre">m</span> <span class="pre">(mass</span> <span class="pre">channels).</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.vtm`:</span> <span class="pre">dictionary</span> <span class="pre">of</span> <span class="pre">$v_{t,m,d}$</span> <span class="pre">matrices</span> <span class="pre">per</span> <span class="pre">letter.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.vtm_full`:</span> <span class="pre">complete</span> <span class="pre">tensor</span> <span class="pre">(sum</span> <span class="pre">of</span> <span class="pre">all</span> <span class="pre">letters)</span> <span class="pre">used</span> <span class="pre">for</span> <span class="pre">machine</span> <span class="pre">learning.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.deconvolve_latent_sources(...)`:</span> <span class="pre">uses</span> <span class="pre">PCA</span> <span class="pre">to</span> <span class="pre">decompose</span> <span class="pre">full</span> <span class="pre">tensor</span> <span class="pre">into</span> <span class="pre">component</span> <span class="pre">chromatograms.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.plot_v_symbol_components(...)`:</span> <span class="pre">visualizes</span> <span class="pre">the</span> <span class="pre">construction</span> <span class="pre">of</span> <span class="pre">$v_{t,m}$</span> <span class="pre">for</span> <span class="pre">each</span> <span class="pre">letter.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">`.plot_vtm_full(...)`:</span> <span class="pre">visualizes</span> <span class="pre">the</span> <span class="pre">components</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">full</span> <span class="pre">$v_{t,m}$</span> <span class="pre">tensor.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">param signals<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of DNAsignal instances (e.g., one per ion channel).</p>
+</dd>
+<dt class="field-even">type signals<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of DNAsignal</p>
+</dd>
+<dt class="field-odd">param vtmscale<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Scale to calculate vtm_full</p>
+</dd>
+<dt class="field-even">type vtmscale<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">param rasterscan<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if one point is read at a time by the detector
+In practice, flatten the 2D signal (T × m) into a single 1D time axis by appending
+all temporal channels one after another:</p>
+</dd>
+<dt class="field-even">type rasterscan<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool (default=True)</p>
+</dd>
+<dt class="field-odd">param dtype<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Numeric dtype used for storing encoding arrays (E_symbol, PE_t, PE_m, vtm, vtm_full).
+Defaults to np.float32 for reduced memory usage.</p>
+</dd>
+<dt class="field-even">type dtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>type or np.dtype, optional</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.m">
+<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.m" title="Link to this definition"></a></dt>
+<dd><p>Number of signals (ion channels).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.d">
+<span class="sig-name descname"><span class="pre">d</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.d" title="Link to this definition"></a></dt>
+<dd><p>Embedding dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.letters">
+<span class="sig-name descname"><span class="pre">letters</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.letters" title="Link to this definition"></a></dt>
+<dd><p>List of symbolic segment labels used in the encodings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.scales">
+<span class="sig-name descname"><span class="pre">scales</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.scales" title="Link to this definition"></a></dt>
+<dd><p>Available scales for the symbolic encoding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection._E_symbol">
+<span class="sig-name descname"><span class="pre">_E_symbol</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection._E_symbol" title="Link to this definition"></a></dt>
+<dd><p>Cached symbolic encoding tensors for each letter and scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection._PE_t">
+<span class="sig-name descname"><span class="pre">_PE_t</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection._PE_t" title="Link to this definition"></a></dt>
+<dd><p>Cached positional encoding along t for each letter and scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection._PE_m">
+<span class="sig-name descname"><span class="pre">_PE_m</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection._PE_m" title="Link to this definition"></a></dt>
+<dd><p>Cached positional encoding along m for each scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection._vtm">
+<span class="sig-name descname"><span class="pre">_vtm</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection._vtm" title="Link to this definition"></a></dt>
+<dd><p>Cached symbolic+positional tensors per letter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection._vtm_full">
+<span class="sig-name descname"><span class="pre">_vtm_full</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection._vtm_full" title="Link to this definition"></a></dt>
+<dd><p>Cached full encoding tensor combining all letters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.E_symbol">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">E_symbol</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.E_symbol" title="Link to this definition"></a></dt>
+<dd><p>Symbolic component of the 2D encoding for each scale and letter.</p>
+<p>For each letter, builds a tensor (T_letter, M, D) where:
+- T_letter is the total number of segments of that letter across all M signals,
+- D is the embedding dimension,
+- M is the number of ion channels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mapping {scale: {letter: ndarray of shape (T_letter, m, d)}}</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of dict</p>
+</dd>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>E_symbol(t, m)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.PE_m">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PE_m</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.PE_m" title="Link to this definition"></a></dt>
+<dd><p>Positional encoding along m (IC index axis) per scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mapping: {scale: array of shape (m, d)}</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PE_m(m)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.PE_t">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PE_t</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.PE_t" title="Link to this definition"></a></dt>
+<dd><p>Positional encoding along t (segment axis) per scale and letter.</p>
+<p>For each scale and letter, this provides a matrix of shape (n_segments, d),
+where n_segments is the total number of segments of that letter across the m signals,
+and d is the embedding dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mapping {scale: {letter: ndarray of shape (n_segments, d)}}</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of dict</p>
+</dd>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PE_t(t)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.combine_embeddings">
+<span class="sig-name descname"><span class="pre">combine_embeddings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected_letters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.combine_embeddings" title="Link to this definition"></a></dt>
+<dd><p>Combine unwrapped embeddings across all signals for each scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selected_letters</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – If provided, restrict to these letters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary {scale: {letter: (m, d)}} for each selected scale and letter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.deconvolve_latent_sources">
+<span class="sig-name descname"><span class="pre">deconvolve_latent_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inertia_loss_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.deconvolve_latent_sources" title="Link to this definition"></a></dt>
+<dd><p>Perform dimensionality reduction on the 3D tensor v_{t,m,d} to extract non-coeluted
+compound chromatograms using PCA, with optional plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_components</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of latent components (e.g., pure compounds) to extract.
+Default is 64.</p></li>
+<li><p><strong>inertia_loss_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – The maximum allowed proportion of total variance to lose in the projection.
+Default is 0.25 (i.e., at least 75% of the variance should be preserved).</p></li>
+<li><p><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to display diagnostic plots.</p></li>
+<li><p><strong>nmax_plot</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of components to visualize in plots.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>components</strong> (<em>np.ndarray</em>) – Component matrix of shape (n_selected_components, D), representing
+the spectral basis vectors (latent features).</p></li>
+<li><p><strong>chromatograms</strong> (<em>np.ndarray</em>) – Projected chromatograms for each component, shape (T, M, n_selected_components).</p></li>
+<li><p><strong>explained_variance_ratio</strong> (<em>np.ndarray</em>) – Variance explained by each selected component.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id27">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#id27" title="Link to this definition"></a></dt>
+<dd><p>Return the number of signals in the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">letters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(18,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot the encoded signals in subplots.
+Rows represent letters, columns represent scales.
+Each subplot contains overlaid colored curves from all signals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>letters</strong> (<em>list</em><em> or </em><em>None</em>) – Letters to be plotted. If None, all available letters are plotted.</p></li>
+<li><p><strong>scales</strong> (<em>list</em><em> or </em><em>None</em>) – Scales to be plotted. If None, all available scales are plotted.</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the full figure.</p></li>
+<li><p><strong>max_legend</strong> (<em>int</em>) – Maximum number of signals to label in the legend.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure containing the plots.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.plot_embedding_projection">
+<span class="sig-name descname"><span class="pre">plot_embedding_projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">letters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pca'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(14,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.plot_embedding_projection" title="Link to this definition"></a></dt>
+<dd><p>Plot embedding projections of the encoded signals using PCA (default) or other DR methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<a class="reference internal" href="#sig2dna_core.signomics.DNAsignal_collection" title="sig2dna_core.signomics.DNAsignal_collection"><em>DNAsignal_collection</em></a>) – The collection of encoded signals.</p></li>
+<li><p><strong>scales</strong> (<em>list</em><em> or </em><em>None</em>) – Scales to include in the projection. If None, all available scales are used.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Dimensionality reduction method (‘pca’ only supported for now).</p></li>
+<li><p><strong>max_points</strong> (<em>int</em>) – Maximum number of signal points to label explicitly.</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.plot_letters">
+<span class="sig-name descname"><span class="pre">plot_letters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.plot_letters" title="Link to this definition"></a></dt>
+<dd><p>Plot a heatmap of the letter codes (symbolic DNA) across all signals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale</strong> (<em>int</em><em>, </em><em>optional</em>) – Scale to use (default: self.vtmscale).</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em>) – Matplotlib colormap name (default: “viridis”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.plot_v_symbol_components">
+<span class="sig-name descname"><span class="pre">plot_v_symbol_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.plot_v_symbol_components" title="Link to this definition"></a></dt>
+<dd><p>Plot the components E_symbol, PE_t, PE_m and their sum v_{t,m}
+as image matrices for each letter at a given scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale</strong> (<em>int</em><em>, </em><em>optional</em>) – The scale to use. Defaults to the first available scale.</p></li>
+<li><p><strong>dims</strong> (<em>&quot;all&quot;</em><em>, </em><em>list</em><em> or </em><em>slice</em>) – Which dimensions to include in the sum over <cite>d</cite>. Default is all.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.plot_vtm_full">
+<span class="sig-name descname"><span class="pre">plot_vtm_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.plot_vtm_full" title="Link to this definition"></a></dt>
+<dd><p>Visualize the components and sum of the full encoded GC-MS signal at a given scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale</strong> (<em>int</em><em>, </em><em>optional</em>) – Scale to visualize. Defaults to the first scale.</p></li>
+<li><p><strong>dims</strong> (<em>&quot;all&quot;</em><em>, </em><em>list</em><em> or </em><em>slice</em>) – Dimensions of the embedding <cite>d</cite> to include (default: all).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.reduce_dimensions">
+<span class="sig-name descname"><span class="pre">reduce_dimensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pca'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_letters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.reduce_dimensions" title="Link to this definition"></a></dt>
+<dd><p>Apply dimensionality reduction (PCA or UMAP) across signals for each scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – “pca” or “umap”.</p></li>
+<li><p><strong>selected_letters</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Restrict to a subset of letters.</p></li>
+<li><p><strong>n_components</strong> (<em>int</em>) – Number of projection dimensions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary {scale: ndarray} with shape (m, n_components), one per scale.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.scale_alignment">
+<span class="sig-name descname"><span class="pre">scale_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.scale_alignment" title="Link to this definition"></a></dt>
+<dd><p>Normalize embeddings across all signals and all scales.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>method</strong> (<em>str</em>) – One of {“zscore”, “minmax”}.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.sinencode_dna_full">
+<span class="sig-name descname"><span class="pre">sinencode_dna_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.sinencode_dna_full" title="Link to this definition"></a></dt>
+<dd><p>🌀 Encode all DNAsignal instances using full-resolution sinusoidal embeddings,
+grouped by letter and organized per scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d_model</strong> (<em>int</em><em>, </em><em>optional</em>) – Dimensionality of the sinusoidal embedding (default is 128).</p></li>
+<li><p><strong>N</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of positions for the encoding (default is 10000).</p></li>
+<li><p><strong>operation</strong> (<em>str</em><em> or </em><em>None</em>) – If “sum”, sum all position encodings per letter.
+If “mean”, average encodings.
+If None, retain full (n_occurrences × d_model) arrays.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.to_dataframe">
+<span class="sig-name descname"><span class="pre">to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected_letters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.to_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Export combined embeddings for all scales as a tidy pandas DataFrame,
+suitable for machine learning tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selected_letters</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Subset of letters to include. If None, include all letters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A long-form DataFrame with columns:
+[‘signal_index’, ‘scale’, ‘letter’, ‘dim_0’, …, ‘dim_{d-1}’]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.vtm">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vtm</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.vtm" title="Link to this definition"></a></dt>
+<dd><p>Compute the full encoded matrix v_{t,m} for each letter at each scale.</p>
+<p>This property combines three orthogonal components:
+- E_symbol(t, m): the original per-segment encoding for each letter
+- PE_t(t): a sinusoidal encoding applied along the segment (time) axis
+- PE_m(m): a sinusoidal encoding applied along the signal (IC) axis</p>
+<dl class="simple">
+<dt>The resulting tensor for each scale and letter is of shape (n_segments, m, d), where:</dt><dd><ul class="simple">
+<li><p>n_segments: number of segments (time positions) per letter</p></li>
+<li><p>m: number of DNAsignal instances in the collection</p></li>
+<li><p>d: dimensionality of the encoding space (d_model)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A nested dictionary {scale: {letter: array of shape (n_segments, m, d)}}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sig2dna_core.signomics.DNAsignal_collection.vtm_full">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vtm_full</span></span><a class="headerlink" href="#sig2dna_core.signomics.DNAsignal_collection.vtm_full" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Compute and store the full encoded tensor for the GC-MS signal:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>If self.rasterscan is False:</dt><dd><p>shape = (T, m, d)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If self.rasterscan is True:</dt><dd><p>shape = (T * m, d)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>This combines:
+- Symbolic embedding per character (one-hot or learned)
+- Positional encoding along time axis
+- PE_m (mass/IC identity) is used only if rasterscan is False</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Encoded array (T, m, d) or (T*m, d)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2581,8 +3304,8 @@ and round-trip verification.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id23">
-<span class="sig-name descname"><span class="pre">Example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with</span> <span class="pre">scaling</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id28">
+<span class="sig-name descname"><span class="pre">Example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with</span> <span class="pre">scaling</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id28" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -2873,8 +3596,8 @@ and round-trip verification.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id24">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">angle_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id29">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">angle_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id29" title="Link to this definition"></a></dt>
 <dd><p>Compute angular differences (∆θ) between consecutive embeddings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2890,8 +3613,8 @@ and round-trip verification.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id25">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">complex_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emb2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'L2'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id30">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">complex_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emb2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'L2'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id30" title="Link to this definition"></a></dt>
 <dd><p>Compute distance between two encoded arrays using complex projection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2911,8 +3634,8 @@ and round-trip verification.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id26">
-<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'least_squares'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id26" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id31">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'least_squares'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id31" title="Link to this definition"></a></dt>
 <dd><p>Decode sinusoidal embeddings back to original values using selected method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2933,8 +3656,8 @@ and round-trip verification.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id27">
-<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id27" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id32">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id32" title="Link to this definition"></a></dt>
 <dd><p>Encode input values into sinusoidal embeddings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2953,8 +3676,8 @@ and round-trip verification.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id28">
-<span class="sig-name descname"><span class="pre">fit_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id28" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id33">
+<span class="sig-name descname"><span class="pre">fit_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id33" title="Link to this definition"></a></dt>
 <dd><p>Fit a scaling factor to normalize values into a target sinusoidal-safe range.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2973,8 +3696,8 @@ and round-trip verification.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id29">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">group_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id29" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id34">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">group_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id34" title="Link to this definition"></a></dt>
 <dd><p>Compute the centroid (average embedding) of each group in complex sinusoidal space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2995,8 +3718,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id30">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pairwise_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id30" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id35">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pairwise_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id35" title="Link to this definition"></a></dt>
 <dd><p>Compute a pairwise similarity (or distance) matrix in sinusoidal embedding space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3015,8 +3738,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id31">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">phase_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id31" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id36">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">phase_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id36" title="Link to this definition"></a></dt>
 <dd><p>Align embedding <cite>emb</cite> to reference <cite>ref</cite> using complex phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3035,8 +3758,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id32">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">phase_unwrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id32" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id37">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">phase_unwrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id37" title="Link to this definition"></a></dt>
 <dd><p>Perform Fourier-like phase unwrapping on sinusoidal embedding.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3055,8 +3778,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id33">
-<span class="sig-name descname"><span class="pre">set_decode_tolerance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id33" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id38">
+<span class="sig-name descname"><span class="pre">set_decode_tolerance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id38" title="Link to this definition"></a></dt>
 <dd><p>Set maximum acceptable residual error for decoding.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3066,8 +3789,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id34">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sindecode_dna_grouped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id34" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id39">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sindecode_dna_grouped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id39" title="Link to this definition"></a></dt>
 <dd><p>Decode sinusoidal embeddings grouped by letter into symbolic segments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3088,8 +3811,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id35">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sinencode_dna_grouped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id35" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id40">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sinencode_dna_grouped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id40" title="Link to this definition"></a></dt>
 <dd><p>Encode symbolic code segments grouped by letter into sinusoidal embeddings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3118,8 +3841,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id36">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_complex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id36" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id41">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_complex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id41" title="Link to this definition"></a></dt>
 <dd><p>Convert sinusoidal embedding into a complex array using Euler’s identity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3135,8 +3858,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id37">
-<span class="sig-name descname"><span class="pre">verify_roundtrip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'least_squares'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id37" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id42">
+<span class="sig-name descname"><span class="pre">verify_roundtrip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'least_squares'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id42" title="Link to this definition"></a></dt>
 <dd><p>Perform an encode → decode → compare roundtrip and report accuracy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3190,8 +3913,8 @@ If return_std=True, also includes key ‘&lt;label&gt;_std’ with standard devi
 </dd>
 </dl>
 </section>
-<section id="id38">
-<h2>Example:<a class="headerlink" href="#id38" title="Link to this heading"></a></h2>
+<section id="id43">
+<h2>Example:<a class="headerlink" href="#id43" title="Link to this heading"></a></h2>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">figprint</span> <span class="o">=</span> <span class="n">import_local_module</span><span class="p">(</span><span class="s2">&quot;figprint&quot;</span><span class="p">,</span> <span class="s2">&quot;figprint.py&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">figprint</span><span class="o">.</span><span class="n">print_pdf</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
@@ -3843,7 +4566,7 @@ s.plot()</p>
 - “zscore+shift”   : (y - mean) / std, then shift so min is shift_eps
 - “minmax”         : (y - min) / (max - min), scales to [0, 1]
 - “max”            : y / max, scales to [0, 1]
-- “l1”             : y / sum(<a href="#id43"><span class="problematic" id="id44">|y|</span></a>), sums to 1 (like probability)
+- “l1”             : y / sum(<a href="#id48"><span class="problematic" id="id49">|y|</span></a>), sums to 1 (like probability)
 - “energy”         : y / sqrt(sum(y^2)), unit energy
 - “none”           : No normalization, just returns a copy or itself</p></li>
 <li><p><strong>inplace</strong> (<em>bool</em>) – Whether to modify the signal in place. If False, returns a new signal.</p></li>
@@ -3928,10 +4651,10 @@ If a file, uses as is.</p></li>
 <p>The collection is used to manage, compare, combine, or visualize multiple signals (e.g., from
 replicates, experiments, synthetic scenarios). Signals are interpolated and padded on insertion
 so all have the same shape and domain. Arithmetic, matrix extraction, and overlay plots are supported.</p>
-<section id="id39">
-<h2>Parameters:<a class="headerlink" href="#id39" title="Link to this heading"></a></h2>
+<section id="id44">
+<h2>Parameters:<a class="headerlink" href="#id44" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt><a href="#id40"><span class="problematic" id="id41">*</span></a>signals<span class="classifier">signal</span></dt><dd><p>One or more signal instances to include (they are copied and aligned).</p>
+<dt><a href="#id45"><span class="problematic" id="id46">*</span></a>signals<span class="classifier">signal</span></dt><dd><p>One or more signal instances to include (they are copied and aligned).</p>
 </dd>
 <dt>n<span class="classifier">int</span></dt><dd><p>Number of sampling points in the aligned x grid (default: 1000).</p>
 </dd>
@@ -3948,8 +4671,8 @@ so all have the same shape and domain. Arithmetic, matrix extraction, and overla
 </dd>
 </dl>
 </section>
-<section id="id42">
-<h2>Key Methods:<a class="headerlink" href="#id42" title="Link to this heading"></a></h2>
+<section id="id47">
+<h2>Key Methods:<a class="headerlink" href="#id47" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>append(signal)              → add and align a new signal</p></li>
 <li><p>to_matrix()                 → convert signals to a 2D array (n_signals x n_points)</p></li>
@@ -3971,6 +4694,24 @@ so all have the same shape and domain. Arithmetic, matrix extraction, and overla
 <li><p>sc[“name”]        → return a copy of signal with that name</p></li>
 <li><p>sc[“A”, “B”]      → return a subcollection with those names</p></li>
 </ul>
+<p>Supports arithmetic operations for aligned signal mixtures.</p>
+</section>
+<section id="arithmetic-operations-on-aligned-signal-collections">
+<h2>Arithmetic operations on aligned signal collections<a class="headerlink" href="#arithmetic-operations-on-aligned-signal-collections" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Scalar multiplication: <cite>a * sc</cite> scales each signal by a constant <cite>a</cite>.</p></li>
+<li><p>Collection addition: <cite>sc1 + sc2</cite> adds two collections element-wise.</p></li>
+<li><p>Linear combinations: <cite>a * A + b * B + c * C</cite> constructs mixtures of compatible collections.</p></li>
+<li><p>Compatible with <cite>sum([a*A, b*B, …])</cite> for aggregating multiple weighted collections.</p></li>
+</ul>
+<dl class="simple">
+<dt>Requirements</dt><dd><ul class="simple">
+<li><p>All signal_collections must share the same number of signals.</p></li>
+<li><p>Signals are aligned on a common x-grid (same <cite>n</cite>, <cite>mode</cite>, and domain).</p></li>
+<li><p>Element-wise operations preserve signal names and metadata when possible.</p></li>
+</ul>
+</dd>
+</dl>
 </section>
 <section id="examples">
 <h2>Examples:<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
@@ -4044,7 +4785,7 @@ Cannot exceed <cite>max_peaks</cite>.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_signals</strong> (<em>int</em>) – Number of synthetic signals to generate.</p></li>
-<li><p><strong>n_peaks</strong> (<em>int</em>) – Number of peaks per signal.</p></li>
+<li><p><strong>n_peaks</strong> (<em>int</em><em> or </em><em>tuple</em><em>[</em><em>int</em><em>,</em><em>int</em><em>]</em>) – Number of peaks per signal or its range.</p></li>
 <li><p><strong>kind_distribution</strong> (<em>str</em>) – ‘uniform’ → use all peak kinds equally; ‘random’ → random draw from kinds.</p></li>
 <li><p><strong>kinds</strong> (<em>tuple</em><em>[</em><em>str</em><em>]</em>) – Generator types to choose from (‘gauss’, ‘lorentz’, ‘triangle’).</p></li>
 <li><p><strong>x_range</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em>) – Start and end of x-domain.</p></li>
@@ -4191,7 +4932,7 @@ If None, open new figure only the first time this collection is plotted.</p></li
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Pseudo-Inverse_Reconstruction.html" class="btn btn-neutral float-left" title="🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorial_blind_deconvolution_dna.html" class="btn btn-neutral float-left" title="📡🧬 Blind Deconvolution of 2D Signals using DNA Representations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

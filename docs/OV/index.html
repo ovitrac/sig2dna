@@ -6,16 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to sig2dna_core’s documentation &mdash; 📡🧬sig2dna_core 0.43 documentation</title>
+  <title>Welcome to sig2dna_core’s documentation &mdash; 📡🧬sig2dna_core 0.51 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=b76d8e31"></script>
+      <script src="../_static/documentation_options.js?v=40225006"></script>
       <script src="../_static/doctools.js?v=888ff710"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true, "tags": "ams"}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -44,6 +46,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../README.html">📡🧬 sig2dna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Pseudo-Inverse_Reconstruction.html">🔄 Pseudo-Inverse Reconstruction of Signals Using Ricker Wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_blind_deconvolution_dna.html">📡🧬 Blind Deconvolution of 2D Signals using DNA Representations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
@@ -204,12 +207,19 @@ analysis.scatter(n_clusters=3)</p>
        $ # git push -u origin main   # Push and set upstream tracking
 
        $ tree -P &#39;*.py&#39; -P &#39;*.md&#39; -P &#39;LICENSE&#39; -I &#39;__pycache__|.*&#39; --prune
-       $ pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
+       $ conda activate base
+       $ pdoc ./sig2dna_core/signomics.py -f --html -o ./docs
        $ doctoc --github  --maxlevel 2 README.md
+
+       $ conda activate sphinxdoc
+       $ cd docs_sphinx/
+       $ make clean
+       $ make html
+       $ cp -rp build/html/. ../docs
 </pre></div>
 </div>
 <p>Author: Olivier Vitrac — olivier.vitrac&#64;gmail.com
-Revision: 2025-06-02</p>
+Revision: 2025-06-13</p>
 <p>… py:class:: DNACodes(*args, meta=None, encoded=False, **kwargs)
 :module: sig2dna_core.signomics</p>
 <p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">~collections.UserDict</span></code></p>
@@ -290,23 +300,54 @@ Dictionary-like container for symbolic signal encodings at multiple scales.</p>
 </section>
 <section id="dnafullcodes-dict">
 <h2>🧬 DNAFullCodes(dict)<a class="headerlink" href="#dnafullcodes-dict" title="Link to this heading"></a></h2>
-<p>Container for symbolic full-resolution DNA-like strings per scale.</p>
-<p>Each entry in the dictionary maps a scale (int) to a DNAstr object or str sequence.
-This class supports future extensions such as sinusoidal encoding or pattern-based decoding.</p>
+<p>A container for symbolic full-resolution DNA-like strings or their sinusoidal embeddings,
+organized per scale.</p>
+<p>This structure maps each <code class="docutils literal notranslate"><span class="pre">scale</span></code> (typically corresponding to a wavelet or resolution level)
+to either:
+- a DNA-like string (<code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">DNAstr</span></code>) representing symbolic patterns over time, or
+- a compressed embedding (dict of vectors) after sinusoidal encoding.</p>
+<p>It supports signal discretization, symbolic transformation, sinusoidal encoding,
+dimensionally-reduced analysis, and visual comparison of encoded motifs.</p>
 <p>… attribute:: meta</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Optional metadata about sampling, units, labels, etc.
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Optional metadata (e.g. sampling rate, units, scale definitions, etc.).
 
   :type: dict
 </pre></div>
 </div>
 <p>… attribute:: encoded</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  True if this structure has been encoded via a sinusoidal encoder.
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Whether this instance contains sinusoidally encoded data.
 
   :type: bool
 </pre></div>
 </div>
-<p>… attribute:: plot(figsize=(12, 4))</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot method for DNAFullCodes
+<p>… attribute:: unwrapped_matrix</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  When applicable, stores a matrix {scale: ndarray (n_letters, d_model)} from compressed
+  representations via `unwrap_letters_to_matrix()`.
+
+  :type: dict, optional
+</pre></div>
+</div>
+<p>… method:: sinencode(d_model=96, N=10000, operation=None)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Encodes symbolic data with sinusoidal positional encoding. Supports per-letter reduction via
+  &#39;sum&#39; or &#39;mean&#39;. Returns a new encoded instance.
+</pre></div>
+</div>
+<p>… method:: sindecode()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Attempts to reconstruct the symbolic string by repeating letters. Only works if the original
+  operation did not compress to a single vector per letter.
+</pre></div>
+</div>
+<p>… method:: unwrap_letters_to_matrix()</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Converts compressed encodings (after &#39;sum&#39; or &#39;mean&#39;) into (n_letters × d_model) matrices
+  per scale. Required for d-space plotting.
+</pre></div>
+</div>
+<p>… method:: plot(figsize=(12, 4))</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plots the letter-wise composition (symbolic form) or encoded means (if encoded=True).
+</pre></div>
+</div>
+<p>… method:: plot_unwrapped_matrix(figsize=(12, 4))</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Visualizes each letter’s embedding vector in d-space, with one subplot per scale.
 </pre></div>
 </div>
 <p>… rubric:: Example</p>
@@ -314,7 +355,9 @@ This class supports future extensions such as sinusoidal encoding or pattern-bas
 <div><blockquote>
 <div><blockquote>
 <div><p>codes = DNAFullCodes({4: ‘YAABZZ’}, meta={“sampling_dt”: 0.5})
-print(codes.summary())</p>
+encoded = codes.sinencode(operation=“mean”)
+encoded.unwrap_letters_to_matrix()
+encoded.plot_unwrapped_matrix()</p>
 </div></blockquote>
 </div></blockquote>
 </div></blockquote>
@@ -326,14 +369,41 @@ print(codes.summary())</p>
   :type figsize: tuple
 </pre></div>
 </div>
+<p>… py:method:: DNAFullCodes.plot_unwrapped_matrix(figsize=(12, 4))
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot each letter&#39;s encoded vector in the abstract embedding space (d-space).
+  One curve per letter, one subplot per scale.
+
+  Requires `unwrap_letters_to_matrix()` to have been called.
+
+  :param figsize: Base figure size. Height will be scaled based on number of scales.
+  :type figsize: tuple
+
+  :returns: The generated matplotlib figure.
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
 <p>… py:method:: DNAFullCodes.sindecode()
 :module: sig2dna_core.signomics</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sindecode method
 </pre></div>
 </div>
-<p>… py:method:: DNAFullCodes.sinencode(d_model=96, N=10000)
+<p>… py:method:: DNAFullCodes.sinencode(d_model=96, N=10000, operation=‘sum’)
 :module: sig2dna_core.signomics</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sinencode method
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sinencode method — encodes each letter in the DNAFullCodes as a set of sinusoidal embeddings.
+
+  :param d_model: Dimensionality of the sinusoidal embedding (default is 96).
+  :type d_model: int, optional
+  :param N: Maximum number of positions for the encoding (default is 10000).
+  :type N: int, optional
+  :param operation: If &quot;sum&quot;, sums all encodings per letter.
+                    If &quot;mean&quot;, averages all encodings per letter.
+                    If None, keeps the full (n_occurrences, d_model) matrix per letter.
+                    Raises a ValueError if the operation is not one of the above.
+  :type operation: str or None, optional
+
+  :returns: * *DNAFullCodes (without aggregation)* -- A new DNAFullCodes instance with encoded representations and metadata.
+            * *DNAFullCodes (with aggregation)* -- A new DNAFullCodes instance with encoded and aggregated (based operation) representations and metadata.
 </pre></div>
 </div>
 <p>… py:method:: DNAFullCodes.summary()
@@ -342,6 +412,19 @@ print(codes.summary())</p>
 
   :returns: Mapping from scale to summary string or code length.
   :rtype: dict
+</pre></div>
+</div>
+<p>… py:method:: DNAFullCodes.unwrap_letters_to_matrix()
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Assemble all encoded letter vectors into a matrix of shape (n_letters, d_model)
+  for each scale.
+
+  Applies only when the encoding was performed with an operation (&quot;sum&quot; or &quot;mean&quot;).
+  Stores the result in self.unwrapped_matrix as a dict {scale: matrix}.
+  Returns the dictionary for chaining or inspection.
+
+  :raises ValueError if the encoding is not compressed (i.e., operation is None or missing),:
+  :raises or if encoded entries are inconsistent in shape.:
 </pre></div>
 </div>
 <p>… py:class:: DNApairwiseAnalysis(D, names, DNAsignals, name=None)
@@ -627,6 +710,16 @@ have <code class="docutils literal notranslate"><span class="pre">x</span></code
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Same as `codes`, but uses full resolution symbolic representation.
 
   :type: dict[int, DNAstr]
+</pre></div>
+</div>
+<p>… attribute:: sincodesfull</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sinusoidal position encoded DNAstr (without aggregation)
+
+  :type: dict[int, DNAFullCodes]
+</pre></div>
+</div>
+<p>… attribute:: sincodesfull_aggregated</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Sinusoidal position encoded DNAstr (with aggregation)
 </pre></div>
 </div>
 <p>… attribute:: peaks</p>
@@ -930,6 +1023,11 @@ dna.codes[4].find(“YAZB”)</p>
   False
 </pre></div>
 </div>
+<p>… py:property:: DNAsignal.letters
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return used letters
+</pre></div>
+</div>
 <p>… py:method:: DNAsignal.normalize_signal(mode=‘zscore+shift’)
 :module: sig2dna_core.signomics</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Normalize the internal signal using one of several strategies that ensure positivity.
@@ -1050,20 +1148,28 @@ dna.codes[4].find(“YAZB”)</p>
       - self.codes (DNACodes): Encoded version of original codes.
 </pre></div>
 </div>
-<p>… py:method:: DNAsignal.sinencode_dna_full(d_model=96, N=10000)
+<p>… py:method:: DNAsignal.sinencode_dna_full(d_model=96, N=10000, operation=None)
 :module: sig2dna_core.signomics</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  🌀 Encode full-resolution DNA-like strings into sinusoidal embeddings grouped by letter.
 
-  :param d_model: Dimensionality of the sinusoidal embedding (must be even).
-  :type d_model: int
-  :param N: Frequency base used for sinusoidal encoding.
-  :type N: int
-  :param Sets:
-  :param ----:
-  :param self.codesfull: Full-resolution symbolic strings at each scale.
-  :type self.codesfull: DNAFullCodes (if not already set)
-  :param self.codesfull_encoded: Sinusoidally encoded version of the full DNA strings.
-  :type self.codesfull_encoded: DNAFullCodes
+  Parameters
+      ----------
+  d_model : int, optional
+      Dimensionality of the sinusoidal embedding (default is 96).
+  N : int, optional
+      Maximum number of positions for the encoding (default is 10000).
+  operation : str or None, optional
+      If &quot;sum&quot;, sums all encodings per letter.
+      If &quot;mean&quot;, averages all encodings per letter.
+      If None, keeps the full (n_occurrences, d_model) matrix per letter.
+      Raises a ValueError if the operation is not one of the above.
+
+  Sets
+  ----
+  self.codesfull : DNAFullCodes (if not already set)
+      Full-resolution symbolic strings at each scale.
+  self.codesfull_encoded : DNAFullCodes
+      Sinusoidally encoded version of the full DNA strings.
 </pre></div>
 </div>
 <p>… py:method:: DNAsignal.sparsify_cwt(scale=None, threshold=None, inplace=True)
@@ -1103,6 +1209,347 @@ dna.codes[4].find(“YAZB”)</p>
   :rtype: signal
 </pre></div>
 </div>
+<p>… py:class:: DNAsignal_collection(*signals, vtmscale=None, rasterscan=True, dtype=&lt;class ‘numpy.float32’&gt;)
+:module: sig2dna_core.signomics</p>
+<p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>A collection of DNAsignal objects (e.g., from a GC-MS chromatogram) supporting symbolic sinusoidal encoding,
+full tensor construction, and blind deconvolution using latent component analysis.</p>
+<section id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Link to this heading"></a></h2>
+<p>DNAsignal_collection is designed to enable symbolic and positional encoding of multiple 1D analytical signals
+(e.g., ion channels from GC-MS data) using lettered segments and sinusoidal encodings. It allows combining
+multiple encoded signals into a single tensor for processing with machine learning methods, including dimensionality
+reduction and blind source separation.</p>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<p>Each signal is decomposed into symbolic segments based on their local morphology (encoded as letters like A, B, Y, Z, _).
+Each segment is represented in an embedding space of dimension <code class="docutils literal notranslate"><span class="pre">d</span></code> via sinusoidal encoding. The 3D tensor
+<span class="math notranslate nohighlight">\(v_{t,m,d}\)</span> is composed of:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(E_{t,m,d}\)</span>: symbolic encoding across segments.</p></li>
+<li><p><span class="math notranslate nohighlight">\(PE_t\)</span>: positional encoding along the time/segment axis (t).</p></li>
+<li><p><span class="math notranslate nohighlight">\(PE_m\)</span>: positional encoding along the mass channel/ion axis (m).</p></li>
+</ul>
+<p>Combining these yields:</p>
+<div class="math notranslate nohighlight">
+\[
+   v_{t,m,d} = E_{t,m,d} + PE_t(t,d) + PE_m(m,d)
+   \]</div>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.sinencode_dna_full(scale=4)</span></code>: performs symbolic encoding at a given scale.</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.E_symbol</span></code>: property returning symbolic component E for each letter and scale.</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.PE_t</span></code>: positional encoding per letter along t for each scale.</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.PE_m</span></code>: positional encoding along m (mass channels).</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.vtm</span></code>: dictionary of <span class="math notranslate nohighlight">\(v_{t,m,d}\)</span> matrices per letter.</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.vtm_full</span></code>: complete tensor (sum of all letters) used for machine learning.</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.deconvolve_latent_sources(...)</span></code>: uses PCA to decompose full tensor into component chromatograms.</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.plot_v_symbol_components(...)</span></code>: visualizes the construction of <span class="math notranslate nohighlight">\(v_{t,m}\)</span> for each letter.</p>
+<p>… method:: - <code class="docutils literal notranslate"><span class="pre">.plot_vtm_full(...)</span></code>: visualizes the components of the full <span class="math notranslate nohighlight">\(v_{t,m}\)</span> tensor.</p>
+<p>:param signals: List of DNAsignal instances (e.g., one per ion channel).
+:type signals: list of DNAsignal
+:param vtmscale: Scale to calculate vtm_full
+:type vtmscale: int
+:param rasterscan: True if one point is read at a time by the detector
+In practice, flatten the 2D signal (T × m) into a single 1D time axis by appending
+all temporal channels one after another:
+:type rasterscan: bool (default=True)
+:param dtype: Numeric dtype used for storing encoding arrays (E_symbol, PE_t, PE_m, vtm, vtm_full).
+Defaults to np.float32 for reduced memory usage.
+:type dtype: type or np.dtype, optional</p>
+<p>… attribute:: m</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Number of signals (ion channels).
+
+  :type: int
+</pre></div>
+</div>
+<p>… attribute:: d</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Embedding dimension.
+
+  :type: int
+</pre></div>
+</div>
+<p>… attribute:: letters</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  List of symbolic segment labels used in the encodings.
+
+  :type: list of str
+</pre></div>
+</div>
+<p>… attribute:: scales</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Available scales for the symbolic encoding.
+
+  :type: list of int
+</pre></div>
+</div>
+<p>… attribute:: _E_symbol</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Cached symbolic encoding tensors for each letter and scale.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: _PE_t</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Cached positional encoding along t for each letter and scale.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: _PE_m</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Cached positional encoding along m for each scale.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: _vtm</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Cached symbolic+positional tensors per letter.
+
+  :type: dict
+</pre></div>
+</div>
+<p>… attribute:: _vtm_full</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Cached full encoding tensor combining all letters.
+
+  :type: np.ndarray
+</pre></div>
+</div>
+<p>… py:property:: DNAsignal_collection.E_symbol
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Symbolic component of the 2D encoding for each scale and letter.
+
+  For each letter, builds a tensor (T_letter, M, D) where:
+  - T_letter is the total number of segments of that letter across all M signals,
+  - D is the embedding dimension,
+  - M is the number of ion channels.
+
+  :returns: Mapping {scale: {letter: ndarray of shape (T_letter, m, d)}}
+  :rtype: dict of dict
+
+  :type: E_symbol(t, m)
+</pre></div>
+</div>
+<p>… py:property:: DNAsignal_collection.PE_m
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Positional encoding along m (IC index axis) per scale.
+
+  :returns: Mapping: {scale: array of shape (m, d)}
+  :rtype: dict
+
+  :type: PE_m(m)
+</pre></div>
+</div>
+<p>… py:property:: DNAsignal_collection.PE_t
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Positional encoding along t (segment axis) per scale and letter.
+
+  For each scale and letter, this provides a matrix of shape (n_segments, d),
+  where n_segments is the total number of segments of that letter across the m signals,
+  and d is the embedding dimension.
+
+  :returns: Mapping {scale: {letter: ndarray of shape (n_segments, d)}}
+  :rtype: dict of dict
+
+  :type: PE_t(t)
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.combine_embeddings(selected_letters=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Combine unwrapped embeddings across all signals for each scale.
+
+  :param selected_letters: If provided, restrict to these letters.
+  :type selected_letters: list of str, optional
+
+  :returns: Dictionary {scale: {letter: (m, d)}} for each selected scale and letter.
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.deconvolve_latent_sources(n_components=64, inertia_loss_threshold=0.25, plot=True, nmax_plot=8)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Perform dimensionality reduction on the 3D tensor v_{t,m,d} to extract non-coeluted
+  compound chromatograms using PCA, with optional plotting.
+
+  :param n_components: Maximum number of latent components (e.g., pure compounds) to extract.
+                       Default is 64.
+  :type n_components: int, optional
+  :param inertia_loss_threshold: The maximum allowed proportion of total variance to lose in the projection.
+                                 Default is 0.25 (i.e., at least 75% of the variance should be preserved).
+  :type inertia_loss_threshold: float, optional
+  :param plot: Whether to display diagnostic plots.
+  :type plot: bool, optional
+  :param nmax_plot: Maximum number of components to visualize in plots.
+  :type nmax_plot: int, optional
+
+  :returns: * **components** (*np.ndarray*) -- Component matrix of shape (n_selected_components, D), representing
+              the spectral basis vectors (latent features).
+            * **chromatograms** (*np.ndarray*) -- Projected chromatograms for each component, shape (T, M, n_selected_components).
+            * **explained_variance_ratio** (*np.ndarray*) -- Variance explained by each selected component.
+</pre></div>
+</div>
+<p>… py:property:: DNAsignal_collection.m
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Return the number of signals in the collection.
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.plot(letters=None, scales=None, figsize=(18, 10), max_legend=25)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot the encoded signals in subplots.
+  Rows represent letters, columns represent scales.
+  Each subplot contains overlaid colored curves from all signals.
+
+  :param letters: Letters to be plotted. If None, all available letters are plotted.
+  :type letters: list or None
+  :param scales: Scales to be plotted. If None, all available scales are plotted.
+  :type scales: list or None
+  :param figsize: Size of the full figure.
+  :type figsize: tuple
+  :param max_legend: Maximum number of signals to label in the legend.
+  :type max_legend: int
+
+  :returns: The figure containing the plots.
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.plot_embedding_projection(letters=None, scales=None, method=‘pca’, max_points=25, figsize=(14, 10))
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot embedding projections of the encoded signals using PCA (default) or other DR methods.
+
+  :param collection: The collection of encoded signals.
+  :type collection: DNAsignal_collection
+  :param scales: Scales to include in the projection. If None, all available scales are used.
+  :type scales: list or None
+  :param method: Dimensionality reduction method (&#39;pca&#39; only supported for now).
+  :type method: str
+  :param max_points: Maximum number of signal points to label explicitly.
+  :type max_points: int
+  :param figsize: Size of the figure.
+  :type figsize: tuple
+
+  :returns: **fig**
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.plot_letters(scale=None, figsize=(12, 6), cmap=‘viridis’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot a heatmap of the letter codes (symbolic DNA) across all signals.
+
+  :param scale: Scale to use (default: self.vtmscale).
+  :type scale: int, optional
+  :param figsize: Size of the figure.
+  :type figsize: tuple
+  :param cmap: Matplotlib colormap name (default: &quot;viridis&quot;).
+  :type cmap: str
+
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.plot_v_symbol_components(scale=None, dims=‘all’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Plot the components E_symbol, PE_t, PE_m and their sum v_{t,m}
+  as image matrices for each letter at a given scale.
+
+  :param scale: The scale to use. Defaults to the first available scale.
+  :type scale: int, optional
+  :param dims: Which dimensions to include in the sum over `d`. Default is all.
+  :type dims: &quot;all&quot;, list or slice
+
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.plot_vtm_full(scale=None, dims=‘all’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Visualize the components and sum of the full encoded GC-MS signal at a given scale.
+
+  :param scale: Scale to visualize. Defaults to the first scale.
+  :type scale: int, optional
+  :param dims: Dimensions of the embedding `d` to include (default: all).
+  :type dims: &quot;all&quot;, list or slice
+
+  :rtype: matplotlib.figure.Figure
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.reduce_dimensions(method=‘pca’, selected_letters=None, n_components=2)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Apply dimensionality reduction (PCA or UMAP) across signals for each scale.
+
+  :param method: &quot;pca&quot; or &quot;umap&quot;.
+  :type method: str
+  :param selected_letters: Restrict to a subset of letters.
+  :type selected_letters: list of str, optional
+  :param n_components: Number of projection dimensions.
+  :type n_components: int
+
+  :returns: Dictionary {scale: ndarray} with shape (m, n_components), one per scale.
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.scale_alignment(method=‘zscore’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Normalize embeddings across all signals and all scales.
+
+  :param method: One of {&quot;zscore&quot;, &quot;minmax&quot;}.
+  :type method: str
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.sinencode_dna_full(d_model=128, N=10000, operation=‘sum’)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  🌀 Encode all DNAsignal instances using full-resolution sinusoidal embeddings,
+  grouped by letter and organized per scale.
+
+  :param d_model: Dimensionality of the sinusoidal embedding (default is 128).
+  :type d_model: int, optional
+  :param N: Maximum number of positions for the encoding (default is 10000).
+  :type N: int, optional
+  :param operation: If &quot;sum&quot;, sum all position encodings per letter.
+                    If &quot;mean&quot;, average encodings.
+                    If None, retain full (n_occurrences × d_model) arrays.
+  :type operation: str or None
+</pre></div>
+</div>
+<p>… py:method:: DNAsignal_collection.to_dataframe(selected_letters=None)
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Export combined embeddings for all scales as a tidy pandas DataFrame,
+  suitable for machine learning tasks.
+
+  :param selected_letters: Subset of letters to include. If None, include all letters.
+  :type selected_letters: list of str, optional
+
+  :returns: A long-form DataFrame with columns:
+            [&#39;signal_index&#39;, &#39;scale&#39;, &#39;letter&#39;, &#39;dim_0&#39;, ..., &#39;dim_{d-1}&#39;]
+  :rtype: pd.DataFrame
+</pre></div>
+</div>
+<p>… py:property:: DNAsignal_collection.vtm
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute the full encoded matrix v_{t,m} for each letter at each scale.
+
+  This property combines three orthogonal components:
+  - E_symbol(t, m): the original per-segment encoding for each letter
+  - PE_t(t): a sinusoidal encoding applied along the segment (time) axis
+  - PE_m(m): a sinusoidal encoding applied along the signal (IC) axis
+
+  The resulting tensor for each scale and letter is of shape (n_segments, m, d), where:
+      - n_segments: number of segments (time positions) per letter
+      - m: number of DNAsignal instances in the collection
+      - d: dimensionality of the encoding space (d_model)
+
+  :returns: A nested dictionary {scale: {letter: array of shape (n_segments, m, d)}}.
+  :rtype: dict
+</pre></div>
+</div>
+<p>… py:property:: DNAsignal_collection.vtm_full
+:module: sig2dna_core.signomics</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  Compute and store the full encoded tensor for the GC-MS signal:
+      - If self.rasterscan is False:
+          shape = (T, m, d)
+      - If self.rasterscan is True:
+          shape = (T * m, d)
+
+  This combines:
+  - Symbolic embedding per character (one-hot or learned)
+  - Positional encoding along time axis
+  - PE_m (mass/IC identity) is used only if rasterscan is False
+
+  :returns: Encoded array (T, m, d) or (T*m, d)
+  :rtype: np.ndarray
+</pre></div>
+</div>
 <p>… py:class:: DNAstr(content, dx=1.0, iloc=0, xloc=None, x_label=‘index’, x_unit=‘-’, engine=‘difflib’, engineOpts=None)
 :module: sig2dna_core.signomics</p>
 <p>Bases: :py:class:<code class="docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -1110,6 +1557,7 @@ dna.codes[4].find(“YAZB”)</p>
 edit-distance metrics, and signal reconstruction from symbolic codes.</p>
 <p>Extended from <code class="docutils literal notranslate"><span class="pre">str</span></code>, it is designed for symbolic transformations of signals
 (e.g., wavelet-encoded GC-MS peaks or time series).</p>
+</section>
 <section id="main-features">
 <h2>Main Features<a class="headerlink" href="#main-features" title="Link to this heading"></a></h2>
 <ul class="simple">
@@ -2483,6 +2931,20 @@ Number of x-points used in alignment (default=1024).</p>
 <li><p>sc[“name”]        → return a copy of signal with that name</p></li>
 <li><p>sc[“A”, “B”]      → return a subcollection with those names</p></li>
 </ul>
+<p>Supports arithmetic operations for aligned signal mixtures.</p>
+</section>
+<section id="arithmetic-operations-on-aligned-signal-collections">
+<h2>Arithmetic operations on aligned signal collections<a class="headerlink" href="#arithmetic-operations-on-aligned-signal-collections" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Scalar multiplication: <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">sc</span></code> scales each signal by a constant <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
+<li><p>Collection addition: <code class="docutils literal notranslate"><span class="pre">sc1</span> <span class="pre">+</span> <span class="pre">sc2</span></code> adds two collections element-wise.</p></li>
+<li><p>Linear combinations: <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">A</span> <span class="pre">+</span> <span class="pre">b</span> <span class="pre">*</span> <span class="pre">B</span> <span class="pre">+</span> <span class="pre">c</span> <span class="pre">*</span> <span class="pre">C</span></code> constructs mixtures of compatible collections.</p></li>
+<li><p>Compatible with <code class="docutils literal notranslate"><span class="pre">sum([a*A,</span> <span class="pre">b*B,</span> <span class="pre">...])</span></code> for aggregating multiple weighted collections.</p></li>
+</ul>
+<p>Requirements
+- All signal_collections must share the same number of signals.
+- Signals are aligned on a common x-grid (same <code class="docutils literal notranslate"><span class="pre">n</span></code>, <code class="docutils literal notranslate"><span class="pre">mode</span></code>, and domain).
+- Element-wise operations preserve signal names and metadata when possible.</p>
 </section>
 <section id="examples">
 <h2>Examples:<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
@@ -2565,8 +3027,8 @@ sc.sum(coeffs=[0.4, 0.6]).plot()</p>
 
   :param n_signals: Number of synthetic signals to generate.
   :type n_signals: int
-  :param n_peaks: Number of peaks per signal.
-  :type n_peaks: int
+  :param n_peaks: Number of peaks per signal or its range.
+  :type n_peaks: int or tuple[int,int]
   :param kind_distribution: &#39;uniform&#39; → use all peak kinds equally; &#39;random&#39; → random draw from kinds.
   :type kind_distribution: str
   :param kinds: Generator types to choose from (&#39;gauss&#39;, &#39;lorentz&#39;, &#39;triangle&#39;).
