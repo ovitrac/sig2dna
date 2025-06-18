@@ -123,15 +123,15 @@ S = signal.from_peaks(...)
 
 A **Mexican hat (Ricker)** wavelet is used:
 
-```{math}
+$$
 \psi_s(t) = \left(1 - \frac{t^2}{s^2}\right)e^{-\frac{t^2}{2s^2}}
-```
+$$
 
 The Continuous Wavelet Transform (CWT) of a signal $x(t)$ is:
 
-```{math}
+$$
 W_s(t) = x(t)*\psi_s(t) = \int x(\tau) \cdot \psi_s(t - \tau) \, d\tau
-```
+$$
 
 where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and $*$ the convolution operator.
 
@@ -143,9 +143,9 @@ where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and 
 
 Applying the **Ricker wavelet (second derivative of a Gaussian**) to the signal $x(t)$ via convolution (i.e., CWT) is equivalent to computing the **second derivative of $x(t)$** smoothed by the Gaussian kernel $g\_s(t)$:
 
-```{math}
+$$
 W_s(t) = x(t)*\psi_s(t) = x(t) * g''(t) = x''(t) * g(t)
-```
+$$
 
 <details>
     <summary>Click here for the demonstration</summary>
@@ -275,9 +275,9 @@ So **changes in the symbolic code structure** directly reflect **signal interfer
 
 Entropy provides a **robust, physics-informed metric** for morphological comparisons.  For a symbolic sequence $X$, it reads:
 
-```{math}
+$$
 H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i)
-```
+$$
 
 where $p(\ell\_i)$ is the frequency of letter $l\_i$ in the sequence $X$.
 
@@ -303,9 +303,9 @@ Let $A$ and $B$ be two symbolic sequences (`DNAstr`) representing two signals. A
 
 Given sequences $A$ and $B$, the mutually exclusive information or excess entropy is defined as:
 
-```{math}
+$$
 D_{\text{excess}}(A, B) = H(A) + H(B) - 2 H(\tilde{A} * \tilde{B})
-```
+$$
 
 where:
 
@@ -324,21 +324,21 @@ Let $P$ and $Q$ be the **empirical frequency distributions** of symbolic letters
 
 Let $M$ be the average distribution:
 
-```{math}
+$$
 M = \frac{1}{2}(P + Q)
-```
+$$
 
 Then, the **Jensen–Shannon distance** between $P$ and $Q$ is defined as:
 
-```{math}
+$$
 D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }
-```
+$$
 
 where $D\_{\text{KL}}$ is the Kullback-Leibler divergence:
 
-```{math}
+$$
 D_{\text{KL}}(P \| M) = \sum_\ell p_\ell \log_2 \left( \frac{p_\ell}{m_\ell} \right)
-```
+$$
 
 and $m\_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
 
@@ -370,9 +370,9 @@ Given two sequences $A$ and $B$, and a set of motifs $\mathcal{M}$ of length $k$
 
 Then the **Jaccard distance** is defined as:
 
-```{math}
+$$
 D_{\text{Jaccard}}(A, B) = 1 - \frac{|\mathcal{M}(A) \cap \mathcal{M}(B)|}{|\mathcal{M}(A) \cup \mathcal{M}(B)|}
-```
+$$
 
 #### 4.4.1 Key Features:
 
@@ -420,13 +420,13 @@ Here is the complete, cleanly formatted **README.md documentation section** for 
 
 Let $t \in \mathbb{R}$ be a scalar quantity (e.g., position, width, or height). The sinusoidal encoding $\mathbf{f}(t) \in \mathbb{R}^d$ is defined by:
 
-```{math}
+$$
 \begin{aligned}
 f_{2k}(t) &= \sin\left(\frac{t}{r^k}\right), \\
 f_{2k+1}(t) &= \cos\left(\frac{t}{r^k}\right),
 \end{aligned}
 \quad \text{for } k = 0, \dots, \frac{d}{2}-1
-```
+$$
 
 where:
 
@@ -436,10 +436,10 @@ where:
 
 Then the full vector for one symbolic segment becomes:
 
-```{math}
+$$
 \mathbf{v} = [\mathbf{f}(x_0) \, \| \, \mathbf{f}(\Delta x) \, \| \, \mathbf{f}(\Delta y)]
 \in \mathbb{R}^{3d}
-```
+$$
 
 These vectors are computed for each letter (A, B, ..., Z) and grouped accordingly.
 
@@ -452,12 +452,10 @@ These vectors are computed for each letter (A, B, ..., Z) and grouped accordingl
 >
 > The **key mathematical identity** is:
 >
-> ```{math}
+> $$
 > f(t + \Delta t) = \mathrm{diag}(f(\Delta t)) \cdot f(t)
-> 
-> ```
-
-```
+> $$
+>
 >
 >
 > 👉 **shifting** a position $t$ by $\Delta t$ corresponds to a **linear transformation** of its embedding.
@@ -482,9 +480,9 @@ These vectors are computed for each letter (A, B, ..., Z) and grouped accordingl
 - Fit $t$ via least-squares:
 
 
-```{math}
+$$
 x\_i = \frac{\sum\_k \theta\_{ik} \cdot \frac{1}{r\_k}}{\sum\_k \left(\frac{1}{r\_k}\right)^2}
-```
+$$
 
 - Robust, differentiable, and avoids scalar-local minima traps.
 
@@ -590,9 +588,9 @@ reconstructed = DNAsignal.sindecode\_dna(
 
 Each scalar $t$ (like $x_0$ or $\Delta x$) is **encoded** as:
 
-```{math}
+$$
 \mathbf{f}(t) = \left[ \sin\left(\frac{t}{r^0}\right), \cos\left(\frac{t}{r^0}\right), \dots, \sin\left(\frac{t}{r^{d/2-1}}\right), \cos\left(\frac{t}{r^{d/2-1}}\right) \right]
-```
+$$
 
 with $r = N^{2/d}$, typically $N = 10000$, and $d \sim 32$.
 
@@ -600,10 +598,10 @@ with $r = N^{2/d}$, typically $N = 10000$, and $d \sim 32$.
 
 In decoding, we estimate $t$ by averaging multiple phase inversions:
 
-```{math}
+$$
 \hat{t} \approx \frac{1}{d/2} \sum\_{k=0}^{d/2 - 1} r^k \cdot \theta\_k,
 \quad \text{where } \theta\_k = \arctan\left( \frac{\sin(t/r^k)}{\cos(t/r^k)} \right)
-```
+$$
 
 Let $L$ be the **maximum span** of $t$ values to encode (e.g., total signal length), and $d$ the embedding size (e.g., 32). Then:
 
@@ -612,9 +610,9 @@ Let $L$ be the **maximum span** of $t$ values to encode (e.g., total signal leng
 
 So the **resolution** behaves like:
 
-```{math}
+$$
 \varepsilon \sim \frac{L}{N}
-```
+$$
 
 where $N$ is the frequency base and $L$ is the range of $t$ values being encoded (*e.g.*, max segment length or signal length)
 
@@ -640,9 +638,6 @@ The errors are acceptable for:
 
 
 
-
-
-
 ## 🔍 6| **Baseline Filtering and Poisson Noise Rejection**
 
 > The **Ricker wavelet** $\psi_s(t)$ used in `sig2dna` is mathematically the **second derivative of a Gaussian kernel**. As such, applying the Continuous Wavelet Transform (CWT) with $\psi_s(t)$ is equivalent to performing a **second-order differentiation** of the signal $x(t)$ followed by a **Gaussian smoothing**, where the scale parameter $s$ controls the bandwidth.
@@ -654,20 +649,19 @@ The errors are acceptable for:
 > However, on real-life signals, maximizing noise rejection by increasing $s$ can blur peak details. Preserving the **morphological fidelity** of peaks while ensuring their **detectability** requires operating **near the optimal scale**, not beyond it. To this end, `sig2dna` integrates a **robust preprocessing methodology** tailored for signals acquired through **accumulation or integration** (i.e., **counting statistics**), such as total ion counts in mass spectrometry or spectroscopic intensities.
 
 
-
 ### Step 1 — Median Baseline Subtraction ﹏𓊝﹏
 
 Let $x(t)$ be the input signal. We compute a moving median over a window of width $w$:
 
-```{math}
+$$
 \text{baseline}(t) = \text{median}\left[x(t - w/2), \dots, x(t + w/2)\right]
-```
+$$
 
 Then, apply a non-negative correction:
 
-```{math}
+$$
 x\_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right)
-```
+$$
 
 🏻‎🏼‎🏽‎🏾🏿
 
@@ -678,15 +672,15 @@ From the baseline-corrected signal $x_b(t)$:
 * Compute the local mean $\mu(t)$ and standard deviation $\sigma(t)$ using a uniform filter.
 * Estimate the coefficient of variation:
 
-```{math}
+$$
 \text{cv}(t) = \frac{\sigma(t)}{\mu(t)}
-```
+$$
 
 Assuming Poisson noise, infer the local Poisson parameter:
 
-```{math}
+$$
 \lambda(t) = \frac{1}{\text{cv}(t)^2}
-```
+$$
 
 🏻‎🏼‎🏽‎🏾🏿
 
@@ -694,19 +688,19 @@ Assuming Poisson noise, infer the local Poisson parameter:
 
 To reject noise, use a threshold $T(t)$ derived from $\lambda(t)$:
 
-```{math}
+$$
 T(t) = k \cdot \sqrt{10 \lambda(t) \Delta t}
-```
+$$
 
 Filtered signal is then:
 
-```{math}
+$$
 x\_{bf}(t) = 
 \begin{cases}
 x\_b(t) & \text{if } x\_b(t) > T(t) \\
 0 & \text{otherwise}
 \end{cases}
-```
+$$
 
 ---
 
@@ -1065,5 +1059,4 @@ MIT License — 2025 Olivier Vitrac
 
 
 ---
-
 
