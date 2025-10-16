@@ -1,5 +1,16 @@
 # 📡🧬 sig2dna
 
+<a href="https://deepwiki.com/ovitrac/sig2dna">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"
+            srcset="https://img.shields.io/badge/DeepWiki-sig2dna-1f6feb?style=flat&logo=bookstack&logoColor=white&labelColor=0d1117">
+    <source media="(prefers-color-scheme: light)"
+            srcset="https://img.shields.io/badge/DeepWiki-sig2dna-0969da?style=flat&logo=bookstack&logoColor=white&labelColor=f6f8fa">
+    <img alt="DeepWiki: sig2dna"
+         src="https://img.shields.io/badge/DeepWiki-sig2dna-0969da?style=flat&logo=bookstack&logoColor=white">
+  </picture>
+</a>
+
 **Symbolic Signal Transformation for Fingerprinting, Alignment, and AI-Based Classification**
 
  ﹏ ﮩ٨ـﮩﮩ٨ـﮩ٨ـﮩﮩ٨ـ﹏﹏
