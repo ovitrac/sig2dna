@@ -1,6 +1,6 @@
 # 📡🧬 sig2dna
 
-<a href="https://deepwiki.com/ovitrac/sig2dna">
+<a href="https://deepwiki.com/ovitrac/sig2dna" title="Detailed manual of sig2dna" target="_blank">
   <picture>
     <source media="(prefers-color-scheme: dark)"
             srcset="https://img.shields.io/badge/DeepWiki-sig2dna-1f6feb?style=flat&logo=bookstack&logoColor=white&labelColor=0d1117">
