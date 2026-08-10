@@ -1,0 +1,231 @@
+"""
+Per-ion (IC-level) symbolic encoding with Poisson noise rejection —
+faithful port of the thesis reference implementation.
+
+Provenance of the method (evidence chain):
+
+- Equations: PhD thesis J. Kermorvant (https://theses.hal.science/tel-04194172),
+  §5.1.3 (Poisson detector model) and Proposition 5.1 (p. 123): a zero-crossing
+  segment is retained iff its height satisfies  h >= 2*sqrt(10 * lambda * dt),
+  where lambda*dt is the local Poisson noise level of the ion channel.
+- Reference implementation: ``Circular_Daleth`` (GPL v3, J. Kermorvant),
+  functions ``samples_compare.m`` / ``sen_filter.m`` / ``monotonetranslate.m``:
+  the noise level is estimated as the **moving variance (window 501) of the
+  scale-1 Ricker CWT coefficients** of the same ion channel (at scale 1 the
+  transform contains essentially noise), i.e. ``filt = 2*sqrt(10*movvar(cfs_1))``,
+  and the rejection/restoration rules on the letter string are:
+    1. blank A/Z whose |height| < max(filt[start], filt[stop]);
+    2. blank any [BCXY]+ run enclosed between blanks;
+    3. blank isolated A/Z enclosed between blanks;
+    4. restore the original letter for blanks immediately preceding A/B/C or
+       immediately following X/Y/Z (rebuilds the YAZB flanks of true peaks).
+  This module re-derives those rules in Python (no GPL code copied; the rules
+  are method facts, published in the thesis).
+- Letters follow the same 6+1 alphabet as ``signomics.DNAsignal._get_letter``:
+  A (up, crosses zero), Z (down, crosses zero), B/Y (up/down, negative side),
+  C/X (up/down, positive side), '_' blank.
+
+The per-ion architecture is mandatory: on a TIC the summation of hundreds of
+ion channels destroys the counting statistics the rejection rule relies on
+(verified empirically on D3 data, 2026-08-10).
+
+Ion chromatograms are concatenated in time ("IC1 + IC2 + ..." with '+' the
+time-concatenation operator) using '$' as an ion-separator character, matching
+the thesis convention (p. 94).
+
+Author: Olivier Vitrac, PhD, HDR — Adservio Innovation Lab — Adservio Group —
+olivier.vitrac@gmail.com
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from typing import Optional
+
+import numpy as np
+import pywt
+from scipy.ndimage import uniform_filter1d
+
+__all__ = [
+    "ICEncoding",
+    "cwt_matrix",
+    "moving_variance",
+    "noise_threshold",
+    "encode_series",
+    "sen_filter",
+    "encode_ic_matrix",
+]
+
+SEPARATOR = "$"  # end-of-ion character (thesis p. 94)
+
+
+# --------------------------------------------------------------------- CWT
+def cwt_matrix(y: np.ndarray, scale: float, wavelet: str = "mexh") -> np.ndarray:
+    """Ricker CWT of each row of ``y`` (n_ions x n_time) at one scale."""
+    coefs, _ = pywt.cwt(np.asarray(y, dtype=np.float64), [scale], wavelet, axis=-1)
+    return coefs[0]
+
+
+def moving_variance(x: np.ndarray, window: int = 501) -> np.ndarray:
+    """Centered moving variance along the last axis (Matlab ``movvar`` analog).
+
+    Edge windows are handled by nearest-padding (Matlab shrinks the window;
+    the difference affects only the first/last ~window/2 points and is
+    documented as an accepted deviation)."""
+    m = uniform_filter1d(x, size=window, axis=-1, mode="nearest")
+    m2 = uniform_filter1d(x * x, size=window, axis=-1, mode="nearest")
+    return np.maximum(m2 - m * m, 0.0)
+
+
+def noise_threshold(
+    cfs_scale1: np.ndarray, window: int = 501, k: float = 2.0, factor: float = 10.0
+) -> np.ndarray:
+    """Pointwise rejection threshold  k*sqrt(factor * movvar(scale-1 CWT)).
+
+    Thesis Prop. 5.1 with lambda*dt estimated from the scale-1 coefficients
+    (reference: samples_compare.m: ``2*sqrt(10*movvar(cfs1f, [250,250]))``)."""
+    return k * np.sqrt(factor * moving_variance(cfs_scale1, window))
+
+
+# ----------------------------------------------------------- segmentation
+def encode_series(c: np.ndarray, tol: float = 1e-12):
+    """Monotone-segment letters of one transformed series (signomics rules).
+
+    Returns (letters, start_idx, stop_idx, height) — one entry per segment.
+    Letter rules identical to ``signomics.DNAsignal._get_letter``."""
+    c = np.asarray(c, dtype=np.float64)
+    d = np.diff(c)
+    sgn = np.sign(d)
+    # segment boundaries where the derivative sign changes (0 joins previous run)
+    # forward-fill zeros so plateaus attach to the preceding trend (vectorized)
+    nz = sgn != 0
+    idx = np.where(nz, np.arange(sgn.size), -1)
+    np.maximum.accumulate(idx, out=idx)
+    run = np.where(idx >= 0, sgn[np.clip(idx, 0, None)], 0.0)
+    change = np.nonzero(run[1:] != run[:-1])[0] + 1
+    bounds = np.concatenate(([0], change, [len(c) - 1]))
+    letters, starts, stops, heights = [], [], [], []
+    for a, b in zip(bounds[:-1], bounds[1:]):
+        if a == b:
+            continue
+        s, e = c[a], c[b]
+        s0 = 0.0 if abs(s) < tol else s
+        e0 = 0.0 if abs(e) < tol else e
+        if s0 < 0 and e0 > 0:
+            L = "A"
+        elif s0 > 0 and e0 < 0:
+            L = "Z"
+        elif s0 <= 0 and e0 <= 0:
+            L = "B" if e0 > s0 else ("Y" if e0 < s0 else "_")
+        elif s0 >= 0 and e0 >= 0:
+            L = "C" if e0 > s0 else ("X" if e0 < s0 else "_")
+        else:
+            L = "_"
+        letters.append(L)
+        starts.append(a)
+        stops.append(b)
+        heights.append(e - s)
+    return (
+        "".join(letters),
+        np.asarray(starts, dtype=np.int64),
+        np.asarray(stops, dtype=np.int64),
+        np.asarray(heights, dtype=np.float64),
+    )
+
+
+# ------------------------------------------------------------- Prop. 5.1
+_RUN_BETWEEN_BLANKS = re.compile(r"(?<=_)[BCXY]+(?=_)")
+_LONE_AZ = re.compile(r"(?<=_)[AZ](?=_)")
+_RESTORE_BEFORE_UP = re.compile(r"_(?=[ABC])")
+_RESTORE_AFTER_DOWN = re.compile(r"(?<=[XYZ])_")
+
+
+def sen_filter(
+    letters: str,
+    start: np.ndarray,
+    stop: np.ndarray,
+    height: np.ndarray,
+    threshold: np.ndarray,
+) -> str:
+    """Literal port of the thesis rejection/restoration rules (sen_filter.m)."""
+    sen = np.array(list(letters))
+    senf = sen.copy()
+    is_az = (senf == "A") | (senf == "Z")
+    if is_az.any():
+        thr = np.maximum(threshold[start], threshold[stop])
+        senf[is_az & (np.abs(height) < thr)] = "_"
+    s = "".join(senf)
+    # rule 2: [BCXY]+ runs enclosed in blanks (string ends count as enclosed
+    # only when actually flanked by '_', as in the reference implementation)
+    s = _RUN_BETWEEN_BLANKS.sub(lambda m: "_" * len(m.group(0)), s)
+    # rule 3: isolated A/Z between blanks
+    s = _LONE_AZ.sub("_", s)
+    # rule 4: restore boundary letters (YAZB flank reconstruction)
+    out = list(s)
+    for m in _RESTORE_BEFORE_UP.finditer(s):
+        out[m.start()] = letters[m.start()]
+    for m in _RESTORE_AFTER_DOWN.finditer(s):
+        out[m.start()] = letters[m.start()]
+    return "".join(out)
+
+
+# ---------------------------------------------------------------- driver
+@dataclass
+class ICEncoding:
+    """Filtered per-ion symbolic encoding of one acquisition at one scale."""
+
+    scale: float
+    mz: np.ndarray
+    letters: list = field(default_factory=list)      # filtered, one str per ion
+    letters_raw: list = field(default_factory=list)  # unfiltered
+    n_rejected: int = 0
+    n_segments: int = 0
+
+    @property
+    def concatenated(self) -> str:
+        """IC1 + IC2 + ... with '$' the ion separator (time concatenation)."""
+        return SEPARATOR.join(self.letters)
+
+    def survivors(self) -> dict:
+        """{mz: filtered letters} for ions with at least one retained letter."""
+        return {
+            float(m): s
+            for m, s in zip(self.mz, self.letters)
+            if s.strip("_")
+        }
+
+
+def encode_ic_matrix(
+    y: np.ndarray,
+    mz: np.ndarray,
+    scale: float,
+    window: int = 501,
+    k: float = 2.0,
+    factor: float = 10.0,
+    wavelet: str = "mexh",
+) -> ICEncoding:
+    """Encode every ion chromatogram of ``y`` (n_ions x n_time) at ``scale``
+    with Poisson rejection (thesis Prop. 5.1).
+
+    The noise threshold of each ion derives from its own scale-1 CWT
+    (scale 1 carries essentially noise); letters are computed on the CWT at
+    the analysis scale, then filtered by :func:`sen_filter`."""
+    y = np.asarray(y, dtype=np.float64)
+    cfs1 = cwt_matrix(y, 1.0, wavelet)
+    thr = noise_threshold(cfs1, window=window, k=k, factor=factor)
+    cfs = cfs1 if scale == 1 else cwt_matrix(y, float(scale), wavelet)
+
+    out = ICEncoding(scale=float(scale), mz=np.asarray(mz))
+    for i in range(y.shape[0]):
+        letters, start, stop, height = encode_series(cfs[i])
+        filtered = (
+            sen_filter(letters, start, stop, height, thr[i]) if letters else ""
+        )
+        out.letters_raw.append(letters)
+        out.letters.append(filtered)
+        out.n_segments += len(letters)
+        out.n_rejected += sum(
+            1 for a, b in zip(letters, filtered) if a != b and b == "_"
+        )
+    return out
