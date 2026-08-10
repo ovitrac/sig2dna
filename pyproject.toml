@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sig2dna"
+version = "0.52.0"
+description = "Symbolic DNA-like encoding of analytical signals (GC-MS and beyond) for alignment, comparison and classification"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Olivier Vitrac", email = "olivier.vitrac@gmail.com" },
+]
+keywords = ["GC-MS", "chromatography", "wavelet", "symbolic encoding", "chemometrics", "NIAS", "recycled plastics"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Chemistry",
+]
+dependencies = [
+  "numpy",
+  "scipy",
+  "pandas",
+  "matplotlib",
+  "PyWavelets",
+  "seaborn",
+  "scikit-learn",
+  "python-Levenshtein",
+  "biopython",
+  "tqdm",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "isort", "flake8", "mypy"]
+
+[project.urls]
+Homepage = "https://github.com/ovitrac/sig2dna"
+Documentation = "https://ovitrac.github.io/sig2dna/"
+
+[tool.setuptools]
+packages = ["sig2dna_core", "sig2dna_core.io"]
