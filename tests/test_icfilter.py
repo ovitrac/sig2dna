@@ -86,3 +86,31 @@ def test_threshold_scales_with_noise_level():
     t_low = noise_threshold(pywt.cwt(low, [1], "mexh", axis=-1)[0][0])
     t_high = noise_threshold(pywt.cwt(high, [1], "mexh", axis=-1)[0][0])
     assert np.median(t_high) > 5 * np.median(t_low)
+
+
+def test_text_entropy_matches_reference_examples():
+    # textentropy.m: 'abcdefghijklmnop' -> 4.00 (m=1), 3.91 (m=2)
+    from sig2dna_core.icfilter import text_entropy
+
+    assert abs(text_entropy("abcdefghijklmnop", 1) - 4.0) < 1e-9
+    assert abs(text_entropy("abcdefghijklmnop", 2) - np.log2(15)) < 1e-9
+    assert text_entropy("aaaa") == 0.0
+    assert text_entropy("", 1) == 0.0
+
+
+def test_exclusive_entropy_distance():
+    from sig2dna_core.icfilter import align_invariants, exclusive_entropy_distance
+
+    # identical sequences: everything invariant, distance 0
+    s = "_Y_AZ_B_YAZB__"
+    assert exclusive_entropy_distance(s, s) < 1e-12
+    # shared motif + exclusive extra peak: distance strictly positive,
+    # and smaller than for fully unrelated content
+    a = "____YAZB____"
+    b = "____YAZB__YAZB__"
+    c = "CCCCCCCCCCCC"
+    d_shared = exclusive_entropy_distance(a, b)
+    d_unrelated = exclusive_entropy_distance(a, c)
+    assert 0 <= d_shared < d_unrelated
+    inv = align_invariants(a, b)
+    assert "YAZB" in inv  # the common peak aligns and cancels

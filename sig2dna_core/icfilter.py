@@ -55,6 +55,9 @@ __all__ = [
     "encode_series",
     "sen_filter",
     "encode_ic_matrix",
+    "text_entropy",
+    "align_invariants",
+    "exclusive_entropy_distance",
 ]
 
 SEPARATOR = "$"  # end-of-ion character (thesis p. 94)
@@ -168,6 +171,61 @@ def sen_filter(
     for m in _RESTORE_AFTER_DOWN.finditer(s):
         out[m.start()] = letters[m.start()]
     return "".join(out)
+
+
+# -------------------------------------------- aligned mutual-information
+def text_entropy(s: str, m: int = 1) -> float:
+    """Shannon entropy (bits) of the overlapping m-gram tokens of ``s``.
+
+    Port of ``textentropy.m`` (Circular_Daleth): for m>1 the reference's
+    strided base-128 products enumerate exactly the overlapping m-grams
+    (its own comment: 'AB|CD|EF|BC|DE'), so the direct m-gram count is the
+    faithful equivalent. Empty strings have zero entropy."""
+    n = len(s) - m + 1
+    if n <= 0:
+        return 0.0
+    counts: dict = {}
+    for k in range(n):
+        t = s[k : k + m]
+        counts[t] = counts.get(t, 0) + 1
+    p = np.array(list(counts.values()), dtype=np.float64) / n
+    return float(-(p * np.log2(p)).sum())
+
+
+def align_invariants(a: str, b: str, open_gap: float = -1.0, extend_gap: float = -1.0) -> str:
+    """Global (Needleman-Wunsch) alignment of two letter strings and return
+    the concatenated **invariant** characters (exact matches).
+
+    Reference: ``fingerprints_compare.m`` — ``nwalign`` with identity scoring
+    matrix (match=1, mismatch=0), gap open/extend penalty 1; invariants are
+    the '|' positions of the match line."""
+    if not a or not b:
+        return ""
+    from Bio import Align  # deferred heavy import
+
+    aligner = Align.PairwiseAligner()
+    aligner.mode = "global"
+    aligner.match_score = 1.0
+    aligner.mismatch_score = 0.0
+    aligner.open_gap_score = open_gap
+    aligner.extend_gap_score = extend_gap
+    aln = aligner.align(a, b)[0]
+    out = []
+    for (a0, a1), (b0, b1) in zip(*aln.aligned):
+        sa, sb = a[a0:a1], b[b0:b1]
+        out.extend(ca for ca, cb in zip(sa, sb) if ca == cb)
+    return "".join(out)
+
+
+def exclusive_entropy_distance(a: str, b: str, m: int = 1) -> float:
+    """Thesis Eq. 4.4 (p. 92): d = H(A) + H(B) - 2*H(A∩B), with H(A∩B) the
+    m-gram entropy of the aligned invariant characters.
+
+    Shared content (PET is PET: common peaks align and match) cancels out;
+    only the mutually exclusive information contributes."""
+    h1, h2 = text_entropy(a, m), text_entropy(b, m)
+    h12 = text_entropy(align_invariants(a, b), m)
+    return h1 + h2 - 2.0 * h12
 
 
 # ---------------------------------------------------------------- driver
