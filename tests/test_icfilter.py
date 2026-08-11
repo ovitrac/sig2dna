@@ -6,6 +6,7 @@ Tests for sig2dna_core.icfilter — per-ion encoding with Poisson rejection
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from sig2dna_core.icfilter import (
     encode_ic_matrix,
@@ -114,3 +115,56 @@ def test_exclusive_entropy_distance():
     assert 0 <= d_shared < d_unrelated
     inv = align_invariants(a, b)
     assert "YAZB" in inv  # the common peak aligns and cancels
+
+
+def _poisson_peaks_signal(n=6000, seed=7):
+    # sparse Gaussian peaks over a Poisson-like noisy baseline
+    rng = np.random.default_rng(seed)
+    t = np.arange(n, dtype=float)
+    y = rng.poisson(20.0, n).astype(float)
+    for c in (900, 2200, 3100, 4500, 5300):
+        y += 5e3 * np.exp(-((t - c) / 12.0) ** 2)
+    return y
+
+
+def test_cwt_exact_extrema_decrease_with_scale():
+    # The regression that catches the wavelet-grid quantization class of
+    # bug (F7): a wider Ricker must smooth, so the number of local extrema
+    # of the coefficients must decrease monotonically along 4 -> 10 -> 25
+    # (non-dyadic scales included). pywt.cwt violated this at scale 25.
+    from sig2dna_core.icfilter import cwt_matrix
+
+    y = _poisson_peaks_signal()[None, :]
+    counts = []
+    for s in (4.0, 10.0, 25.0):
+        c = cwt_matrix(y, s)[0]
+        counts.append(int((np.diff(np.sign(np.diff(c))) != 0).sum()))
+    assert counts[0] > counts[1] > counts[2]
+
+
+def test_cwt_engines_structurally_equivalent_at_dyadic_scales():
+    # At grid-exact scales the legacy pywt engine and the analytic kernel
+    # must produce the same extremum structure (letters depend only on it).
+    from sig2dna_core.icfilter import cwt_matrix
+
+    y = _poisson_peaks_signal()[None, :]
+    for s in (16.0, 32.0):
+        a = cwt_matrix(y, s, engine="pywt")[0]
+        b = cwt_matrix(y, s, engine="exact")[0]
+        na = int((np.diff(np.sign(np.diff(a))) != 0).sum())
+        nb = int((np.diff(np.sign(np.diff(b))) != 0).sum())
+        assert abs(na - nb) <= max(2, 0.01 * na)
+        r = np.corrcoef(a, b)[0, 1]
+        assert r > 0.99
+
+
+def test_cwt_pywt_engine_fails_closed_on_non_grid_scales():
+    from sig2dna_core.icfilter import cwt_matrix
+
+    y = _poisson_peaks_signal()[None, :]
+    with pytest.raises(ValueError):
+        cwt_matrix(y, 25.0, engine="pywt")
+    with pytest.raises(NotImplementedError):
+        cwt_matrix(y, 16.0, wavelet="morl", engine="exact")
+    with pytest.raises(ValueError):
+        cwt_matrix(y, 16.0, engine="nonsense")

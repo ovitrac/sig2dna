@@ -46,9 +46,11 @@ from typing import Optional
 import numpy as np
 import pywt
 from scipy.ndimage import uniform_filter1d
+from scipy.signal import fftconvolve
 
 __all__ = [
     "ICEncoding",
+    "ricker_kernel",
     "cwt_matrix",
     "moving_variance",
     "noise_threshold",
@@ -64,10 +66,63 @@ SEPARATOR = "$"  # end-of-ion character (thesis p. 94)
 
 
 # --------------------------------------------------------------------- CWT
-def cwt_matrix(y: np.ndarray, scale: float, wavelet: str = "mexh") -> np.ndarray:
-    """Ricker CWT of each row of ``y`` (n_ions x n_time) at one scale."""
-    coefs, _ = pywt.cwt(np.asarray(y, dtype=np.float64), [scale], wavelet, axis=-1)
-    return coefs[0]
+def ricker_kernel(scale: float) -> np.ndarray:
+    """Analytically sampled Ricker (mexh) wavelet at ``scale`` (in samples),
+    L2-normalized, support truncated at +/- 8*scale."""
+    n = int(np.ceil(8 * float(scale)))
+    t = np.arange(-n, n + 1, dtype=np.float64)
+    a = float(scale)
+    return (
+        (2.0 / (np.sqrt(3.0 * a) * np.pi ** 0.25))
+        * (1 - (t / a) ** 2)
+        * np.exp(-(t ** 2) / (2 * a ** 2))
+    )
+
+
+def cwt_matrix(
+    y: np.ndarray, scale: float, wavelet: str = "mexh", engine: str = "exact"
+) -> np.ndarray:
+    """Ricker CWT of each row of ``y`` (n_ions x n_time) at one scale.
+
+    Engines
+    -------
+    ``"exact"`` (default): FFT convolution with the analytically sampled
+    Ricker kernel — valid at every scale, and the faster path (cost is
+    independent of scale). Only ``wavelet="mexh"`` is implemented; any other
+    wavelet raises ``NotImplementedError`` (fail closed).
+
+    ``"pywt"`` (deprecated, kept only to reproduce pre-0.53 results):
+    delegates to ``pywt.cwt``, which samples the integrated wavelet on a
+    2**10 grid with floor indexing. That sampling is exact only for scales
+    with 64/scale integer (1, 2, 4, 8, 16, 32, 64); at any other scale the
+    quantization staircase injects high-frequency ripple that silently
+    corrupts the monotone-segment structure downstream. Such scales
+    therefore raise ``ValueError`` on this engine. Scheduled for removal.
+
+    Coefficients from the two engines are structurally equivalent at the
+    grid-exact scales (identical extremum structure) but not bit-identical;
+    never mix engines inside one encoding chain.
+    """
+    y = np.asarray(y, dtype=np.float64)
+    if engine == "exact":
+        if wavelet != "mexh":
+            raise NotImplementedError(
+                f"engine='exact' implements the Ricker (mexh) wavelet only, "
+                f"got {wavelet!r}"
+            )
+        return fftconvolve(y, ricker_kernel(scale)[None, :], mode="same",
+                           axes=-1)
+    if engine == "pywt":
+        if not float(64.0 / scale).is_integer():
+            raise ValueError(
+                f"engine='pywt' is only valid at grid-exact scales "
+                f"(64/scale integer); scale {scale} would be silently "
+                f"corrupted by the wavelet-grid quantization of pywt.cwt "
+                f"— use engine='exact'"
+            )
+        coefs, _ = pywt.cwt(y, [scale], wavelet, axis=-1)
+        return coefs[0]
+    raise ValueError(f"unknown engine {engine!r} (use 'exact' or 'pywt')")
 
 
 def moving_variance(x: np.ndarray, window: int = 501) -> np.ndarray:
@@ -262,17 +317,21 @@ def encode_ic_matrix(
     k: float = 2.0,
     factor: float = 10.0,
     wavelet: str = "mexh",
+    engine: str = "exact",
 ) -> ICEncoding:
     """Encode every ion chromatogram of ``y`` (n_ions x n_time) at ``scale``
     with Poisson rejection (thesis Prop. 5.1).
 
     The noise threshold of each ion derives from its own scale-1 CWT
     (scale 1 carries essentially noise); letters are computed on the CWT at
-    the analysis scale, then filtered by :func:`sen_filter`."""
+    the analysis scale, then filtered by :func:`sen_filter`. The same CWT
+    ``engine`` (see :func:`cwt_matrix`) is used for the threshold and the
+    analysis scale — the two stages must never mix engines."""
     y = np.asarray(y, dtype=np.float64)
-    cfs1 = cwt_matrix(y, 1.0, wavelet)
+    cfs1 = cwt_matrix(y, 1.0, wavelet, engine=engine)
     thr = noise_threshold(cfs1, window=window, k=k, factor=factor)
-    cfs = cfs1 if scale == 1 else cwt_matrix(y, float(scale), wavelet)
+    cfs = cfs1 if scale == 1 else cwt_matrix(y, float(scale), wavelet,
+                                             engine=engine)
 
     out = ICEncoding(scale=float(scale), mz=np.asarray(mz))
     for i in range(y.shape[0]):
