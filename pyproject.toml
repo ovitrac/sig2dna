@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sig2dna"
-version = "0.53.0"
+version = "0.54.0"
 description = "Symbolic DNA-like encoding of analytical signals (GC-MS and beyond) for alignment, comparison and classification"
 readme = "README.md"
 requires-python = ">=3.10"
