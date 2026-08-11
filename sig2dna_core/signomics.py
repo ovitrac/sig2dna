@@ -1752,7 +1752,8 @@ class DNAsignal:
             if ("encode_dna" in encoder) or ("encode_dna_full" in encoder):
                 self.encode_dna(scales=scales)
                 if plot and "plot_codes" in plotter:
-                    self.plot_codes(scales=scales)
+                    for s in scales:
+                        self.plot_codes(s)
             if ("encode_dna_full" in encoder):
                 self.encode_dna_full()
 
@@ -1970,6 +1971,16 @@ class DNAsignal:
         return (recon_signal, weights) if return_weights else recon_signal
 
 
+    def copy(self):
+        """
+        Return a deep copy of this DNAsignal.
+
+        Used by non-destructive workflows (e.g., ``sparsify_cwt(inplace=False)``)
+        so that the original transforms and codes remain untouched.
+        """
+        import copy as _copy
+        return _copy.deepcopy(self)
+
     def sparsify_cwt(self, scale=None, threshold=None, inplace=True):
         """
         Sparsify CWT coefficients by zeroing values below a threshold.
@@ -2098,7 +2109,7 @@ class DNAsignal:
                                  'xloc':xloc,
                                  'iloc':iloc,
                                  'dx':dx}
-            return self.codes # for chaining
+        return self.codes # for chaining (after all scales are encoded)
 
     def sinencode_dna(self, scales=None, d_part=32, N=10000):
         """
@@ -2594,8 +2605,8 @@ class DNAsignal:
             plt.plot(self.cwt_coeffs[scale], label=f'Scale {scale}', linewidth=2, alpha=0.7)
         plt.legend()
         plt.title("Signal and Transformed Scales")
-        plt.x_label(f"{self.x_label} [{self.x_unit}]")
-        plt.y_label(f"{self.y_label} [{self.y_unit}]")
+        plt.xlabel(f"{self.x_label} [{self.x_unit}]")
+        plt.ylabel(f"{self.y_label} [{self.y_unit}]")
         plt.show()
 
     def plot_transforms(self, indices=None, **kwargs):
@@ -5953,15 +5964,17 @@ class signal:
         return self
 
 
-    def _toDNA(self,encode=True,scales=[1,3,4,8,16,32]):
+    def _toDNA(self,encode=True,scales=None):
         """
         Return a DNA encoded signal
 
         Parameters
             encode : bool (default=True)
-            scales : list (default=[1,3,4,8,16,32])
+            scales : list (default=None, i.e. the DNAsignal dyadic default [1,2,4,8,16,32])
         """
-        return DNAsignal(self,encode=encode)
+        if scales is None:
+            return DNAsignal(self,encode=encode)
+        return DNAsignal(self,encode=encode,scales=scales)
 
 # ------------------------
 # Signal collection class
@@ -6752,7 +6765,10 @@ class peaks:
 
     def __getitem__(self, key):
         if isinstance(key, str):
-            next((p for p in self._peaks if p['name'] == key), None)
+            hit = next((p for p in self._peaks if p['name'] == key), None)
+            if hit is None:
+                raise KeyError(f"no peak named {key!r}")
+            return hit
         elif isinstance(key, int):
             return self._peaks[key]
         elif isinstance(key, (list, tuple)):
