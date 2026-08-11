@@ -172,6 +172,8 @@ from scipy.stats import entropy
 from scipy.spatial.distance import jensenshannon
 from scipy.optimize import minimize_scalar
 from scipy.linalg import svd, pinv
+
+from .tools.segments import sign_runs
 from difflib import SequenceMatcher
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm # from matplotlib.cm import get_cmap
@@ -2082,11 +2084,10 @@ class DNAsignal:
         for scale in scales:
             coef = self.cwt_coeffs[scale]
             letters, widths, heights, iloc, xloc = [], [], [], [], []
-            monotonic = np.diff(coef)
-            mono_sign = np.sign(monotonic)
-            sign_changes = np.where(np.diff(mono_sign) != 0)[0] + 1  # +1 because diff shortens by 1
+            # segmentation delegated to the shared primitive (same breaks as
+            # the historical inline code: exact sign, flats as own segments)
             start_idx = 0
-            segment_ends = np.append(sign_changes, len(coef) - 1)
+            segment_ends = sign_runs(coef, flats='segment')[1:]
             for count, idx in enumerate(segment_ends):
                 xsegment = self.x[start_idx:idx + 1]
                 segment = coef[start_idx:idx + 1]

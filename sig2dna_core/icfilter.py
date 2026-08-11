@@ -48,6 +48,8 @@ import pywt
 from scipy.ndimage import uniform_filter1d
 from scipy.signal import fftconvolve
 
+from .tools.segments import sign_runs
+
 __all__ = [
     "ICEncoding",
     "ricker_kernel",
@@ -73,9 +75,9 @@ def ricker_kernel(scale: float) -> np.ndarray:
     t = np.arange(-n, n + 1, dtype=np.float64)
     a = float(scale)
     return (
-        (2.0 / (np.sqrt(3.0 * a) * np.pi ** 0.25))
+        (2.0 / (np.sqrt(3.0 * a) * np.pi**0.25))
         * (1 - (t / a) ** 2)
-        * np.exp(-(t ** 2) / (2 * a ** 2))
+        * np.exp(-(t**2) / (2 * a**2))
     )
 
 
@@ -110,8 +112,7 @@ def cwt_matrix(
                 f"engine='exact' implements the Ricker (mexh) wavelet only, "
                 f"got {wavelet!r}"
             )
-        return fftconvolve(y, ricker_kernel(scale)[None, :], mode="same",
-                           axes=-1)
+        return fftconvolve(y, ricker_kernel(scale)[None, :], mode="same", axes=-1)
     if engine == "pywt":
         if not float(64.0 / scale).is_integer():
             raise ValueError(
@@ -153,16 +154,9 @@ def encode_series(c: np.ndarray, tol: float = 1e-12):
     Returns (letters, start_idx, stop_idx, height) — one entry per segment.
     Letter rules identical to ``signomics.DNAsignal._get_letter``."""
     c = np.asarray(c, dtype=np.float64)
-    d = np.diff(c)
-    sgn = np.sign(d)
-    # segment boundaries where the derivative sign changes (0 joins previous run)
-    # forward-fill zeros so plateaus attach to the preceding trend (vectorized)
-    nz = sgn != 0
-    idx = np.where(nz, np.arange(sgn.size), -1)
-    np.maximum.accumulate(idx, out=idx)
-    run = np.where(idx >= 0, sgn[np.clip(idx, 0, None)], 0.0)
-    change = np.nonzero(run[1:] != run[:-1])[0] + 1
-    bounds = np.concatenate(([0], change, [len(c) - 1]))
+    # segment boundaries where the derivative sign changes; plateaus attach
+    # to the preceding trend — delegated to the shared primitive
+    bounds = sign_runs(c, flats="attach")
     letters, starts, stops, heights = [], [], [], []
     for a, b in zip(bounds[:-1], bounds[1:]):
         if a == b:
@@ -247,7 +241,9 @@ def text_entropy(s: str, m: int = 1) -> float:
     return float(-(p * np.log2(p)).sum())
 
 
-def align_invariants(a: str, b: str, open_gap: float = -1.0, extend_gap: float = -1.0) -> str:
+def align_invariants(
+    a: str, b: str, open_gap: float = -1.0, extend_gap: float = -1.0
+) -> str:
     """Global (Needleman-Wunsch) alignment of two letter strings and return
     the concatenated **invariant** characters (exact matches).
 
@@ -290,7 +286,7 @@ class ICEncoding:
 
     scale: float
     mz: np.ndarray
-    letters: list = field(default_factory=list)      # filtered, one str per ion
+    letters: list = field(default_factory=list)  # filtered, one str per ion
     letters_raw: list = field(default_factory=list)  # unfiltered
     n_rejected: int = 0
     n_segments: int = 0
@@ -302,11 +298,7 @@ class ICEncoding:
 
     def survivors(self) -> dict:
         """{mz: filtered letters} for ions with at least one retained letter."""
-        return {
-            float(m): s
-            for m, s in zip(self.mz, self.letters)
-            if s.strip("_")
-        }
+        return {float(m): s for m, s in zip(self.mz, self.letters) if s.strip("_")}
 
 
 def encode_ic_matrix(
@@ -330,15 +322,12 @@ def encode_ic_matrix(
     y = np.asarray(y, dtype=np.float64)
     cfs1 = cwt_matrix(y, 1.0, wavelet, engine=engine)
     thr = noise_threshold(cfs1, window=window, k=k, factor=factor)
-    cfs = cfs1 if scale == 1 else cwt_matrix(y, float(scale), wavelet,
-                                             engine=engine)
+    cfs = cfs1 if scale == 1 else cwt_matrix(y, float(scale), wavelet, engine=engine)
 
     out = ICEncoding(scale=float(scale), mz=np.asarray(mz))
     for i in range(y.shape[0]):
         letters, start, stop, height = encode_series(cfs[i])
-        filtered = (
-            sen_filter(letters, start, stop, height, thr[i]) if letters else ""
-        )
+        filtered = sen_filter(letters, start, stop, height, thr[i]) if letters else ""
         out.letters_raw.append(letters)
         out.letters.append(filtered)
         out.n_segments += len(letters)
