@@ -35,11 +35,17 @@ implementation.
 
 Reconstruction (the Fig 5.48 bijection): the apex of each detected peak is
 followed across scales (simplified ridge filiation after Du et al. 2006);
-``l_opt`` is interpolated log-parabolically from the apex amplitudes; then::
+ridge rows whose apex drifts are discarded (position invariance marks
+interference); the closed-form scale response
+``W(l) = C l^{5/2}/(sigma^2+l^2)^{3/2}`` is fitted (``C = K h sigma``
+projected out, only ``sigma`` optimized), and then directly::
 
-    sigma = l_opt / sqrt(5)
-    h     = W_max / (1.10597 sqrt(sigma))
-    A_g   = h sigma sqrt(2 pi)
+    l_opt = sqrt(5) sigma
+    h     = C / (K sigma)
+    A_g   = h sigma sqrt(2 pi) = C sqrt(2 pi) / K
+
+(:func:`interpolate_optimal_scale` remains available as a quick
+log-parabolic estimator of ``l_opt``, with O(10 %) bias on a dyadic grid.)
 
 Compatible inputs: ``signomics.DNAsignal.cwt_coeffs`` (dict scale -> 1-D
 coefficient array, pywt path) and stacks built from
