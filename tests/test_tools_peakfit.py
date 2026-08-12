@@ -164,3 +164,95 @@ def test_plot_fit():
     fit = monotonepeakfit(pk, y, x, baseline=True, sort=True)
     ax = plot_fit(y, x, fit)
     assert ax is not None
+
+
+# ---------------------------------------------------------------------------
+# EMG kernel (extension over the Matlab reference)
+# ---------------------------------------------------------------------------
+def synthetic_emg_peak(tau=0.15):
+    """Single tailed peak generated with the EMG density itself."""
+    from sig2dna_core.tools.peakfit import _emg_pdf
+
+    x = np.linspace(0.0, 20.0, 2000)
+    c, w, amp = 8.0, 0.5, 3.0
+    shape = _emg_pdf(x, c, w, tau)
+    y = amp * shape / shape.max()
+    return x, y, (c, w, tau, amp)
+
+
+class TestEMG:
+    def test_emg_recovers_tailed_peak(self):
+        x, y, (c, w, tau, amp) = synthetic_emg_peak(tau=0.15)
+        pk = monotonepeak(y, x, mfilt=5)
+        assert len(pk) == 1
+        assert pk.tail[0] == "right"
+        fit = monotonepeakfit(pk, y, x, emg=True, sort=True)
+        assert abs(fit.position[1, 0] - c) < 0.05
+        assert abs(fit.width[1, 0] - w) / w < 0.15
+        assert abs(fit.tau[1, 0] - tau) / tau < 0.20
+        assert abs(fit.weight[0, 1] - amp) / amp < 0.05
+
+    def test_emg_beats_gaussian_on_tailed_peak(self):
+        x, y, _ = synthetic_emg_peak(tau=0.25)
+        pk = monotonepeak(y, x, mfilt=5)
+        fg = monotonepeakfit(pk, y, x, sort=True)
+        fe = monotonepeakfit(pk, y, x, emg=True, sort=True)
+
+        def resid(f):
+            return float(np.linalg.norm(y - f.expansion(x, strategy=2)))
+
+        assert resid(fe) < 0.3 * resid(fg)
+
+    def test_emg_left_tail(self):
+        x, y, (c, w, tau, amp) = synthetic_emg_peak(tau=-0.2)
+        pk = monotonepeak(y, x, mfilt=5)
+        assert pk.tail[0] == "left"
+        fit = monotonepeakfit(pk, y, x, emg=True, sort=True)
+        assert fit.tau[1, 0] < 0
+        assert abs(fit.tau[1, 0] - tau) / abs(tau) < 0.25
+        assert abs(fit.position[1, 0] - c) < 0.05
+
+    def test_emg_doublet(self):
+        from sig2dna_core.tools.peakfit import _emg_pdf
+
+        x = np.linspace(5.0, 20.0, 2000)
+        y = np.zeros_like(x)
+        true = [(10.0, 0.4, 0.20, 2.0), (11.5, 0.35, 0.15, 1.0)]
+        for c, w, t, a in true:
+            s = _emg_pdf(x, c, w, t)
+            y = y + a * s / s.max()
+        # zero=0.0: noiseless analytic signal — the default dead zone would
+        # dissolve the apex junction into a flat segment
+        pk = monotonepeak(
+            y, x, mfilt=8, zero=0.0, sort="descend", maxpeak=2, keeporder=True
+        )
+        assert len(pk) == 2
+        fit = monotonepeakfit(pk, y, x, emg=True, sort=True, keeporder=True)
+        for i, (c, w, t, a) in enumerate(true):
+            assert abs(fit.position[1, i] - c) < 0.1, f"center {i}"
+            assert abs(fit.weight[i, 1] - a) / a < 0.15, f"amplitude {i}"
+
+    def test_emg_exclusive_with_lorentzian(self):
+        x, y, _ = synthetic_emg_peak()
+        pk = monotonepeak(y, x, mfilt=5)
+        with pytest.raises(ValueError):
+            monotonepeakfit(pk, y, x, emg=True, lorentzian=True)
+
+    def test_emg_to_frame_and_expansion(self):
+        x, y, _ = synthetic_emg_peak()
+        pk = monotonepeak(y, x, mfilt=5)
+        fit = monotonepeakfit(pk, y, x, emg=True, sort=True)
+        df = fit.to_frame(2)
+        assert "tau" in df.columns
+        # kernel closure and expansion agree
+        ker = fit.kernel(0, strategy=2)
+        np.testing.assert_allclose(
+            fit.weight[0, 1] * ker(x), fit.expansion(x, strategy=2), rtol=1e-10
+        )
+
+    def test_gaussian_path_unchanged(self):
+        """emg=False must leave FitResult.tau None (reference path intact)."""
+        x, y, _ = synthetic_doublet()
+        pk = monotonepeak(y, x, mfilt=10, sort="descend", maxpeak=2, keeporder=True)
+        fit = monotonepeakfit(pk, y, x, baseline=True, sort=True)
+        assert fit.tau is None and fit.norm is None

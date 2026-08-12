@@ -53,6 +53,7 @@ __all__ = [
     "filtzero",
     "monotone",
     "monotone_full",
+    "sign_runs",
     "MonotoneSegments",
     "MonotoneFull",
     "DEFAULT_LETTER_RULES",
@@ -153,6 +154,50 @@ def _runs(idx: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     il = idx[np.r_[True, gap]]
     ir = idx[np.r_[gap, True]] + 1
     return il, ir
+
+
+def sign_runs(c: np.ndarray, zero: float = 0.0, flats: str = "segment") -> np.ndarray:
+    """Boundaries of constant-trend runs of a series — the shared
+    segmentation primitive of the symbolic encoders
+    (``signomics.DNAsignal.encode_dna``, ``icfilter.encode_series``).
+
+    The dead-zone sign of ``diff(c)`` is computed (``|diff| <= zero`` counts
+    as flat) and the 0-based sample indices bounding each run of constant
+    sign are returned as ``bounds``; segment ``k`` spans samples
+    ``bounds[k] .. bounds[k+1]`` inclusive, so consecutive segments share
+    their boundary sample (unlike :func:`monotone`, whose ``leftpriority``
+    convention avoids sharing).
+
+    Parameters
+    ----------
+    c : array (n,)
+        Series (n >= 2 for a meaningful result).
+    zero : float
+        Dead zone; the encoders use ``0.0`` (exact sign).
+    flats : {'segment', 'attach'}
+        ``'segment'``: flat runs form segments of their own (``encode_dna``
+        behavior). ``'attach'``: flat runs are forward-filled with the
+        preceding trend so plateaus attach to it (``encode_series``
+        behavior; a leading plateau keeps sign 0).
+
+    Returns
+    -------
+    bounds : int array
+        ``[0, change_1, ..., change_m, n-1]``.
+    """
+    c = np.asarray(c, dtype=float).ravel()
+    n = c.size
+    d = np.diff(c)
+    s = np.where(d > zero, 1.0, np.where(d < -zero, -1.0, 0.0))
+    if flats == "attach":
+        nz = s != 0.0
+        idx = np.where(nz, np.arange(s.size), -1)
+        np.maximum.accumulate(idx, out=idx)
+        s = np.where(idx >= 0, s[np.clip(idx, 0, None)], 0.0)
+    elif flats != "segment":
+        raise ValueError(f"flats must be 'segment' or 'attach', got {flats!r}")
+    changes = np.nonzero(s[1:] != s[:-1])[0] + 1
+    return np.concatenate(([0], changes, [max(n - 1, 0)]))
 
 
 def monotone(

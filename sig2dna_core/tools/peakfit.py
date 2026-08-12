@@ -18,6 +18,15 @@ Kernels (the reference's simplified parameterization)::
         area = 0.6006*sqrt(pi)*w,  sigma = 0.6006/sqrt(2)*w
     lorentzian(x; c, w) = 1/(1+((x-c)/(0.5 w))^2)   (same half-height value)
 
+Extension over the Matlab reference (``emg=True``): an exponentially
+modified Gaussian kernel for chromatographic tailing — same 0.6006 Gaussian
+core, convolved with an exponential of **signed** time constant ``tau``
+(positive tails right, negative mirrors to fronting), fitted per peak in
+both strategies and initialized from the detected asymmetry side
+(``PeakTable.tail``). EMG kernels are normalized to unit maximum so weights
+remain peak amplitudes; their area is reported as ``1/norm`` (the EMG
+density has unit area).
+
 Peak amplitudes (weights) are resolved at every objective evaluation by
 linear least squares ``|G\\y|`` (or NNLS when ``nonneg`` and G is
 rank-deficient). ``scipy``'s Nelder–Mead uses the same initial-simplex
@@ -48,6 +57,7 @@ from typing import Callable, Optional, Sequence, Tuple, Union
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize, nnls
+from scipy.special import erfcx
 from scipy.stats import norm as _norm
 
 from .peaks import PeakTable
@@ -64,6 +74,32 @@ def _gaussian_kernel(x, position, width):
 
 def _lorentzian_kernel(x, position, width):
     return 1.0 / (1.0 + ((x - position) / (0.5 * width)) ** 2)
+
+
+def _emg_pdf(x, position, width, tau):
+    """Exponentially modified Gaussian density (unnormalized amplitude).
+
+    Gaussian core follows the 0.6006-width convention
+    (``sigma = 0.6006*width/sqrt(2)``); ``tau`` is the exponential tail
+    time constant, **signed**: ``tau > 0`` tails to the right (classical GC
+    tailing), ``tau < 0`` mirrors the shape to tail left (fronting).
+
+    Evaluated in the numerically stable scaled form
+    ``pdf = exp(-xi^2/(2 sigma^2)) * erfcx(v) / (2|tau|)`` with
+    ``v = (sigma/|tau| - xi/sigma)/sqrt(2)``, which degrades gracefully to
+    the Gaussian shape as ``tau -> 0`` (a relative floor on ``|tau|``
+    avoids the singular limit).
+    """
+    sigma = 0.6006 * width / np.sqrt(2.0)
+    t = np.maximum(np.abs(tau), 1e-8 * width)
+    xi = np.where(tau >= 0, x - position, position - x)
+    v = (sigma / t - xi / sigma) / np.sqrt(2.0)
+    with np.errstate(over="ignore", invalid="ignore", under="ignore"):
+        core = np.exp(-(xi**2) / (2.0 * sigma**2)) * erfcx(v)
+        # far decay side (v << 0): erfc(v) ~= 2 exactly; the exponent below
+        # is negative wherever this branch is selected, so no overflow
+        far = 2.0 * np.exp(sigma**2 / (2.0 * t**2) - xi / t)
+        return np.where(v > -25.0, core, far) / (2.0 * t)
 
 
 def _argpad(v, n: int) -> np.ndarray:
@@ -125,6 +161,8 @@ class FitResult:
     window: dict
     nsignificantpeaks: np.ndarray
     lorentzian: bool = False
+    tau: Optional[np.ndarray] = None  # (2, n), EMG only (signed tail constant)
+    norm: Optional[np.ndarray] = None  # (2, n), EMG unit-max normalization
     _x: np.ndarray = field(default_factory=lambda: np.empty(0), repr=False)
 
     @property
@@ -134,8 +172,11 @@ class FitResult:
     def kernel(self, i: int, strategy: int = 2) -> Callable:
         """Unit-amplitude kernel of peak ``i`` (0-based) for a strategy (1|2)."""
         k = strategy - 1
-        ker = _lorentzian_kernel if self.lorentzian else _gaussian_kernel
         c, w = self.position[k, i], self.width[k, i]
+        if self.tau is not None:
+            t, nrm = self.tau[k, i], self.norm[k, i]
+            return lambda x: _emg_pdf(np.asarray(x, dtype=float), c, w, t) / nrm
+        ker = _lorentzian_kernel if self.lorentzian else _gaussian_kernel
         return lambda x: ker(np.asarray(x, dtype=float), c, w)
 
     def expansion(
@@ -150,8 +191,21 @@ class FitResult:
         x = np.asarray(x, dtype=float)
         k = strategy - 1
         n = self.npeaks if npeaks is None else int(npeaks)
-        ker = _lorentzian_kernel if self.lorentzian else _gaussian_kernel
-        G = ker(x[:, None], self.position[k, :n][None, :], self.width[k, :n][None, :])
+        if self.tau is not None:
+            G = (
+                _emg_pdf(
+                    x[:, None],
+                    self.position[k, :n][None, :],
+                    self.width[k, :n][None, :],
+                    self.tau[k, :n][None, :],
+                )
+                / self.norm[k, :n][None, :]
+            )
+        else:
+            ker = _lorentzian_kernel if self.lorentzian else _gaussian_kernel
+            G = ker(
+                x[:, None], self.position[k, :n][None, :], self.width[k, :n][None, :]
+            )
         y = G @ self.weight[:n, k]
         if with_baseline:
             y = y + np.polyval(self.baseline, x)
@@ -159,18 +213,19 @@ class FitResult:
 
     def to_frame(self, strategy: int = 2) -> pd.DataFrame:
         k = strategy - 1
-        return pd.DataFrame(
-            {
-                "position": self.position[k],
-                "width": self.width[k],
-                "sigma": self.sigma[k],
-                "area": self.area[k],
-                "weight": self.weight[:, k],
-                "relativeweight": self.relativeweight[:, k],
-                "rank": self.rank[:, k],
-                "r2": self.r2[:, k],
-            }
-        )
+        cols = {
+            "position": self.position[k],
+            "width": self.width[k],
+            "sigma": self.sigma[k],
+            "area": self.area[k],
+            "weight": self.weight[:, k],
+            "relativeweight": self.relativeweight[:, k],
+            "rank": self.rank[:, k],
+            "r2": self.r2[:, k],
+        }
+        if self.tau is not None:
+            cols["tau"] = self.tau[k]
+        return pd.DataFrame(cols)
 
 
 def monotonepeakfit(
@@ -191,6 +246,7 @@ def monotonepeakfit(
     baseline: bool = False,
     sort: bool = False,
     lorentzian: bool = False,
+    emg: bool = False,
     endforced: bool = False,
     keeporder: bool = False,
     keepinitialorder: bool = False,
@@ -223,6 +279,8 @@ def monotonepeakfit(
     def H(v):  # smoothed heaviside forcing positive widths
         return 0.5 * (1.0 + np.tanh(v / dx))
 
+    if emg and lorentzian:
+        raise ValueError("emg and lorentzian are exclusive")
     kernel = _lorentzian_kernel if lorentzian else _gaussian_kernel
 
     # constraint defaults (strategy 2 only)
@@ -266,22 +324,44 @@ def monotonepeakfit(
 
     widthguess = np.asarray(p.width, dtype=float) / 4.0
     positionguess = np.asarray(p.center, dtype=float)
+    # EMG tail guess: sign from the detected asymmetry side, |tau| ~ width/4
+    tauguess = (
+        np.where(np.asarray(p.tail, dtype=object) == "right", 1.0, -1.0) * widthguess
+        if emg
+        else None
+    )
 
-    def gaussian(c, s):
-        """Mixture evaluation: kernels + least-squares amplitudes."""
-        G = kernel(x[:, None], np.atleast_1d(c)[None, :], np.atleast_1d(s)[None, :])
+    def mixture(c, s, t=None):
+        """Mixture evaluation: kernels + least-squares amplitudes.
+        Returns (yfit, weights, G, norms); norms is the per-column unit-max
+        normalization (ones unless EMG)."""
+        c = np.atleast_1d(c)[None, :]
+        s = np.atleast_1d(s)[None, :]
+        if emg:
+            G = _emg_pdf(x[:, None], c, s, np.atleast_1d(t)[None, :])
+            norms = G.max(axis=0)
+            norms[norms <= 0] = 1.0
+            G = G / norms[None, :]
+        else:
+            G = kernel(x[:, None], c, s)
+            norms = np.ones(n)
         if nonneg and np.linalg.matrix_rank(G) < n:
             W, _ = nnls(G, y)
         else:
             W = np.abs(np.linalg.lstsq(G, y, rcond=None)[0])
-        return G @ W, W, G
+        return G @ W, W, G, norms
 
-    def fit_fixedpos(s):
-        yfit, _, _ = gaussian(positionguess, s)
+    def fit_fixedpos(z):
+        if emg:
+            s, t = z.reshape(2, n, order="F")
+        else:
+            s, t = z, None
+        yfit, _, _, _ = mixture(positionguess, s, t)
         return np.linalg.norm(yfit - y) + np.linalg.norm((1.0 - H(s)) * penaltyscale)
 
     def fit_free(z):
-        ps = z.reshape(2, n, order="F")
+        ps = z.reshape(3 if emg else 2, n, order="F")
+        t = ps[2] if emg else None
         WC = float(
             np.sum(
                 (Hwidth(ps[1] - widthmax_v) + Hwidth(widthmin_v - ps[1]))
@@ -291,7 +371,7 @@ def monotonepeakfit(
         SC = float(
             np.sum(Hshift(np.abs(ps[0] - positionguess) - shiftmax_v) * shiftpenalty_v)
         )
-        yfit, _, _ = gaussian(ps[0], ps[1])
+        yfit, _, _, _ = mixture(ps[0], ps[1], t)
         return (
             np.linalg.norm(yfit - y)
             + np.linalg.norm((1.0 - H(ps[1])) * penaltyscale)
@@ -299,25 +379,34 @@ def monotonepeakfit(
             + SC
         )
 
-    nm_opts = dict(xatol=tol, fatol=tol, maxiter=maxiter, maxfev=200 * max(n, 1))
+    nvar1 = 2 * n if emg else n
+    nm_opts = dict(xatol=tol, fatol=tol, maxiter=maxiter, maxfev=200 * max(nvar1, 1))
     position = np.full((2, n), np.nan)
     width = np.full((2, n), np.nan)
+    tau = np.full((2, n), np.nan) if emg else None
     critfit = np.zeros(2)
 
-    # STRATEGY 1: widths only, prescribed centers
-    res1 = minimize(fit_fixedpos, widthguess, method="Nelder-Mead", options=nm_opts)
-    width[0] = res1.x
+    # STRATEGY 1: widths (and EMG taus) only, prescribed centers
+    z1 = np.vstack([widthguess, tauguess]).reshape(-1, order="F") if emg else widthguess
+    res1 = minimize(fit_fixedpos, z1, method="Nelder-Mead", options=nm_opts)
+    if emg:
+        width[0], tau[0] = res1.x.reshape(2, n, order="F")
+    else:
+        width[0] = res1.x
     position[0] = positionguess
     critfit[0] = res1.fun
 
-    # STRATEGY 2: centers and widths free
-    z0 = np.vstack([positionguess, widthguess if independent else width[0]]).reshape(
-        -1, order="F"
-    )
-    nm_opts2 = dict(nm_opts, maxfev=200 * 2 * n)
+    # STRATEGY 2: centers and widths (and EMG taus) free
+    rows2 = [positionguess, widthguess if independent else width[0]]
+    if emg:
+        rows2.append(tauguess if independent else tau[0])
+    z0 = np.vstack(rows2).reshape(-1, order="F")
+    nm_opts2 = dict(nm_opts, maxfev=200 * len(z0))
     res2 = minimize(fit_free, z0, method="Nelder-Mead", options=nm_opts2)
-    ps2 = res2.x.reshape(2, n, order="F")
+    ps2 = res2.x.reshape(3 if emg else 2, n, order="F")
     position[1], width[1] = ps2[0], ps2[1]
+    if emg:
+        tau[1] = ps2[2]
     critfit[1] = res2.fun
 
     # permutation matching of strategy 2 against the guesses
@@ -355,21 +444,27 @@ def monotonepeakfit(
         best = np.asarray(perms[ibest])
         position[1] = position[1, best]
         width[1] = width[1, best]
+        if emg:
+            tau[1] = tau[1, best]
 
     # weights, ranks, fitted models
     weight = np.full((n, 2), np.nan)
     numrank = np.zeros(2, dtype=int)
     order = np.zeros((n, 2), dtype=int)
     rank_ = np.zeros((n, 2), dtype=int)
+    norm_ = np.ones((2, n)) if emg else None
     for k in range(2):
-        _, W, G = gaussian(position[k], width[k])
+        _, W, G, norms = mixture(position[k], width[k], tau[k] if emg else None)
         weight[:, k] = W
         numrank[k] = np.linalg.matrix_rank(G)
         order[:, k] = np.argsort(-weight[:, k], kind="stable")
         rank_[order[:, k], k] = np.arange(1, n + 1)
+        if emg:
+            norm_[k] = norms
 
     sigma = (0.6006 * width) / np.sqrt(2.0)
-    area = 0.6006 * np.sqrt(np.pi) * width
+    # unit-max kernel area: EMG density has unit area, so area = 1/norm
+    area = 1.0 / norm_ if emg else 0.6006 * np.sqrt(np.pi) * width
     relativeweight = weight / np.sum(weight, axis=0, keepdims=True)
     r2max = 1.0 - critfit**2 / sce
     windowwidth = float(x[-1] - x[0])
@@ -406,14 +501,21 @@ def monotonepeakfit(
         for k in range(2):
             initialorder[k, np.argsort(position[k], kind="stable")] = np.arange(n)
         cumweight = np.full((n, 2), np.nan)
-        for k in range(2):
-            idx = order[:, k]
+
+        def _permute(k, idx):
             position[k] = position[k, idx]
             width[k] = width[k, idx]
             sigma[k] = sigma[k, idx]
             area[k] = area[k, idx]
             weight[:, k] = weight[idx, k]
             rank_[:, k] = rank_[idx, k]
+            if emg:
+                tau[k] = tau[k, idx]
+                norm_[k] = norm_[k, idx]
+
+        for k in range(2):
+            idx = order[:, k]
+            _permute(k, idx)
             cumweight[:, k] = np.cumsum(relativeweight[idx, k])
             if not np.all(np.isnan(cumweight[:, k])):
                 nsignificantpeaks[k] = (
@@ -431,37 +533,34 @@ def monotonepeakfit(
         if keepinitialorder:
             for k in range(2):
                 idx = _nearestpointunique(positionguess, position[k])
-                position[k] = position[k, idx]
-                width[k] = width[k, idx]
-                sigma[k] = sigma[k, idx]
-                area[k] = area[k, idx]
-                weight[:, k] = weight[idx, k]
-                rank_[:, k] = rank_[idx, k]
+                _permute(k, idx)
                 relativeweight[:, k] = relativeweight[idx, k]
         elif keepfittedorder:
             for k in range(2):
                 srt = np.argsort(position[k], kind="stable")
                 idx = srt[initialorder[k]]
-                position[k] = position[k, idx]
-                width[k] = width[k, idx]
-                sigma[k] = sigma[k, idx]
-                area[k] = area[k, idx]
-                weight[:, k] = weight[idx, k]
-                rank_[:, k] = rank_[idx, k]
+                _permute(k, idx)
                 relativeweight[:, k] = relativeweight[idx, k]
         elif keeporder:
             idx = np.argsort(position[0], kind="stable")
-            position = position[:, idx]
-            width = width[:, idx]
-            sigma = sigma[:, idx]
-            area = area[:, idx]
-            weight = weight[idx, :]
-            rank_ = rank_[idx, :]
+            for k in range(2):
+                _permute(k, idx)
             relativeweight = relativeweight[idx, :]
 
         # refresh r2 with expansion order i (verbatim, baseline included)
         for k in range(2):
-            Gk = kernel(x[:, None], position[k][None, :], width[k][None, :])
+            if emg:
+                Gk = (
+                    _emg_pdf(
+                        x[:, None],
+                        position[k][None, :],
+                        width[k][None, :],
+                        tau[k][None, :],
+                    )
+                    / norm_[k][None, :]
+                )
+            else:
+                Gk = kernel(x[:, None], position[k][None, :], width[k][None, :])
             for i in range(n):
                 model = Gk[:, : i + 1] @ weight[: i + 1, k] + np.polyval(b, x)
                 r2[i, k] = 1.0 - float(np.linalg.norm(y - model) ** 2) / sce
@@ -492,6 +591,8 @@ def monotonepeakfit(
         window=window,
         nsignificantpeaks=nsignificantpeaks,
         lorentzian=lorentzian,
+        tau=tau,
+        norm=norm_,
         _x=x,
     )
 
