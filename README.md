@@ -1,6 +1,7 @@
 # 📡🧬 sig2dna
 
 <a href="https://deepwiki.com/ovitrac/sig2dna" title="Detailed manual of sig2dna" target="_blank">
+
   <picture>
     <source media="(prefers-color-scheme: dark)"
             srcset="https://img.shields.io/badge/DeepWiki-sig2dna-1f6feb?style=flat&logo=bookstack&logoColor=white&labelColor=0d1117">
@@ -45,6 +46,38 @@ It supports **large-scale applications** such as identifying unknown substances 
 ➡️ You can seamlessly concatenate or compare signals originating from **different instruments or modes** (e.g., UV + MS, GC×GC, LC-FTIR, etc.) — the symbolic coding abstracts away intensity scales and detector-specific artifacts, focusing instead on **morphological motifs**.
 
 > Additional recommendations for 🖼️ 2D and 🗂️ multimodal acquisition systems are given at the end of this document 📄.
+
+---
+
+## 🧭 Two complementary methodologies
+
+Since v0.6, `sig2dna` offers **two readings of the same signal** — one symbolic, one extensive — computed from a single peak-event extraction and designed to be used together:
+
+| | **Route 1 — symbolic (CWT letters)** | **Route 2 — event/channel information algebra** |
+|---|---|---|
+| representation | wavelet-encoded letters (`Y A Z B`) per peak → per-channel *texts* | peak **events** above a *local* noise threshold → counts, weights, families |
+| what it reads | **shape & organization** of the chemistry (entropy, grammar, motifs) | **inventory & amount** of chemistry (extensive: quantities add & subtract) |
+| natural invariance | amplitude scale (letters ignore intensity) | peak displacement along the run (channel counts are the RT-marginal) |
+| typical questions | fingerprint comparison, history/ageing signatures, classification | foreign-information accounting in **bits**, reference-population excess, contamination screening |
+| modules | `signomics`, `icfilter`, `chemspace`, `excess` | `events`, `channels`, `families`, `bridges` |
+
+**The information concept.** An event that a reference population also shows carries ≈ 0 bits; an event seen in a fraction *q* of the references weighs *w* = −log₂ *q* bits. Summing surprisals turns "how contaminated / transformed is this sample?" into a measured, **additive** quantity — information from independent sources adds up, which is what makes subtraction, decomposition and conservation checks possible. The dictionary layer (`families`) then *interprets* that information against libraries and **decoy-calibrated** nulls; it never defines the measurement.
+
+**Metrology of comparisons.** Each claimed invariance has a measured limit, and `bridges` makes the rule explicit: two acquisition domains may be compared only across a **measured bridge** (same physical materials, both conditions), summarized by a two-coordinate edge — transport cost *R* (relative to a replicate floor) and structure preserved *Q* (none / group / neighborhood / identity). *A chemical fingerprint need not be invariant across analytical operators; what must be measurable is the information lost, preserved, or transformed between them.*
+
+```python
+import numpy as np
+from sig2dna_core.events import extract_events, is_recycled_pet
+from sig2dna_core.channels import channel_state, d_comp
+from sig2dna_core.families import group_families, make_decoys, recognize
+
+events, thr, ds = extract_events(y)          # y: (n_channels, n_time)
+B, p = channel_state(events, y.shape[0])     # extensive budget + composition
+verdict = is_recycled_pet(events, {"V1": ref1, "V2": ref2}, history_score=z)
+# -> structured: history / authenticity / direction (E_gain, E_loss) / domain
+```
+
+Both routes are validated by exact synthetic laws shipped as tests (one isolated peak ⇒ exactly one event; shared populations cancel exactly; a class absent from *n* references contributes exactly −log₂(1/(n+2)) bits; channel counts are displacement-invariant; composition and log-ratio dispersion are budget-invariant).
 
 ---
 
@@ -290,7 +323,7 @@ $$
 H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i)
 $$
 
-where $p(\ell\_i)$ is the frequency of letter $l\_i$ in the sequence $X$.
+where $p(\ell_i)$ is the frequency of letter $l_i$ in the sequence $X$.
 
 Entropy $H$ is an extensive quantity verify additivity properties for independent sequences. Its value is accumulated between structured and low structured regions. Entropy is **invariant under translation and stable under small perturbations**, especially when using symbolic codes rather than raw intensities. This makes it ideal for comparing:
 
@@ -330,8 +363,8 @@ where:
 
 Let $P$ and $Q$ be the **empirical frequency distributions** of symbolic letters in two DNA-like coded signals $A$ and $B$, respectively. That is:
 
-* $P = {p\_\ell}$ where $p\_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}$
-* $Q = {q\_\ell}$ where $q\_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}$
+* $P = {p_\ell}$ where $p_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}$
+* $Q = {q_\ell}$ where $q_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}$
 
 Let $M$ be the average distribution:
 
@@ -345,13 +378,13 @@ $$
 D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }
 $$
 
-where $D\_{\text{KL}}$ is the Kullback-Leibler divergence:
+where $D_{\text{KL}}$ is the Kullback-Leibler divergence:
 
 $$
 D_{\text{KL}}(P \| M) = \sum_\ell p_\ell \log_2 \left( \frac{p_\ell}{m_\ell} \right)
 $$
 
-and $m\_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
+and $m_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
 
 
 #### 4.3.1 **Interpretation** 💡

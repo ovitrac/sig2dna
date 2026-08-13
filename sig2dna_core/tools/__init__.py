@@ -18,6 +18,8 @@ olivier.vitrac@gmail.com
 from __future__ import annotations
 
 from .baseline import ndf, removepeaks
+from .cwtarea import (calibration_curve, optimal_scale, plot_calibration,
+                      reconstruct_areas)
 from .peakfit import FitResult, monotonepeakfit, plot_fit
 from .peaks import PeakTable, monotonepeak, plot_peaks
 from .segments import (DEFAULT_LETTER_RULES, MonotoneFull, MonotoneSegments,
@@ -40,6 +42,10 @@ __all__ = [
     "plot_fit",
     "plot_peaks",
     "plot_segments",
+    "calibration_curve",
+    "optimal_scale",
+    "plot_calibration",
+    "reconstruct_areas",
     "removepeaks",
     "to_letters",
 ]
