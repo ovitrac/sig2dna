@@ -226,7 +226,8 @@ class TestCalibrationCurve:
         w = fftconvolve(y, ricker_kernel(scale), mode="same")
         c = n // 2
         right = np.nonzero(w[c:] < 0)[0][0]
-        lobe = np.trapezoid(w[c - right : c + right + 1])
+        _trapz = getattr(np, "trapezoid", np.trapz)
+        lobe = _trapz(w[c - right : c + right + 1])
         s = np.hypot(sigma, scale)
         assert lobe / w[c] == pytest.approx(2.0 * s / np.sqrt(np.e), rel=0.02)
 
