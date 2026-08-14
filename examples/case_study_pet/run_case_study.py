@@ -1,8 +1,22 @@
 #!/usr/bin/env python3
 """
-Case study — one virgin and one recycled PET, three readings of the same
+Case study — one virgin and one recycled PET, four readings of the same
 two signals: CWT letters (shape/organization), event/channel algebra
-(inventory/amount), and the organization/grammar algebra connecting them.
+(inventory/amount), the organization/grammar algebra connecting them,
+and pseudo-EI spectra reconstructed from co-eluting differential events
+(recognizable chemistry: the two faces of recycling).
+
+Route 4 is blind-first: the event algebra nominates the event classes
+gained by the recycled run, chain-clusters their apexes into co-eluting
+families (|t_m - t*| <= tau), and reconstructs each family's spectrum
+from the raw local-baseline-corrected ion amplitudes (base peak = 100;
+event surprisal bits are never used as intensities). Only afterwards is
+each spectrum compared with the frozen candidate-marker dictionaries
+(degradation/history vs contamination/cleanliness); exemplars are
+chosen at the poles, gated on genuine amplitude excess
+(X = sum S+ / sum S_R >= 0.25) so apex/class shifts are named as such,
+and the strongest excess families outside both dictionaries are shown
+as their own category instead of being forced onto the nearest marker.
 
 Fully replayable: everything in report.html is recomputed from the
 shipped anonymized data (case_vr.npz: two full-scan GC-MS runs,
@@ -47,14 +61,31 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TAU = 36.0
 SCALE = 16.0
 GATE = 2.0
+# route 4 (events -> chemistry): pseudo-EI reconstruction
+MIN_FRAG = 3       # a co-eluting family needs >= this many distinct ions
+TOP_FAM = 12       # reconstruct at most this many families (by support)
+BASE_W = 350       # samples each side of t* for the local baseline median
+N_EXEMPLAR = 3     # pole exemplars per axis, at most
+X_MIN = 0.25       # exemplars need this excess-support fraction
+# Candidate marker dictionaries for the two faces of recycling
+# (family-level EI fragments; candidate assignments pending library
+# confirmation -- labels deliberately stay generic, never molecule names).
+DICT_D = {45: "dioxolane/acetaldehyde-EG-like", 87: "dioxolane-like",
+          96: "furanic-like", 109: "methylfuranic-like",
+          148: "anhydride-like", 572: "cyclic-oligomer-like"}
+DICT_C = {55: "alkene-like", 56: "alkene-like", 59: "oxygenate-like",
+          69: "terpene/alkene-like", 72: "oxygenate-like",
+          74: "fatty-ester-like", 86: "oxygenate-like",
+          88: "oxygenate-like", 91: "alkylbenzene-like",
+          121: "terpene-like", 165: "PAH-like"}
 
 THEMES = {
     "light": dict(bg="#ffffff", ink="#1c2321", mut="#5c6663",
                   grid="#e3e0d8", v="#2e7d54", r="#b3542e",
-                  band="#00000012"),
+                  acc="#22536b", band="#00000012"),
     "dark": dict(bg="#1d2326", ink="#e6e2d8", mut="#9aa4a0",
                  grid="#333a3d", v="#5fae86", r="#d08159",
-                 band="#ffffff14"),
+                 acc="#7fb4cf", band="#ffffff14"),
 }
 
 
@@ -84,6 +115,39 @@ def legend(ax, t):
     leg = ax.legend(frameon=False)
     for txt in leg.get_texts():
         txt.set_color(t["ink"])
+
+
+def local_amp(y, ion, apex, t_star):
+    """Raw amplitude at ``apex`` minus the local baseline (median of a
+    window centred on the family apex t*). Floored at zero. The spectrum
+    intensities come from the SIGNAL, never from event surprisal bits."""
+    lo, hi = max(0, t_star - BASE_W), min(y.shape[1], t_star + BASE_W)
+    return max(float(y[ion, apex] - np.median(y[ion, lo:hi])), 0.0)
+
+
+def ref_amp(y, ion, t_star, tau):
+    """Best baseline-corrected response of ``ion`` in the reference run
+    within +-tau of t* (tolerates small retention shifts)."""
+    lo = max(0, int(t_star - tau))
+    hi = min(y.shape[1], int(t_star + tau) + 1)
+    wlo, whi = max(0, t_star - BASE_W), min(y.shape[1], t_star + BASE_W)
+    return max(float(y[ion, lo:hi].max()
+                     - np.median(y[ion, wlo:whi])), 0.0)
+
+
+def dict_frac(spec_mz, keys, top=10):
+    """Fraction of the spectrum's SIGNATURE intensity (its ``top`` most
+    intense fragments, standard EI main-peak practice) carried by
+    dictionary channels — a full-spectrum fraction would bury rich
+    spectra under their minor fragments. Matching is EXACT unit-mass: a
+    +-1 tolerance conflates chemically opposite markers (e.g.
+    phthalic-anhydride 148, a degradation marker, with the
+    dialkyl-phthalate 149 of plasticizer contamination)."""
+    sig = dict(sorted(spec_mz.items(), key=lambda kv: kv[1])[-top:])
+    tot = sum(sig.values())
+    if tot <= 0:
+        return 0.0
+    return sum(v for m, v in sig.items() if m in keys) / tot
 
 
 def main():
@@ -143,6 +207,99 @@ def main():
     top_idx = np.argsort(-gain_ch)[:12]
     stats["topgain"] = [(int(mz[i]), int(gain_ch[i])) for i in top_idx
                         if gain_ch[i] > 0]
+
+    # ---------------- route 4: events -> chemistry -----------------------
+    # Blind-first: the event algebra nominates gained co-eluting families;
+    # spectra are reconstructed from RAW amplitudes; only afterwards are
+    # they compared with the candidate marker dictionaries.
+    print("route 4: reconstructing pseudo-EI spectra...", flush=True)
+    ticV, ticR = yV.sum(0), yR.sum(0)
+    ok = (ticV > 0) & (ticR > 0)
+    alpha = float(np.median(ticR[ok] / ticV[ok]))  # response calibration
+    stats["alpha"] = alpha
+    gained = sorted((d["R"][2], ion, d["R"][0], d["R"][1])
+                    for (ion, cid), d in occ.items()
+                    if "R" in d and "V" not in d)
+    stats["n_gained_cls"] = len(gained)
+    fams = []                       # chain clustering of gained apexes
+    for rec in gained:
+        if fams and rec[0] - fams[-1][-1][0] <= TAU:
+            fams[-1].append(rec)
+        else:
+            fams.append([rec])
+    fams = [f for f in fams if len({r[1] for r in f}) >= MIN_FRAG]
+    fams.sort(key=lambda f: (-len({r[1] for r in f}),
+                             -sum(r[2] for r in f)))
+    stats["n_fam_all"] = len(fams)
+    fams = fams[:TOP_FAM]
+    families = []
+    for f in fams:
+        t_star = max(f, key=lambda r: r[2])[0]   # strongest gained apex
+        gained_ions = {r[1] for r in f}
+        sup = {}      # ALL co-eluting R events, strongest per ion
+        for e in evR:
+            if abs(e.apex_idx - t_star) <= TAU:
+                if e.ion not in sup or e.a_stat > sup[e.ion].a_stat:
+                    sup[e.ion] = e
+        SR = {}
+        for ion, e in sup.items():
+            a = local_amp(yR, ion, e.apex_idx, t_star)
+            if a > 0:
+                SR[ion] = a
+        if len(SR) < MIN_FRAG:
+            continue
+        SV = {ion: ref_amp(yV, ion, t_star, TAU) for ion in SR}
+        SP = {ion: max(SR[ion] - alpha * SV[ion], 0.0) for ion in SR}
+        smz = {int(mz[i]): v for i, v in SR.items()}
+        D_c = dict_frac(smz, DICT_D)
+        C_c = dict_frac(smz, DICT_C)
+        base_mz = max(smz, key=smz.get)
+        # generic family label from the most intense matched marker of
+        # the signature (top-10 fragments), consistent with dict_frac
+        sig = dict(sorted(smz.items(), key=lambda kv: kv[1])[-10:])
+        lbl, best_v = "", 0.0
+        for dic in (DICT_D, DICT_C):
+            for m, v in sig.items():
+                if m in dic and v > best_v:
+                    lbl, best_v = dic[m], v
+        if D_c >= 2 * C_c and D_c >= 0.15:
+            reading = "degradation-like"
+        elif C_c >= 2 * D_c and C_c >= 0.15:
+            reading = "contamination-like"
+        else:
+            reading = "mixed / unresolved"
+        # excess support: fraction of the R spectrum's intensity that is
+        # genuine excess after response matching. Low X means the family
+        # was nominated by apex/class shifts (inventory change without
+        # amplitude excess), not by new chemistry.
+        X = sum(SP.values()) / sum(SR.values())
+        families.append(dict(
+            t_star=int(t_star), rt=t_star * dt / 60.0, SR=SR, SV=SV, SP=SP,
+            gained=gained_ions, D=D_c, C=C_c, X=X, base_mz=int(base_mz),
+            n_frag=len(SR), n_gained=len(gained_ions), label=lbl,
+            reading=reading))
+    stats["families"] = families
+    deg = sorted((f for f in families if f["reading"] == "degradation-like"
+                  and f["X"] >= X_MIN),
+                 key=lambda f: -(f["D"] - f["C"]))[:N_EXEMPLAR]
+    con = sorted((f for f in families
+                  if f["reading"] == "contamination-like"
+                  and f["X"] >= X_MIN),
+                 key=lambda f: -(f["C"] - f["D"]))[:N_EXEMPLAR]
+    # strongest genuine-excess families that neither dictionary spans:
+    # shown as their own category rather than forced onto a pole
+    unm = sorted((f for f in families if f["reading"] == "mixed / unresolved"
+                  and f["X"] >= 0.5), key=lambda f: -f["X"])[:N_EXEMPLAR]
+    stats["exemplars"] = deg + con + unm
+    stats["n_deg"], stats["n_con"] = len(deg), len(con)
+    stats["n_unm"] = len(unm)
+    stats["has_himass"] = any(f["base_mz"] > 500 or
+                              any(int(mz[i]) > 500 for i in f["SR"])
+                              for f in families)
+    print(f"  {len(gained)} gained classes -> {stats['n_fam_all']} families "
+          f"(>= {MIN_FRAG} ions); reconstructed {len(families)}; "
+          f"exemplars {len(deg)} degradation-like / {len(con)} "
+          f"contamination-like; alpha={alpha:.3f}", flush=True)
 
     # ---------------- route 3: grammar, three calibrations ---------------
     print("route 3: grammar...", flush=True)
@@ -270,6 +427,83 @@ def main():
         legend(ax, t)
         figs[("quad", theme)] = fig64(fig)
 
+        # route 4 figures: D-C family map + three-spectra exemplars
+        fig, ax, t = themed_axes(theme, figsize=(5.6, 4.2))
+        col = {"degradation-like": t["acc"], "contamination-like": t["r"],
+               "mixed / unresolved": t["mut"]}
+        seen = set()
+        for f in stats["families"]:
+            lab = f["reading"] if f["reading"] not in seen else None
+            seen.add(f["reading"])
+            ax.scatter(f["C"], f["D"], s=28 + 3 * f["n_frag"],
+                       c=col[f["reading"]], alpha=.85, label=lab)
+        for f in stats["exemplars"]:
+            ax.annotate(f"{f['rt']:.1f} min", (f["C"], f["D"]),
+                        textcoords="offset points", xytext=(5, 4),
+                        fontsize=7, color=t["ink"])
+        lim = max([0.3] + [f["D"] for f in stats["families"]]
+                  + [f["C"] for f in stats["families"]]) * 1.15
+        ax.plot([0, lim], [0, lim], color=t["grid"], lw=0.8)
+        ax.set_xlim(-0.01, lim)
+        ax.set_ylim(-0.01, lim)
+        ax.set_xlabel("C  (contamination-dictionary intensity fraction)")
+        ax.set_ylabel("D  (degradation-dictionary intensity fraction)")
+        legend(ax, t)
+        figs[("fammap", theme)] = fig64(fig)
+
+        for k, f in enumerate(stats["exemplars"]):
+            smax = max(f["SR"].values())
+            fam_mz = [int(mz[i]) for i in f["SR"]]
+            xlo = max(min(fam_mz) - 8, int(mz[0]) - 2)
+            xhi = max(fam_mz) + 14
+            fig, axs = plt.subplots(3, 1, figsize=(9, 5.2), sharex=True)
+            tt = THEMES[theme]
+            fig.patch.set_facecolor(tt["bg"])
+            rows = ((axs[0], f["SV"], tt["v"],
+                     "virgin reference, response-matched "
+                     "(\u00d7\u03b1, same scale)", alpha),
+                    (axs[1], f["SR"], tt["r"],
+                     "recycled raw pseudo-EI \u2014 the chemical object",
+                     1.0),
+                    (axs[2], f["SP"], tt["acc"],
+                     "excess  [S_R \u2212 \u03b1\u00b7S_V]\u208a \u2014 "
+                     "explanatory overlay", 1.0))
+            for ax, S, c, lab, mult in rows:
+                ax.set_facecolor(tt["bg"])
+                for sp in ("top", "right"):
+                    ax.spines[sp].set_visible(False)
+                for sp in ("left", "bottom"):
+                    ax.spines[sp].set_color(tt["mut"])
+                ax.tick_params(colors=tt["mut"], labelcolor=tt["ink"])
+                vals = {int(mz[i]): 100.0 * mult * v / smax
+                        for i, v in S.items()}
+                if vals:
+                    ax.vlines(list(vals), 0, list(vals.values()),
+                              color=c, lw=1.6)
+                top5 = sorted(vals, key=vals.get)[-5:]
+                for m in top5:
+                    if vals[m] > 4:
+                        ax.annotate(str(m), (m, vals[m]),
+                                    textcoords="offset points",
+                                    xytext=(0, 2), ha="center",
+                                    fontsize=7, color=tt["ink"])
+                ax.set_ylim(0, 112)
+                ax.set_ylabel("% base", color=tt["ink"], fontsize=8)
+                ax.set_title(lab, fontsize=8.5, color=tt["ink"],
+                             loc="left")
+            axs[2].set_xlabel("m/z", color=tt["ink"])
+            axs[0].set_xlim(xlo, xhi)
+            beyond = f["reading"] == "mixed / unresolved"
+            cat = "beyond the frozen dictionaries" if beyond else f["reading"]
+            fig.suptitle(
+                cat + (f" \u00b7 {f['label']}" if f["label"] and not beyond
+                       else "")
+                + f" \u00b7 RT {f['rt']:.1f} min \u00b7 "
+                  f"{f['n_frag']} fragments ({f['n_gained']} gained)",
+                fontsize=9.5, color=tt["ink"], x=0.12, ha="left")
+            fig.tight_layout(rect=(0, 0, 1, 0.96))
+            figs[(f"spec{k}", theme)] = fig64(fig)
+
     write_report(figs, stats, n_ch, n_t, dt, time.time() - t0)
 
 
@@ -307,6 +541,35 @@ def write_report(figs, s, n_ch, n_t, dt, elapsed):
         for k, (a, b) in s["quad"].items())
     img_grammar = img_pair(figs, "grammar", "organization residuals, R0 vs R2")
     img_quad = img_pair(figs, "quad", "channel-state quadrants")
+    fam_rows = "".join(
+        f"<tr><td>{f['rt']:.1f}</td><td>{f['n_frag']}</td>"
+        f"<td>{f['n_gained']}</td><td>{f['base_mz']}</td>"
+        f"<td>{f['D']:.2f}</td><td>{f['C']:.2f}</td>"
+        f"<td>{f['X']:.2f}</td>"
+        f"<td>{f['reading']}"
+        f"{' &mdash; ' + f['label'] if f['label'] else ''}"
+        f"{'' if f['X'] >= 0.25 else ' <span class=chip>class shift</span>'}"
+        f"</td></tr>"
+        for f in s["families"])
+    cat_head = {"degradation-like": "Degradation face",
+                "contamination-like": "Contamination face",
+                "mixed / unresolved": "Beyond the frozen dictionaries"}
+    spec_html = "".join(
+        f"<h3>{cat_head[f['reading']]} &mdash; "
+        + (f["label"] if f["label"]
+           and f["reading"] != "mixed / unresolved"
+           else "signature outside both dictionaries")
+        + f" (RT {f['rt']:.1f}&thinsp;min, base peak m/z {f['base_mz']})</h3>"
+        + img_pair(figs, f"spec{k}", "three-spectra pseudo-EI reconstruction")
+        for k, f in enumerate(s["exemplars"]))
+    himass_note = ("" if s["has_himass"] else
+                   " No credible high-mass family (m/z &gt; 500, e.g. a "
+                   "cyclic-oligomer-type marker) was nominated by the "
+                   "events of this particular pair; the panel reports what "
+                   "the data support and does not manufacture known cohort "
+                   "markers.")
+    tau_s = TAU * dt
+    n_fam_rec = len(s["families"])
 
     def trim(t, n=90):
         t = t.strip("_")
@@ -315,7 +578,7 @@ def write_report(figs, s, n_ch, n_t, dt, elapsed):
     html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>sig2dna case study — one virgin and one recycled PET, three readings</title>
+<title>sig2dna case study — one virgin and one recycled PET, four readings</title>
 <style>
   :root {{ --ink:#1c2321; --mut:#5c6663; --bg:#fbfaf7; --card:#ffffff;
           --line:#e3e0d8; --v:#2e7d54; --r:#b3542e; --acc:#22536b;
@@ -389,7 +652,7 @@ if(t)document.documentElement.setAttribute('data-theme',t);}}catch(e){{}}
 </script>
 <main>
 
-<h1>One virgin and one recycled PET &mdash; three readings of the same two signals</h1>
+<h1>One virgin and one recycled PET &mdash; four readings of the same two signals</h1>
 <p class="sub">sig2dna case study &middot; regenerated by
 <code>run_case_study.py</code> from the shipped anonymized data
 ({n_ch} channels &times; {n_t:,} scans, {dt:.2f}&thinsp;s/scan,
@@ -519,18 +782,115 @@ construction intends. Organization-only channels appear at both ends of
 the mass axis: a tendency, not a partition of chemical information by
 mass.</p>
 
-<h2>4 &middot; Three readings, one verdict structure</h2>
+<h2>4 &middot; From differential events to chemistry &mdash; the two
+faces of recycling</h2>
+<p>The event ontology extends one step further, from statistics back to
+<em>recognizable chemistry</em>:</p>
+<p class="mono" style="text-align:center">letters &rarr; fragment-peak
+events &rarr; co-eluting fragments &rarr; pseudo-EI spectrum &rarr;
+candidate chemistry</p>
+<p>The selection is <b>blind-first</b>: the event algebra nominates the
+event classes <em>gained</em> by the recycled run (present in R, absent
+in V), chain-clusters their apexes into co-eluting families
+(|t<sub>m</sub>&nbsp;&minus;&nbsp;t<sup>*</sup>| &le; &tau; =
+{tau_s:.1f}&thinsp;s), and reconstructs each family's spectrum from the
+<b>raw, local-baseline-corrected ion amplitudes</b> of <em>all</em>
+co-eluting events, normalized to base peak = 100. The event machinery
+supplies the candidate peak; the original signal supplies the spectral
+intensities &mdash; event surprisal bits are never used as intensities.
+Only <em>after</em> reconstruction is each spectrum compared with two
+frozen candidate-marker dictionaries: <b>&#119967;</b>
+(degradation/history: furanic-like 96/109, anhydride-like 148,
+dioxolane/acetaldehyde-EG-like 87/45, cyclic-oligomer-like 572) and
+<b>&#119966;</b> (contamination/cleanliness: fatty-ester-like 74,
+alkylbenzene-like 91, terpene/PAH/alkene-like 121/165/55/56/69,
+oxygenate-like 59/72/86/88). D and C are the fractions of a spectrum's
+<em>signature</em> intensity (its 10 most intense fragments, standard
+EI main-peak practice) carried by each dictionary, with exact unit-mass
+matching &mdash; a &plusmn;1 tolerance would conflate chemically
+opposite markers such as anhydride 148 (degradation) and
+dialkyl-phthalate 149 (plasticizer contamination);
+exemplars are chosen only near the poles (D&nbsp;&Gt;&nbsp;C or
+C&nbsp;&Gt;&nbsp;D) <em>and</em> with genuine amplitude excess:
+X&nbsp;=&nbsp;&Sigma;S<sup>+</sup>/&Sigma;S<sub>R</sub>&nbsp;&ge;&nbsp;0.25,
+where a low X unmasks families the event layer flagged as gained but
+whose fragments the response-matched virgin also carries &mdash;
+apex/class <em>shifts</em> (inventory change without amplitude excess),
+not new chemistry. The three-spectra display below makes this
+distinction visible instead of hiding it.</p>
+<p>{s['n_gained_cls']} gained event classes cluster into
+{s['n_fam_all']} co-eluting families with &ge;&thinsp;3 fragments;
+the {n_fam_rec} strongest were reconstructed. At the poles with genuine
+excess (X&nbsp;&ge;&nbsp;0.25): {s['n_deg']} degradation-like and
+{s['n_con']} contamination-like famil{'ies' if s['n_con'] != 1 else 'y'};
+in addition, the {s['n_unm']} strongest excess families
+(X&nbsp;&ge;&nbsp;0.5) whose signatures <em>neither</em> dictionary
+spans are shown as their own category &mdash; the dictionaries were
+frozen before looking, and the panel does not stretch them after the
+fact. Response calibration between the two runs:
+&alpha; = {s['alpha']:.3f} (median per-scan TIC
+ratio).{himass_note}</p>
+{img_pair(figs, 'fammap', 'degradation vs contamination family map')}
+<table>
+<tr><th>RT (min)</th><th>fragments</th><th>gained</th>
+<th>base peak m/z</th><th>D</th><th>C</th><th>X</th>
+<th>reading</th></tr>
+{fam_rows}
+</table>
+<p>For each pole exemplar, three spectra: the <b>virgin reference</b>
+around the same retention region (response-matched by &alpha;, drawn on
+the same scale), the <b>recycled raw pseudo-EI spectrum</b> &mdash;
+this is the chemical object &mdash; and the <b>excess spectrum</b>
+[S<sub>R</sub>&nbsp;&minus;&nbsp;&alpha;S<sub>V</sub>]<sub>+</sub>, the
+explanatory overlay highlighting the fragments responsible for the
+difference.</p>
+{spec_html}
+<p>What this particular pair says, read blind: the one clean
+degradation-pole exemplar carries the
+dioxolane/acetaldehyde&ndash;ethylene-glycol signature (base peak
+m/z&thinsp;45) &mdash; a recycling-<em>history</em> marker;
+{('no contamination-pole family survives the excess gate, the '
+  'contamination-flagged families being apex/class shifts rather than '
+  'new chemistry') if s['n_con'] == 0 else
+ (str(s['n_con']) + ' contamination-pole '
+  + ('family survives' if s['n_con'] == 1 else 'families survive')
+  + ' the excess gate')}. The largest genuine excess lies <em>beyond</em> the frozen
+dictionaries: an aromatic-ester-type signature (163/194/135/103) and an
+ester-plasticizer-type signature (149/167 over an alkyl series) &mdash;
+both family-level candidate readings pending library confirmation, and
+natural candidates for a future dictionary revision. Blind-first
+reporting keeps such surprises visible instead of forcing them onto the
+nearest known marker.</p>
+<p class="note"><b>Naming caution.</b> All labels above
+(&laquo;&thinsp;furanic-like&thinsp;&raquo;,
+&laquo;&thinsp;fatty-ester-like&thinsp;&raquo;&hellip;) are
+family-level candidate EI assignments pending library confirmation.
+Promotion to a named molecule requires two independent sources of
+identification (retention index <em>and</em> a convincing full-spectrum
+library match); none is claimed here. A contamination spectrum reads
+roughly as <em>foreign chemistry was added</em>; a degradation spectrum
+as <em>the polymer/process generated or transformed chemistry</em>
+&mdash; and the event algebra reminds us that a transformation
+A&thinsp;&rarr;&thinsp;B writes both signs at once
+(E<sup>+</sup>&thinsp;&gt;&thinsp;0 and
+E<sup>&minus;</sup>&thinsp;&gt;&thinsp;0), which is why the
+two-dimensional (E<sup>+</sup>,&thinsp;E<sup>&minus;</sup>) reading is
+mechanistically richer than any single scalar.</p>
+
+<h2>5 &middot; Four readings, one verdict structure</h2>
 <div class="verdict">
 <p><b>Letters</b> say how the chemistry is <em>arranged</em> (shape,
 history). <b>Events</b> say <em>what and how much</em> is there
 (inventory, in additive bits). <b>Grammar</b> says what remains unusual
 about the arrangement <em>once the inventory is known</em> &mdash;
 signed: perturbations may add texture (I<sub>O</sub><sup>+</sup>) or
-erase it (I<sub>O</sub><sup>&minus;</sup>).</p>
+erase it (I<sub>O</sub><sup>&minus;</sup>). <b>Reconstructed spectra</b>
+say whether the gained chemistry looks like degradation or
+contamination &mdash; the two faces of recycling.</p>
 <p style="margin-bottom:0">No single scalar decides; a defensible
 verdict is structured &mdash; history &times; inventory departure
-&times; organization &times; validity domain &mdash; and every claim
-carries the scope it was measured in.</p>
+&times; organization &times; chemistry &times; validity domain &mdash;
+and every claim carries the scope it was measured in.</p>
 </div>
 
 <footer>Generated deterministically by <code>run_case_study.py</code>
