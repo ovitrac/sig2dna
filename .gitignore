@@ -134,3 +134,7 @@ dmypy.json
 # Drop zip files
 *.zip
 
+
+# CloakMCP session artifacts
+.cloak-session-audit.jsonl
+**/.cloak-session-audit.jsonl
