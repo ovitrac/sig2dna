@@ -816,7 +816,13 @@ X&nbsp;=&nbsp;&Sigma;S<sup>+</sup>/&Sigma;S<sub>R</sub>&nbsp;&ge;&nbsp;0.25,
 where a low X unmasks families the event layer flagged as gained but
 whose fragments the response-matched virgin also carries &mdash;
 apex/class <em>shifts</em> (inventory change without amplitude excess),
-not new chemistry. The three-spectra display below makes this
+not new chemistry: <b>event-class gain &ne; chemical excess</b>. The
+route is thus two successive questions &mdash; <b>4a</b>: is there
+actual chemical excess? (X answers) &mdash; <b>4b</b>: what kind of
+chemistry is that excess compatible with? (the dictionaries answer,
+and only for families that passed 4a). In full: gained event &rarr;
+co-eluting family &rarr; pseudo-EI spectrum &rarr; excess gate &rarr;
+chemical interpretation. The three-spectra display below makes the 4a
 distinction visible instead of hiding it.</p>
 <p>{s['n_gained_cls']} gained event classes cluster into
 {s['n_fam_all']} co-eluting families with &ge;&thinsp;3 fragments;
@@ -854,13 +860,26 @@ m/z&thinsp;45) &mdash; a recycling-<em>history</em> marker;
   'new chemistry') if s['n_con'] == 0 else
  (str(s['n_con']) + ' contamination-pole '
   + ('family survives' if s['n_con'] == 1 else 'families survive')
-  + ' the excess gate')}. The largest genuine excess lies <em>beyond</em> the frozen
-dictionaries: an aromatic-ester-type signature (163/194/135/103) and an
-ester-plasticizer-type signature (149/167 over an alkyl series) &mdash;
-both family-level candidate readings pending library confirmation, and
-natural candidates for a future dictionary revision. Blind-first
-reporting keeps such surprises visible instead of forcing them onto the
-nearest known marker.</p>
+  + ' the excess gate')}. The largest genuine excess lies
+<em>beyond</em> the frozen dictionaries: an <b>aromatic-ester-type
+excess associated with recycling/process history</b>
+(163/194/135/103; candidate only) and an
+<b>ester-plasticizer-type excess</b> (149/167 over an alkyl series;
+candidate only) &mdash; family-level candidate readings pending
+two-source confirmation (retention index <em>and</em> library match).
+Blind-first reporting keeps such surprises visible instead of forcing
+them onto the nearest known marker.</p>
+<div class="verdict">
+<p style="margin-bottom:0"><b>Recycling leaves at least two chemically
+distinct memories.</b> One is polymer/process history, illustrated
+here by a genuine dioxolane/acetaldehyde&ndash;EG-type excess. The
+other is foreign contamination chemistry, which the frozen dictionary
+can detect but which is not expressed as a genuine excess in this
+decontaminated example. The largest additional spectral information in
+this sample lies instead in previously unencoded aromatic-ester and
+ester-plasticizer-type families, illustrating why the dictionary must
+remain open to unknown chemistry.</p>
+</div>
 <p class="note"><b>Naming caution.</b> All labels above
 (&laquo;&thinsp;furanic-like&thinsp;&raquo;,
 &laquo;&thinsp;fatty-ester-like&thinsp;&raquo;&hellip;) are
