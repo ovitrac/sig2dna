@@ -89,11 +89,13 @@ THEMES = {
 }
 
 
-def fig64(fig):
+def figbytes(fig):
+    """Render once as SVG; the same bytes feed the HTML (base64-inline)
+    and the Markdown report (committed files under figures/)."""
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=110, bbox_inches="tight")
+    fig.savefig(buf, format="svg", bbox_inches="tight")
     plt.close(fig)
-    return base64.b64encode(buf.getvalue()).decode()
+    return buf.getvalue()
 
 
 def themed_axes(theme, figsize=(9, 2.8)):
@@ -371,7 +373,7 @@ def main():
         ax.set_xlabel("retention time (min)")
         ax.set_ylabel("total ion current")
         legend(ax, t)
-        figs[("tic", theme)] = fig64(fig)
+        figs[("tic", theme)] = figbytes(fig)
 
         fig, ax, t = themed_axes(theme)
         ax.plot(mz, entV, color=t["v"], lw=0.8, label="virgin")
@@ -380,7 +382,7 @@ def main():
         ax.set_xlabel("m/z channel")
         ax.set_ylabel("text entropy (bits)")
         legend(ax, t)
-        figs[("entropy", theme)] = fig64(fig)
+        figs[("entropy", theme)] = figbytes(fig)
 
         fig, ax, t = themed_axes(theme)
         ax.plot(mz, nV, color=t["v"], lw=0.8, label="virgin")
@@ -389,7 +391,7 @@ def main():
         ax.set_xlabel("m/z channel")
         ax.set_ylabel("resolved events per channel")
         legend(ax, t)
-        figs[("counts", theme)] = fig64(fig)
+        figs[("counts", theme)] = figbytes(fig)
 
         fig, axs = plt.subplots(2, 1, figsize=(9, 4.6), sharex=True)
         tt = THEMES[theme]
@@ -411,7 +413,7 @@ def main():
             ax.set_ylabel("z", color=tt["ink"])
             ax.set_title(lbl, fontsize=9, color=tt["ink"], loc="left")
         axs[1].set_xlabel("m/z channel", color=tt["ink"])
-        figs[("grammar", theme)] = fig64(fig)
+        figs[("grammar", theme)] = figbytes(fig)
 
         fig, ax, t = themed_axes(theme, figsize=(5.6, 4.2))
         m_low = mz < 200
@@ -425,7 +427,7 @@ def main():
         ax.set_xlabel("inventory z  (event count vs reference)")
         ax.set_ylabel("organization z  (R2-calibrated)")
         legend(ax, t)
-        figs[("quad", theme)] = fig64(fig)
+        figs[("quad", theme)] = figbytes(fig)
 
         # route 4 figures: D-C family map + three-spectra exemplars
         fig, ax, t = themed_axes(theme, figsize=(5.6, 4.2))
@@ -449,7 +451,7 @@ def main():
         ax.set_xlabel("C  (contamination-dictionary intensity fraction)")
         ax.set_ylabel("D  (degradation-dictionary intensity fraction)")
         legend(ax, t)
-        figs[("fammap", theme)] = fig64(fig)
+        figs[("fammap", theme)] = figbytes(fig)
 
         for k, f in enumerate(stats["exemplars"]):
             smax = max(f["SR"].values())
@@ -502,16 +504,29 @@ def main():
                   f"{f['n_frag']} fragments ({f['n_gained']} gained)",
                 fontsize=9.5, color=tt["ink"], x=0.12, ha="left")
             fig.tight_layout(rect=(0, 0, 1, 0.96))
-            figs[(f"spec{k}", theme)] = fig64(fig)
+            figs[(f"spec{k}", theme)] = figbytes(fig)
 
     write_report(figs, stats, n_ch, n_t, dt, time.time() - t0)
+    write_markdown(figs, stats, n_ch, n_t, dt)
 
 
 def img_pair(figs, name, alt):
-    return (f'<img class="fl" src="data:image/png;base64,'
-            f'{figs[(name, "light")]}" alt="{alt}">'
-            f'<img class="fd" src="data:image/png;base64,'
-            f'{figs[(name, "dark")]}" alt="{alt}">')
+    b64l = base64.b64encode(figs[(name, "light")]).decode()
+    b64d = base64.b64encode(figs[(name, "dark")]).decode()
+    return (f'<img class="fl" src="data:image/svg+xml;base64,'
+            f'{b64l}" alt="{alt}">'
+            f'<img class="fd" src="data:image/svg+xml;base64,'
+            f'{b64d}" alt="{alt}">')
+
+
+def md_pic(name, alt):
+    """GitHub-rendered dual-theme figure: the <picture> element with a
+    prefers-color-scheme source is supported in GitHub Markdown."""
+    return (f'<picture>\n'
+            f'<source media="(prefers-color-scheme: dark)" '
+            f'srcset="figures/{name}_dark.svg">\n'
+            f'<img src="figures/{name}_light.svg" alt="{alt}">\n'
+            f'</picture>')
 
 
 def write_report(figs, s, n_ch, n_t, dt, elapsed):
@@ -936,6 +951,306 @@ any number in this report.</footer>
     with open(out, "w") as f:
         f.write(html)
     print(f"written {out} ({os.path.getsize(out) / 1e6:.1f} MB)")
+
+
+def write_markdown(figs, s, n_ch, n_t, dt):
+    """GitHub-rendered companion of report.html: same generator, same
+    numbers; figures are committed dual-theme SVGs under figures/."""
+    fdir = os.path.join(HERE, "figures")
+    os.makedirs(fdir, exist_ok=True)
+    for (name, theme), data in figs.items():
+        with open(os.path.join(fdir, f"{name}_{theme}.svg"), "wb") as fh:
+            fh.write(data)
+
+    lv, lr = s["lettersV"], s["lettersR"]
+    keys = [k for k in "YAZBCX_" if k in lv or k in lr]
+    lhead = " | ".join(f"`{k}`" for k in keys)
+    lsep = " | ".join("---:" for _ in keys)
+    lrow_v = " | ".join(f"{lv.get(k, 0):,}" for k in keys)
+    lrow_r = " | ".join(f"{lr.get(k, 0):,}" for k in keys)
+    topg = " · ".join(f"m/z {m} (+{g})" for m, g in s["topgain"])
+    sign_word = {1: "net enrichment (I_O⁺ dominated)",
+                 -1: "net regularization (I_O⁻ dominated)",
+                 0: "balanced"}[s["sign"]]
+
+    def _ratio(lo, hi):
+        if hi == 0:
+            return ("∞ (no channel above the gate at m/z ≥ 200)"
+                    if lo > 0 else "—")
+        return f"{lo / hi:.2f}"
+    ladder_rows = "\n".join(
+        f"| `{name}` | {lo:.3f} | {hi:.3f} | **{_ratio(lo, hi)}** |"
+        for name, (lo, hi) in s["ladder"].items())
+    quad_rows = "\n".join(f"| {k} | {a:.3f} | {b:.3f} |"
+                          for k, (a, b) in s["quad"].items())
+    fam_rows = "\n".join(
+        f"| {f['rt']:.1f} | {f['n_frag']} | {f['n_gained']} "
+        f"| {f['base_mz']} | {f['D']:.2f} | {f['C']:.2f} | {f['X']:.2f} "
+        f"| {f['reading']}"
+        + (f" — {f['label']}" if f["label"] else "")
+        + ("" if f["X"] >= 0.25 else " *(class shift)*") + " |"
+        for f in s["families"])
+    cat_head = {"degradation-like": "Degradation face",
+                "contamination-like": "Contamination face",
+                "mixed / unresolved": "Beyond the frozen dictionaries"}
+    spec_md = "\n\n".join(
+        f"#### {cat_head[f['reading']]} — "
+        + (f["label"] if f["label"]
+           and f["reading"] != "mixed / unresolved"
+           else "signature outside both dictionaries")
+        + f" (RT {f['rt']:.1f} min, base peak m/z {f['base_mz']})\n\n"
+        + md_pic(f"spec{k}", "three-spectra pseudo-EI reconstruction")
+        for k, f in enumerate(s["exemplars"]))
+    himass = ("" if s["has_himass"] else
+              " No credible high-mass family (m/z > 500, e.g. a "
+              "cyclic-oligomer-type marker) was nominated by the events "
+              "of this particular pair; the panel reports what the data "
+              "support and does not manufacture known cohort markers.")
+    con_clause = (
+        "no contamination-pole family survives the excess gate, the "
+        "contamination-flagged families being apex/class shifts rather "
+        "than new chemistry" if s["n_con"] == 0 else
+        f"{s['n_con']} contamination-pole "
+        + ("family survives" if s["n_con"] == 1 else "families survive")
+        + " the excess gate")
+
+    def trim(t, n=90):
+        t = t.strip("_")
+        return (t[:n] + "…") if len(t) > n else (t or "(empty)")
+
+    md = f"""# One virgin and one recycled PET — four readings of the same two signals
+
+*sig2dna case study · GitHub-rendered companion of
+[`report.html`](report.html) — same generator
+([`run_case_study.py`](run_case_study.py)), same numbers, regenerated
+from the shipped anonymized data ({n_ch} channels × {n_t:,} scans,
+{dt:.2f} s/scan, m/z 40–650). Figures are committed dual-theme SVGs.*
+
+> **Scope of this example.** The two chromatograms are real, anonymized
+> measurements (identifiers, timestamps and provenance removed). The
+> dataset also ships an anonymized **reference-population calibration**
+> (per-channel location and spread of grammar residuals and event
+> counts, from {s['n_ref']} anonymized virgin references,
+> leave-one-out; mode = `reference_population`). No technical-replicate
+> floors exist here. The calibration bundle was built by the same
+> software stack that generates this report — per-channel grammar
+> calibration is **pipeline-local**; recomputing on a different stack
+> may shift individual z values. The numbers illustrate the four
+> representations; they are not a validated classification.
+
+## 0 · The two signals
+
+{md_pic('tic', 'TIC overlay')}
+
+Summed over all channels the two runs look broadly similar — the
+differences that matter live per channel, and each route below reads
+them differently.
+
+## 1 · Route 1: CWT letters — shape & organization
+
+Each channel is wavelet-encoded into letters (`Y` rise, `A` apex,
+`Z` fall, `B` return, `C`/`X` merged forms, `_` non-coding) after
+Poisson rejection of noise segments; amplitude is deliberately
+forgotten — the letters read the *morphology*. m/z {s['demo_mz']},
+most-coded channel of the virgin run:
+
+```text
+V  {trim(s['textV'])}
+R  {trim(s['textR'])}
+```
+
+| letter counts (all channels) | {lhead} |
+|---|{lsep}|
+| virgin | {lrow_v} |
+| recycled | {lrow_r} |
+
+{md_pic('entropy', 'per-channel text entropy')}
+
+Per-channel text entropy is the intensive organization statistic:
+where the recycled trace departs, its channel texts are organized
+differently at similar coding density.
+
+## 2 · Route 2: events — inventory & amount
+
+Peaks above each channel's *local* noise threshold become events;
+counting them per channel gives the extensive inventory. Population
+comparison uses Laplace surprisal: an event class absent from the
+reference weighs −log₂(1/(n+2)) bits.
+
+{md_pic('counts', 'per-channel event counts')}
+
+| | event budget B | ρ_E (median events/channel) |
+|---|---:|---:|
+| virgin | {s['BV']:,} | {s['rhoV']:.0f} |
+| recycled | {s['BR']:,} | {s['rhoR']:.0f} |
+
+Composition distance d_comp(V, R) = **{s['dcomp']:.4f}**; directed
+information of R against the single-reference V:
+E⁺ = **{s['Egain']:.0f} bits** (gained classes),
+E⁻ = **{s['Eloss']:.0f} bits** (lost classes).
+Channels gaining most events: {topg}.
+
+## 3 · Route 3: grammar — organization conditioned on inventory, and why calibration matters
+
+The chain rule I(E, T) = I(E) + I(T | E) in practice: an order-2
+Markov grammar trained on the virgin channel texts (gap runs become
+punctuation — retention time is punctuation, not vocabulary) assigns
+each channel text a code length in bits; the expectation given that
+channel's *resolved event count* is subtracted (shipped reference fit:
+L̂ = {s['beta'][0]:.1f} + {s['beta'][1]:.2f} N); residuals are
+standardized and censored at |z| > 2. **How they are standardized
+decides what you see** — the same residuals under three calibrations
+of increasing evidential quality:
+
+| calibration of z | P(\\|z\\|>2), m/z<200 | P(\\|z\\|>2), m/z≥200 | low/high ratio |
+|---|---:|---:|---:|
+{ladder_rows}
+
+Under the global proxy (R0) the flagged channels are **exclusively
+low-mass** — a **heteroscedasticity artifact**: grammar-residual
+variance grows with channel event density, and one global σ
+preferentially pushes dense low-mass channels past the gate while
+starving the sparse high-mass channels. Density-conditioned σ(N) (R1)
+flattens the mass dependence almost completely; the shipped
+per-channel reference-population calibration (R2) is the properly
+scaled score. *The representation can be simple; the calibration must
+not be.*
+
+{md_pic('grammar', 'organization residuals, R0 vs R2')}
+
+| R2-calibrated | I_O⁺ (bits) | I_O⁻ (bits) | net |
+|---|---:|---:|---:|
+| virgin (vs shipped reference population) | {s['ioV'][0]:.0f} \
+| {s['ioV'][1]:.0f} | {s['ioV'][0] - s['ioV'][1]:+.0f} |
+| recycled | {s['ioR'][0]:.0f} | {s['ioR'][1]:.0f} | {s['ioR'][0] - s['ioR'][1]:+.0f} |
+
+Direction of the organization change R vs V: **{sign_word}**. Profile
+distance (level-free) = {s['pdist']:.3f}. Calibration mode of every
+number in this section: `reference_population` — never to be read as
+replicate-grade significance.
+
+### Channel states: what kind of difference does each channel carry?
+
+{md_pic('quad', 'channel-state quadrants')}
+
+| fraction of channels | m/z < 200 | m/z ≥ 200 |
+|---|---:|---:|
+{quad_rows}
+
+Inventory change and organization change are largely carried by
+*different* channels — the two routes localize different aspects of
+the same perturbation, which is exactly what the chain-rule
+construction intends.
+
+## 4 · From differential events to chemistry — the two faces of recycling
+
+letters → fragment-peak events → co-eluting fragments → pseudo-EI
+spectrum → candidate chemistry
+
+The selection is **blind-first**: the event algebra nominates the
+event classes *gained* by the recycled run, chain-clusters their
+apexes into co-eluting families (\\|t_m − t\\*\\| ≤ τ =
+{TAU * dt:.1f} s), and reconstructs each family's spectrum from the
+**raw, local-baseline-corrected ion amplitudes** of *all* co-eluting
+events, normalized to base peak = 100 — event surprisal bits are never
+used as intensities. Only *after* reconstruction is each spectrum
+compared with two frozen candidate-marker dictionaries: **𝒟**
+(degradation/history: furanic-like 96/109, anhydride-like 148,
+dioxolane/acetaldehyde-EG-like 87/45, cyclic-oligomer-like 572) and
+**𝒞** (contamination/cleanliness: fatty-ester-like 74,
+alkylbenzene-like 91, terpene/PAH/alkene-like 121/165/55/56/69,
+oxygenate-like 59/72/86/88). D and C are the fractions of a spectrum's
+*signature* intensity (10 most intense fragments, exact unit-mass
+matching — a ±1 tolerance would conflate anhydride 148 with
+dialkyl-phthalate 149). Exemplars need a pole (D ≫ C or C ≫ D) *and*
+genuine amplitude excess X = ΣS⁺/ΣS_R ≥ 0.25:
+**event-class gain ≠ chemical excess** — the route asks **4a** is
+there actual chemical excess? then **4b** what chemistry is it
+compatible with?
+
+{s['n_gained_cls']} gained event classes cluster into
+{s['n_fam_all']} co-eluting families with ≥ 3 fragments; the
+{len(s['families'])} strongest were reconstructed
+({s['n_deg']} degradation-like, {s['n_con']} contamination-like at the
+poles with X ≥ 0.25; the {s['n_unm']} strongest excess families whose
+signatures *neither* dictionary spans are shown as their own
+category). Response calibration between the two runs:
+α = {s['alpha']:.3f} (median per-scan TIC ratio).{himass}
+
+{md_pic('fammap', 'degradation vs contamination family map')}
+
+| RT (min) | fragments | gained | base peak m/z | D | C | X | reading |
+|---:|---:|---:|---:|---:|---:|---:|---|
+{fam_rows}
+
+For each exemplar, three spectra: the **virgin reference** around the
+same retention region (response-matched by α, same scale), the
+**recycled raw pseudo-EI spectrum** — the chemical object — and the
+**excess spectrum** [S_R − α·S_V]₊, the explanatory overlay.
+
+{spec_md}
+
+What this particular pair says, read blind: the one clean
+degradation-pole exemplar carries the dioxolane/acetaldehyde–
+ethylene-glycol signature (base peak m/z 45) — a recycling-*history*
+marker; {con_clause}. The largest genuine excess lies *beyond* the
+frozen dictionaries: a **dimethyl-benzenedicarboxylate-like aromatic
+ester** (terephthalate-type expected in PET context; positional isomer
+unresolved; 163/194/135/103) — a recycling/*process*-history reading —
+`E2 · MSP+RI-library supported candidate`, and a **heavy
+dialkyl-phthalate-like plasticizer signature** (149/167 over an alkyl
+series) `E2 · MSP+RI-library supported candidate`. Neither is
+*confirmed* — see the evidentiality ladder below.
+
+> **Recycling leaves at least two chemically distinct memories.** One
+> is polymer/process history, illustrated here by a genuine
+> dioxolane/acetaldehyde–EG-type excess. The other is foreign
+> contamination chemistry, which the frozen dictionary can detect but
+> which is not expressed as a genuine excess in this decontaminated
+> example. The largest additional spectral information in this sample
+> lies instead in previously unencoded aromatic-ester and
+> ester-plasticizer-type families, illustrating why the dictionary
+> must remain open to unknown chemistry.
+
+> **Naming caution — the evidentiality ladder.** **E0** fragment-
+> pattern candidate · **E1** external spectral-library supported ·
+> **E2** spectral + independent-library retention-region supported ·
+> **E3** measured retention index and/or authentic-standard
+> confirmation. Dictionary labels above are E0; the two promoted
+> families are E2 — *supported, not confirmed*: their retention
+> evidence is a library retention *region*, not a retention index
+> measured for these peaks. A standing warning: a very high unit-mass
+> EI match score is *not* molecular identity — structurally unrelated
+> molecules can share the same nominal mass and the same nominal
+> neutral loss.
+
+## 5 · Four readings, one verdict structure
+
+**Letters** say how the chemistry is *arranged* (shape, history).
+**Events** say *what and how much* is there (inventory, in additive
+bits). **Grammar** says what remains unusual about the arrangement
+*once the inventory is known* — signed: perturbations may add texture
+(I_O⁺) or erase it (I_O⁻). **Reconstructed spectra** say whether the
+gained chemistry looks like degradation or contamination — the two
+faces of recycling. No single scalar decides; a defensible verdict is
+structured — history × inventory departure × organization × chemistry
+× validity domain — and every claim carries the scope it was measured
+in.
+
+---
+
+*Generated deterministically by `run_case_study.py` (sig2dna, MIT).
+Data: anonymized full-scan GC-MS, shipped as `case_vr.npz`. No
+language model was involved in producing any number in this report.*
+"""
+    out = os.path.join(HERE, "report.md")
+    with open(out, "w") as f:
+        f.write(md)
+    n_svg = len(figs)
+    tot = sum(os.path.getsize(os.path.join(fdir, p))
+              for p in os.listdir(fdir))
+    print(f"written {out} ({os.path.getsize(out) / 1e3:.0f} kB) + "
+          f"{n_svg} SVGs ({tot / 1e6:.1f} MB)")
 
 
 if __name__ == "__main__":
