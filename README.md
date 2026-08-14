@@ -79,6 +79,27 @@ verdict = is_recycled_pet(events, {"V1": ref1, "V2": ref2}, history_score=z)
 
 Both routes are validated by exact synthetic laws shipped as tests (one isolated peak ⇒ exactly one event; shared populations cancel exactly; a class absent from *n* references contributes exactly −log₂(1/(n+2)) bits; channel counts are displacement-invariant; composition and log-ratio dispersion are budget-invariant).
 
+### 🔗 Connecting the two: the organization/grammar algebra (v0.7)
+
+The two routes are now joined by a third layer (`grammar`) that takes the information chain rule seriously: **I(E, T) = I(E) + I(T | E)**. The event layer measures *what* is present; the symbolic texts, **conditioned on the resolved event inventory**, measure only the residual *organization* — how the signal is arranged beyond what the inventory explains. A reference grammar (order-2 Markov over letters + gap punctuation: retention time becomes *punctuation, not vocabulary*) assigns each channel text a code length in bits; subtracting the expectation given the channel's event count and censoring per channel against reference replicates yields a **signed** organization measure: `I_O+` (excess/new syntax) and `I_O−` (over-regularity/texture erasure) — both directions are informative, perturbations may add texture or erase it.
+
+The layer ships with its measured validity limits in the docstrings: conditioning must use the event layer (never the text's own statistics); censoring is constitutive; organization *levels* are acquisition-session-sensitive, so floors must come from true replicates; and the estimator requires a **sparse-event regime** — `rho_e` (median resolved events per channel) is the regime coordinate, with two distinct saturation modes (scale mismatch: curable by scale choice; event-density saturation in rich matrices: not cured by coarsening — use channel counts there). Whether the *sign* of an organization change transports across sessions while its magnitude does not is deliberately left as a stated open question.
+
+`sig2text` (**experimental**, schema in progress) sketches the serialization end of the same programme: measurements compiled into typed, evidential *chemical documents* — namespaced claims carrying state, magnitude, validity scope and evidence status, with masks (missing ≠ zero), a strict STATE/CAUSE separation, suppressed-negative-finding tokens, and the round-trip law `parse(serialize(doc)) == doc` shipped as a test. The intended division of labor: deterministic kernels produce the documents; a language model may *read* them and render prose — it never produces the measurements or the claims.
+
+**Worked case study.** [`examples/case_study_pet/`](examples/case_study_pet/) applies all three readings to one anonymized pair of real chromatograms (a virgin and a recycled PET, single-quadrupole GC-MS): `run_case_study.py` regenerates [`report.html`](examples/case_study_pet/report.html) from the shipped data — letters, events, and grammar side by side on the same two signals.
+
+```python
+from sig2dna_core.grammar import (MarkovGrammar, tokenize, fit_conditioning,
+                                  channel_calibration, organization_scores)
+
+ref_texts = [[tokenize(t) for t in run] for run in reference_runs]
+G = MarkovGrammar().train(seq for run in ref_texts for seq in run)
+# fit L^(T|N) on leave-one-out reference scores, calibrate per channel,
+# then score any run: z-profile + signed, censored I_O+ / I_O- in bits
+z, i_o_pos, i_o_neg = organization_scores(L, N, beta, mu, sd)
+```
+
 ---
 
 
