@@ -25,6 +25,11 @@ Principles encoded here:
   "not identifiable" is information, not absence.
 - **Round-trip law**: ``parse(serialize(doc)) == doc`` for the scientific
   state object; serialization must not lose or coerce.
+- **Calibration is part of the claim**: a score carries the mode that
+  produced it (``replicate`` / ``reference_population`` /
+  ``density_conditioned`` / ``global_proxy``, in decreasing evidential
+  quality); a density-conditioned score must never masquerade as
+  replicate-grade significance.
 """
 from __future__ import annotations
 
@@ -47,6 +52,7 @@ class Claim:
     scope: str = ""
     status: str = "measured"
     mask_reason: str = ""
+    calibration: str = ""
 
     def __post_init__(self):
         if self.namespace not in NAMESPACES:
@@ -74,8 +80,9 @@ class Document:
                 body = f"value=NA mask_reason={c.mask_reason!r}"
             else:
                 body = f"value={c.value!r}"
+            cal = f" calibration={c.calibration}" if c.calibration else ""
             lines.append(f"  {c.namespace}:{c.name} state={c.state!r} "
-                         f"{body} scope={c.scope!r} status={c.status}")
+                         f"{body} scope={c.scope!r} status={c.status}{cal}")
         return "\n".join(lines) + "\n"
 
 
@@ -90,15 +97,15 @@ def parse(text: str) -> Document:
     pat = re.compile(
         r"^\s*(\w+):(\S+) state='([^']*)' "
         r"(?:value=(\S+)|value=NA mask_reason='([^']*)') "
-        r"scope='([^']*)' status=(\w+)$")
+        r"scope='([^']*)' status=(\w+)(?: calibration=(\S+))?$")
     for line in lines[3:]:
         m = pat.match(line)
         if not m:
             raise ValueError(f"unparseable claim line: {line!r}")
-        ns, name, state, val, mask, scope, status = m.groups()
+        ns, name, state, val, mask, scope, status, cal = m.groups()
         doc.claims.append(Claim(
             namespace=ns, name=name, state=state,
             value=None if val is None else float(val),
             scope=scope, status=status,
-            mask_reason=mask or ""))
+            mask_reason=mask or "", calibration=cal or ""))
     return doc

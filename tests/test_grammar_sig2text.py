@@ -3,7 +3,8 @@ round-trip (synthetic only)."""
 import numpy as np
 import pytest
 
-from sig2dna_core.grammar import (MarkovGrammar, channel_calibration,
+from sig2dna_core.grammar import (DensityCalibration, MarkovGrammar,
+                                  channel_calibration,
                                   fit_conditioning, organization_scores,
                                   profile_distance, rho_e, sign_delta,
                                   tokenize)
@@ -96,6 +97,21 @@ def test_gain_invariance_of_texts():
     assert e0.letters == e1.letters
 
 
+def test_density_calibration_flattens_heteroscedastic():
+    # variance grows with N: a global sigma over-flags high-N channels;
+    # DensityCalibration (R1) restores flat exceedance rates
+    rng = np.random.default_rng(9)
+    n = rng.integers(1, 60, 4000).astype(float)
+    r = rng.normal(0, 0.5 + 0.1 * n)
+    cal = DensityCalibration(n_bins=8).fit(r, n)
+    z = cal.z(r, n)
+    hi, lo = n > np.median(n), n <= np.median(n)
+    glob = np.abs(r / r.std()) > 2
+    corr = np.abs(z) > 2
+    assert glob[hi].mean() > 3 * glob[lo].mean()   # the artifact
+    assert corr[hi].mean() < 2 * max(corr[lo].mean(), 1e-3)  # the cure
+
+
 def test_sig2text_roundtrip_and_masks():
     doc = Document(sample_id="SYN-001", domain="synthetic-demo")
     doc.claims = [
@@ -105,6 +121,8 @@ def test_sig2text_roundtrip_and_masks():
         Claim("mu", "ORIGIN", state="", value=None, scope="cohort",
               status="suppressed",
               mask_reason="negative finding: not identifiable"),
+        Claim("phi", "O", state="-", value=-3.1, scope="same-session",
+              calibration="reference_population"),
     ]
     back = parse(doc.serialize())
     assert back == doc                      # the round-trip law

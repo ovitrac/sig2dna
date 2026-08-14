@@ -170,3 +170,44 @@ def sign_delta(io_target, io_reference) -> int:
     stability as a hypothesis to test, not a property to assume."""
     d = (io_target[0] - io_target[1]) - (io_reference[0] - io_reference[1])
     return (d > 0) - (d < 0)
+
+
+class DensityCalibration:
+    """Heteroscedastic fallback calibration: mu(N) and sigma(N) fitted by
+    event-count bins on pooled reference residuals.
+
+    Calibration hierarchy (in EVIDENTIAL quality, not numerical size)::
+
+        R3  per-channel true-replicate calibration
+        R2  reference-population per-channel (robust) + shrinkage to sigma(N)
+        R1  this class: density-conditioned sigma(N) proxy
+        R0  one global sigma -- didactic visualization only
+
+    A density-conditioned z must never masquerade as replicate-grade
+    significance: it is a proxy surprisal score. Label every score with
+    its calibration mode; lack of metrology must make claims harder, not
+    easier. The representation can be simple; the calibration must not
+    be."""
+
+    def __init__(self, n_bins: int = 10):
+        self.n_bins = n_bins
+
+    def fit(self, residuals: np.ndarray,
+            counts: np.ndarray) -> "DensityCalibration":
+        q = np.quantile(counts, np.linspace(0, 1, self.n_bins + 1))
+        q[-1] += 1
+        b = np.clip(np.searchsorted(q, counts, side="right") - 1,
+                    0, self.n_bins - 1)
+        self.edges = q
+        self.mu = np.array([residuals[b == k].mean()
+                            if (b == k).any() else 0.0
+                            for k in range(self.n_bins)])
+        self.sd = np.array([max(residuals[b == k].std(ddof=1), 1.0)
+                            if (b == k).sum() > 1 else 1.0
+                            for k in range(self.n_bins)])
+        return self
+
+    def z(self, residuals: np.ndarray, counts: np.ndarray) -> np.ndarray:
+        b = np.clip(np.searchsorted(self.edges, counts, side="right") - 1,
+                    0, self.n_bins - 1)
+        return (residuals - self.mu[b]) / self.sd[b]

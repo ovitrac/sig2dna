@@ -10,11 +10,17 @@ n_channels x n_time integer intensities; 0.14 s/scan; m/z 40-650;
 all identifiers, timestamps and provenance removed). The report ships
 with light and dark themes (system default, manual toggle, print=light).
 
-DEMO-GRADE CALIBRATION NOTICE: with a single reference run there are no
-replicate floors; the grammar gates here use a global residual-spread
-proxy and the virgin run is scored in-sample as a visual baseline. A
-real deployment calibrates per channel on true replicates and states
-scopes explicitly (see module docstrings).
+CALIBRATION DEMONSTRATION: the dataset ships, alongside the two runs,
+an anonymized reference-population calibration (per-channel location and
+spread of grammar residuals and event counts from nine anonymized virgin
+references, leave-one-out; mode = reference_population, R2). The grammar
+section scores the SAME residuals under three calibrations — R0 global
+proxy, R1 density-conditioned sigma(N) fitted on the single shipped
+reference, R2 shipped reference-population — and shows how the apparent
+low-m/z concentration of outliers under R0 is a heteroscedasticity
+artifact that calibration removes. No replicate floors exist in this
+example; even R2 remains reference-population grade, not
+technical-replicate grade (R3).
 
 Run:  python run_case_study.py     (writes report.html next to itself)
 """
@@ -31,9 +37,10 @@ import matplotlib.pyplot as plt
 
 from sig2dna_core.events import cluster_classes, escore, extract_events
 from sig2dna_core.channels import channel_counts, d_comp
-from sig2dna_core.grammar import (MarkovGrammar, fit_conditioning,
-                                  organization_scores, profile_distance,
-                                  rho_e, sign_delta, tokenize)
+from sig2dna_core.grammar import (DensityCalibration, MarkovGrammar,
+                                  fit_conditioning, organization_scores,
+                                  profile_distance, rho_e, sign_delta,
+                                  tokenize)
 from sig2dna_core.icfilter import encode_ic_matrix, text_entropy
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -137,24 +144,63 @@ def main():
     stats["topgain"] = [(int(mz[i]), int(gain_ch[i])) for i in top_idx
                         if gain_ch[i] > 0]
 
-    # ---------------- route 3: grammar -----------------------------------
+    # ---------------- route 3: grammar, three calibrations ---------------
     print("route 3: grammar...", flush=True)
     toksV = [tokenize(s) for s in encV.letters]
     toksR = [tokenize(s) for s in encR.letters]
-    G = MarkovGrammar().train(toksV)
+    # shipped reference grammar (trained on the same anonymized virgin
+    # references as the shipped calibration -- aggregate transition
+    # counts only, part of the calibration bundle)
+    import gzip as _gzip
+    import json as _json
+    G = MarkovGrammar()
+    with _gzip.open(os.path.join(HERE, "case_grammar.json.gz"), "rt") as f:
+        for a, b, cnt in _json.load(f):
+            for tok, n in cnt.items():
+                G.ctx[(a, b)][tok] += n
     LV = np.array([G.codelen(s) for s in toksV])
     LR = np.array([G.codelen(s) for s in toksR])
-    beta, res = fit_conditioning(LV, nV)
+    beta = z["beta_ref"].astype(float)      # shipped reference conditioning
     stats["beta"] = beta
-    stats["R2"] = 1 - res.var() / LV.var()
-    # demo-grade calibration: global residual spread (see notice above)
-    mu = np.zeros(n_ch)
-    sd = np.full(n_ch, max(np.std(res, ddof=1), 1.0))
-    zV, pV, nnV = organization_scores(LV, nV, beta, mu, sd, gate=GATE)
-    zR, pR, nnR = organization_scores(LR, nR, beta, mu, sd, gate=GATE)
-    stats["ioV"], stats["ioR"] = (pV, nnV), (pR, nnR)
-    stats["sign"] = sign_delta((pR, nnR), (pV, nnV))
-    stats["pdist"] = profile_distance(zV, zR)
+    rV = LV - (beta[0] + beta[1] * nV)
+    rR = LR - (beta[0] + beta[1] * nR)
+    stats["R2"] = 1 - rV.var() / LV.var()
+    mu_L, sd_L = z["mu_L"].astype(float), z["sd_L"].astype(float)
+    mu_N, sd_N = z["mu_N"].astype(float), z["sd_N"].astype(float)
+    stats["n_ref"] = int(z["n_ref"])
+    # R0: one global sigma (didactic visualization only)
+    z0 = (rR - rV.mean()) / max(rV.std(ddof=1), 1.0)
+    # R1: density-conditioned sigma(N) fitted on the single reference
+    cal1 = DensityCalibration(n_bins=8).fit(rV, nV)
+    z1 = cal1.z(rR, nR)
+    # R2: shipped reference-population per-channel calibration
+    z2 = (rR - mu_L) / sd_L
+    z2V = (rV - mu_L) / sd_L
+    low = mz < 200
+    def ratio(zz):
+        hit = np.abs(zz) > GATE
+        return hit[low].mean(), hit[~low].mean()
+    stats["ladder"] = {name: ratio(zz) for name, zz in
+                       (("R0 global_proxy", z0),
+                        ("R1 density_conditioned", z1),
+                        ("R2 reference_population", z2))}
+    d2 = z2 * sd_L
+    d2V = z2V * sd_L
+    stats["ioR"] = (float(d2[z2 > GATE].sum()),
+                    float(-d2[z2 < -GATE].sum()))
+    stats["ioV"] = (float(d2V[z2V > GATE].sum()),
+                    float(-d2V[z2V < -GATE].sum()))
+    stats["sign"] = sign_delta(stats["ioR"], stats["ioV"])
+    stats["pdist"] = profile_distance(z2V, z2)
+    # channel-state quadrants (ratified display): inventory vs organization
+    zN = (nR - mu_N) / sd_N
+    inv = np.abs(zN) > GATE
+    org = np.abs(z2) > GATE
+    stats["quad"] = {}
+    for lbl, m_ in (("stable", ~inv & ~org), ("inventory-only", inv & ~org),
+                    ("organization-only", ~inv & org), ("both", inv & org)):
+        stats["quad"][lbl] = (float(m_[low].mean()), float(m_[~low].mean()))
+    stats["zN"], stats["z0"], stats["z2"] = zN, z0, z2
 
     # ---------------- figures, both themes -------------------------------
     print("rendering figures (light + dark)...", flush=True)
@@ -188,15 +234,41 @@ def main():
         legend(ax, t)
         figs[("counts", theme)] = fig64(fig)
 
-        fig, ax, t = themed_axes(theme)
-        ax.axhspan(-GATE, GATE, color=t["band"], lw=0)
-        ax.plot(mz, zR, color=t["r"], lw=0.8,
-                label="recycled, z vs virgin grammar")
-        ax.axhline(0, color=t["mut"], lw=0.6)
-        ax.set_xlabel("m/z channel")
-        ax.set_ylabel("organization residual z")
-        legend(ax, t)
+        fig, axs = plt.subplots(2, 1, figsize=(9, 4.6), sharex=True)
+        tt = THEMES[theme]
+        fig.patch.set_facecolor(tt["bg"])
+        for ax, zz, lbl in ((axs[0], stats["z0"],
+                             "R0: global proxy (didactic only)"),
+                            (axs[1], stats["z2"],
+                             "R2: shipped reference-population "
+                             "calibration")):
+            ax.set_facecolor(tt["bg"])
+            for sp in ("top", "right"):
+                ax.spines[sp].set_visible(False)
+            for sp in ("left", "bottom"):
+                ax.spines[sp].set_color(tt["mut"])
+            ax.tick_params(colors=tt["mut"], labelcolor=tt["ink"])
+            ax.axhspan(-GATE, GATE, color=tt["band"], lw=0)
+            ax.plot(mz, zz, color=tt["r"], lw=0.8)
+            ax.axhline(0, color=tt["mut"], lw=0.6)
+            ax.set_ylabel("z", color=tt["ink"])
+            ax.set_title(lbl, fontsize=9, color=tt["ink"], loc="left")
+        axs[1].set_xlabel("m/z channel", color=tt["ink"])
         figs[("grammar", theme)] = fig64(fig)
+
+        fig, ax, t = themed_axes(theme, figsize=(5.6, 4.2))
+        m_low = mz < 200
+        ax.scatter(stats["zN"][~m_low], stats["z2"][~m_low], s=8,
+                   c=t["mut"], alpha=.55, label="m/z \u2265 200")
+        ax.scatter(stats["zN"][m_low], stats["z2"][m_low], s=10,
+                   c=t["r"], alpha=.8, label="m/z < 200")
+        for g in (-GATE, GATE):
+            ax.axhline(g, color=t["grid"], lw=0.8)
+            ax.axvline(g, color=t["grid"], lw=0.8)
+        ax.set_xlabel("inventory z  (event count vs reference)")
+        ax.set_ylabel("organization z  (R2-calibrated)")
+        legend(ax, t)
+        figs[("quad", theme)] = fig64(fig)
 
     write_report(figs, stats, n_ch, n_t, dt, time.time() - t0)
 
@@ -220,6 +292,21 @@ def write_report(figs, s, n_ch, n_t, dt, elapsed):
     sign_word = {1: "net enrichment (I<sub>O</sub><sup>+</sup> dominated)",
                  -1: "net regularization (I<sub>O</sub><sup>&minus;</sup> "
                      "dominated)", 0: "balanced"}[s["sign"]]
+
+    def _ratio(lo, hi):
+        if hi == 0:
+            return ("&infin; (no channel above the gate at m/z &ge; 200)"
+                    if lo > 0 else "&mdash;")
+        return f"{lo / hi:.2f}"
+    ladder_rows = "".join(
+        f"<tr><td><code>{name}</code></td><td>{lo:.3f}</td>"
+        f"<td>{hi:.3f}</td><td><b>{_ratio(lo, hi)}</b></td></tr>"
+        for name, (lo, hi) in s["ladder"].items())
+    quad_rows = "".join(
+        f"<tr><td>{k}</td><td>{a:.3f}</td><td>{b:.3f}</td></tr>"
+        for k, (a, b) in s["quad"].items())
+    img_grammar = img_pair(figs, "grammar", "organization residuals, R0 vs R2")
+    img_quad = img_pair(figs, "quad", "channel-state quadrants")
 
     def trim(t, n=90):
         t = t.strip("_")
@@ -310,12 +397,18 @@ m/z 40&ndash;650) &middot; compute time {elapsed:.0f}&thinsp;s</p>
 
 <p class="note"><b>Scope of this example.</b> The two chromatograms are
 real, anonymized measurements (identifiers, timestamps and provenance
-removed). With a single reference run there are no replicate floors:
-grammar gates use a global residual-spread proxy and the virgin run is
-scored in-sample as a visual baseline. The numbers illustrate the three
-representations; they are not a validated classification. Real
-deployments calibrate per channel on true replicates and state validity
-scopes explicitly (see the module docstrings).</p>
+removed). The dataset also ships an anonymized
+<b>reference-population calibration</b> (per-channel location and spread
+of grammar residuals and event counts, from {s['n_ref']} anonymized
+virgin references, leave-one-out; mode = <code>reference_population</code>).
+No technical-replicate floors exist here: even the calibrated scores are
+reference-population grade, not replicate grade. One further lesson is
+shipped deliberately: the calibration bundle was built by the same
+software stack that generates this report &mdash; marginal letters can
+flicker between library versions, so per-channel grammar calibration is
+<b>pipeline-local</b>; recomputing on a different stack may shift
+individual z values. The numbers illustrate the three representations;
+they are not a validated classification.</p>
 
 <h2>0 &middot; The two signals</h2>
 {img_pair(figs, 'tic', 'TIC overlay')}
@@ -365,27 +458,66 @@ single-reference V: E<sup>+</sup> = <b>{s['Egain']:.0f} bits</b>
 (lost classes). Channels gaining most events: {topg}</p>
 
 <h2>3 &middot; Route 3: grammar &mdash; organization conditioned on
-inventory</h2>
+inventory, and why calibration matters</h2>
 <p>The chain rule I(E,&thinsp;T) = I(E) + I(T&thinsp;|&thinsp;E) in
 practice: an order-2 Markov grammar is trained on the virgin channel
 texts (gap runs become punctuation &mdash; retention time is punctuation,
-not vocabulary); each recycled channel text gets a code length in bits;
-the expectation given that channel's <em>resolved event count</em>
-(fit: L&#770; = {s['beta'][0]:.1f} + {s['beta'][1]:.2f}&thinsp;N,
-R&sup2; = {s['R2']:.2f}) is subtracted; residuals are standardized and
-censored at |z| &gt; 2.</p>
-{img_pair(figs, 'grammar', 'organization residuals')}
+not vocabulary); each channel text gets a code length in bits; the
+expectation given that channel's <em>resolved event count</em> is
+subtracted (shipped reference fit:
+L&#770; = {s['beta'][0]:.1f} + {s['beta'][1]:.2f}&thinsp;N); residuals
+are standardized and censored at |z| &gt; 2. <b>How they are
+standardized decides what you see</b> &mdash; the same residuals under
+three calibrations of increasing evidential quality:</p>
 <table>
-<tr><th></th><th>I<sub>O</sub><sup>+</sup> (bits)</th>
+<tr><th>calibration of z</th><th>P(|z|&gt;2), m/z&lt;200</th>
+<th>P(|z|&gt;2), m/z&ge;200</th><th>low/high ratio</th></tr>
+{ladder_rows}
+</table>
+<p>Under the global proxy (R0) the flagged channels are
+<b>exclusively low-mass</b> &mdash; a <b>heteroscedasticity
+artifact</b>: grammar-residual variance grows with channel event
+density, and one global &sigma; preferentially pushes dense low-mass
+channels past the gate while starving the sparse high-mass channels.
+Density-conditioned &sigma;(N) (R1, fitted on the single shipped
+reference) flattens the mass dependence almost completely. The shipped
+per-channel reference-population calibration (R2) is the properly
+scaled score: moderate exceedance on both sides with a residual
+low-mass lean for this particular pair &mdash; a tendency, not a
+partition of chemical information by mass. <em>The representation can
+be simple; the calibration must not be.</em></p>
+{img_grammar}
+<table>
+<tr><th>R2-calibrated</th><th>I<sub>O</sub><sup>+</sup> (bits)</th>
 <th>I<sub>O</sub><sup>&minus;</sup> (bits)</th><th>net</th></tr>
-<tr><td class="v">virgin (in-sample baseline)</td>
+<tr><td class="v">virgin (vs shipped reference population)</td>
 <td>{s['ioV'][0]:.0f}</td><td>{s['ioV'][1]:.0f}</td>
 <td>{s['ioV'][0] - s['ioV'][1]:+.0f}</td></tr>
 <tr><td class="r">recycled</td><td>{s['ioR'][0]:.0f}</td>
 <td>{s['ioR'][1]:.0f}</td><td>{s['ioR'][0] - s['ioR'][1]:+.0f}</td></tr>
 </table>
 <p>Direction of the organization change R vs V: <b>{sign_word}</b>.
-Profile distance (level-free) = {s['pdist']:.3f}.</p>
+Profile distance (level-free) = {s['pdist']:.3f}.
+Calibration mode of every number in this section:
+<code>reference_population</code> &mdash; never to be read as
+replicate-grade significance.</p>
+
+<h3>Channel states: what kind of difference does each channel carry?</h3>
+<p>Crossing the inventory deviation (event count vs the shipped
+reference statistics) with the R2-calibrated organization deviation
+classifies every channel into four readable states:</p>
+{img_quad}
+<table>
+<tr><th>fraction of channels</th><th>m/z &lt; 200</th>
+<th>m/z &ge; 200</th></tr>
+{quad_rows}
+</table>
+<p>Inventory change and organization change are largely carried by
+<em>different</em> channels &mdash; the two routes localize different
+aspects of the same perturbation, which is exactly what the chain-rule
+construction intends. Organization-only channels appear at both ends of
+the mass axis: a tendency, not a partition of chemical information by
+mass.</p>
 
 <h2>4 &middot; Three readings, one verdict structure</h2>
 <div class="verdict">
